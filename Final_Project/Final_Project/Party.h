@@ -14,7 +14,7 @@ private:
 	vector<SOCKET> sockets;//socket for all TCP connection. sockets[0] is a UDP soket
 	vector<pair<long, long>> shares;//index of vector is the id of input's party
 public:
-	
+	void connectToAllParties();
 
 };
 
