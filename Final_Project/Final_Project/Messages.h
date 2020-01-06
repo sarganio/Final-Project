@@ -51,17 +51,3 @@ public:
 		_data = nullptr;
 	}*/
 };
-/*
-#pragma pack(1)
-typedef struct Seq:public Message {
-	char _key[SEQ_LEN];
-} Seq;
-#pragma pack(1)
-typedef struct Key :public Message {
-	char _key[KEY_LEN];
-} Seq;
-#pragma pack(1)
-typedef struct Reconstruct :public Message {
-	char _key[KEY_LEN];
-} Seq;
-*/

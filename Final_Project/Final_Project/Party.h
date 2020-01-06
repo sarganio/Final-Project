@@ -1,8 +1,6 @@
 #pragma once
 #include <vector>
 #include "Messages.h"
-//#include <WinSock2.h>
-//#include <Windows.h>
 
 using std::vector;
 using std::pair;
