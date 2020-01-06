@@ -124,11 +124,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Party.cpp" />
+    <ClCompile Include="Socket.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Stk.cpp" />
+    <ClCompile Include="TcpClient.cpp" />
+    <ClCompile Include="TcpServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Messages.h" />
     <ClInclude Include="Party.h" />
+    <ClInclude Include="Socket.h" />
+    <ClInclude Include="Stk.h" />
+    <ClInclude Include="TcpClient.h" />
+    <ClInclude Include="TcpServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
