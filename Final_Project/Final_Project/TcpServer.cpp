@@ -6,15 +6,13 @@ using std::cerr;
 	TcpServer::TcpServer(int port)
 	{
 		// Create a socket server.
-	//#if defined(__OS_WINDOWS__)  // windoze-only stuff
 		WSADATA wsaData;
 		WORD wVersionRequested = MAKEWORD(1, 1);
 
 		WSAStartup(wVersionRequested, &wsaData);
 		if (wsaData.wVersion != wVersionRequested) 
 			cerr << "TcpServer: Incompatible Windows socket library version!";
-		
-	//#endif
+
 
 		// Create the server-side socket
 		_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
