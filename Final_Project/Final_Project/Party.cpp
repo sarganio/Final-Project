@@ -15,6 +15,7 @@ void Party::connectToAllParties() {
 
 	short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
-	TcpClient to = TcpClient(myPort);
-	to.connect(toPort);
+	TcpClient to = TcpClient(1234);
+	to.connect(toPort,toIP);
+	to.writeBuffer("12345", 6);
 }
