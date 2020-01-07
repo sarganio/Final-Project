@@ -8,6 +8,7 @@ using std::string;
 using std::cout;
 using stk::TcpClient;
 using stk::TcpServer;
+Party::Party(short id,long input):_id(id),_input(input){}
 void Party::connectToAllParties() {
 	short idToConnect = (_id + 1) % NUM_OF_PARTIES;
 	string toIP = BASE_IP + std::to_string(idToConnect);
@@ -15,7 +16,11 @@ void Party::connectToAllParties() {
 
 	short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
-	TcpClient to = TcpClient(1234);
+	TcpServer from = TcpServer(myPort);
+	from.accept();
+	TcpClient to = TcpClient(toPort);
 	to.connect(toPort,toIP);
-	to.writeBuffer("12345", 6);
+	
+
+
 }
