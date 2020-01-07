@@ -7,8 +7,7 @@
 using std::string;
 using std::cout;
 using std::endl;
-using stk::TcpClient;
-using stk::TcpServer;
+
 Party::Party(short id,long input):_id(id),_input(input){}
 void Party::connectToAllParties() {
 	short idToConnect = (_id + 1) % NUM_OF_PARTIES;

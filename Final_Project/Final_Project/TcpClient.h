@@ -2,7 +2,6 @@
 
 #include "Socket.h"
 
-namespace stk {
 
 	/***************************************************/
 	/*! \class TcpClient
@@ -25,7 +24,7 @@ namespace stk {
 	*/
 	/***************************************************/
 
-	class TcpClient : public Socket
+	class TcpClient :public Socket
 	{
 	public:
 		//! Default class constructor creates a socket client connection to the specified host and port.
@@ -45,14 +44,6 @@ namespace stk {
 		*/
 		int connect(int port, std::string hostname = "localhost");
 
-		//! Write a buffer over the socket connection.  Returns the number of bytes written or -1 if an error occurs.
-		int writeBuffer(const void* buffer, long bufferSize, int flags = 0);
-
-		//! Read a buffer from the socket connection, up to length \e bufferSize.  Returns the number of bytes read or -1 if an error occurs.
-		int readBuffer(void* buffer, long bufferSize, int flags = 0);
-
 	protected:
 
 	};
-
-} // stk namespace

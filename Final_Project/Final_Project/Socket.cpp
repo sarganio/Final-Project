@@ -1,7 +1,5 @@
 #include "Socket.h"
 
-namespace stk {
-
 	Socket::Socket()
 	{
 		_socket = -1;
@@ -10,58 +8,38 @@ namespace stk {
 
 	Socket :: ~Socket()
 	{
-		this->close(_socket);
-
-	#if defined(__OS_WINDOWS__)
+		if(isValid())
+			this->close();
 
 		WSACleanup();
 
-	#endif
-	}
-
-	void Socket::close(int socket)
-	{
-		if (!isValid(socket)) return;
-
-	#if (defined(__OS_IRIX__) || defined(__OS_LINUX__) || defined(__OS_MACOSX__))
-
-		::close(socket);
-
-	#elif defined(__OS_WINDOWS__)
-
-		::closesocket(socket);
-
-	#endif
 	}
 
 	void Socket::setBlocking(int socket, bool enable)
 	{
-		if (!isValid(socket)) return;
-
-	#if (defined(__OS_IRIX__) || defined(__OS_LINUX__) || defined(__OS_MACOSX__))
-
-		int tmp = ::fcntl(socket, F_GETFL, 0);
-		if (tmp >= 0)
-			tmp = ::fcntl(socket, F_SETFL, enable ? (tmp & ~O_NONBLOCK) : (tmp | O_NONBLOCK));
-
-	#elif defined(__OS_WINDOWS__)
+		if (!isValid()) return;
 
 		unsigned long non_block = !enable;
 		ioctlsocket(socket, FIONBIO, &non_block);
 
-	#endif
 	}
 
-	int Socket::writeBuffer(int socket, const void* buffer, long bufferSize, int flags)
+
+	int Socket::writeBuffer(const void* buffer, long bufferSize, int flags)
 	{
-		if (!isValid(socket)) return -1;
-		return send(socket, (const char*)buffer, bufferSize, flags);
+		if (!isValid()) return -1;
+		return send(_socket, (const char*)buffer, bufferSize, flags);
 	}
 
-	int Socket::readBuffer(int socket, void* buffer, long bufferSize, int flags)
+	int Socket::readBuffer(void* buffer, long bufferSize, int flags)
 	{
-		if (!isValid(socket)) return -1;
-		return recv(socket, (char*)buffer, bufferSize, flags);
+		if (!isValid()) return -1;
+		return recv(_socket, (char*)buffer, bufferSize, flags);
 	}
+	void Socket::close()
+	{
+		if (!isValid()) return;
 
-} // stk namespace
+		::closesocket(_socket);
+
+	}

@@ -1,22 +1,19 @@
 #include <cstring>
 #include <sstream>
 #include "TcpClient.h"
+#include <iostream>
 
 
-namespace stk {
-
+using std::cerr;
 	TcpClient::TcpClient(int port, std::string hostname)
 	{
-	//#if defined(__OS_WINDOWS__)  // windoze-only stuff
 		WSADATA wsaData;
 		WORD wVersionRequested = MAKEWORD(1, 1);
 
 		WSAStartup(wVersionRequested, &wsaData);
-		if (wsaData.wVersion != wVersionRequested) {
-			oStream_ << "TcpClient: Incompatible Windows socket library version!";
-			handleError(StkError::PROCESS_SOCKET);
-		}
-	//#endif
+		if (wsaData.wVersion != wVersionRequested) 
+			cerr << "TcpClient: Incompatible Windows socket library version!";
+
 
 		// Create a socket client connection.
 		connect(port, hostname);
@@ -29,21 +26,19 @@ namespace stk {
 	int TcpClient::connect(int port, std::string hostname)
 	{
 		// Close any existing connections.
-		this->close(_socket);
+		this->close();
 
 		// Create the client-side socket
 		_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (_socket < 0) {
-			oStream_ << "TcpClient: Couldn't create socket client!";
-			handleError(StkError::PROCESS_SOCKET);
-		}
+		if (_socket < 0) 
+			cerr << "TcpClient: Couldn't create socket client!";
+
 
 		int flag = 1;
 		int result = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
-		if (result < 0) {
-			oStream_ << "TcpClient: Error setting socket options!";
-			handleError(StkError::PROCESS_SOCKET);
-		}
+		if (result < 0) 
+			cerr << "TcpClient: Error setting socket options!";
+
 
 		// Fill in the address structure
 		struct sockaddr_in server_address;
@@ -52,24 +47,9 @@ namespace stk {
 		server_address.sin_port = htons(port);
 
 		// Connect to the server
-		if (::connect(_socket, (struct sockaddr*) & server_address, sizeof(server_address)) < 0) {
-			oStream_ << "TcpClient: Couldn't connect to socket server!";
-			handleError(StkError::PROCESS_SOCKET);
-		}
+		if (::connect(_socket, (struct sockaddr*) & server_address, sizeof(server_address)) < 0) 
+			cerr << "TcpClient: Couldn't connect to socket server!";
+
 
 		return _socket;
 	}
-
-	int TcpClient::writeBuffer(const void* buffer, long bufferSize, int flags)
-	{
-		if (!isValid(_socket)) return -1;
-		return send(_socket, (const char*)buffer, bufferSize, flags);
-	}
-
-	int TcpClient::readBuffer(void* buffer, long bufferSize, int flags)
-	{
-		if (!isValid(_socket)) return -1;
-		return recv(_socket, (char*)buffer, bufferSize, flags);
-	}
-
-} // stk namespace
