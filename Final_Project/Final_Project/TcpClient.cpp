@@ -7,7 +7,7 @@ namespace stk {
 
 	TcpClient::TcpClient(int port, std::string hostname)
 	{
-	#if defined(__OS_WINDOWS__)  // windoze-only stuff
+	//#if defined(__OS_WINDOWS__)  // windoze-only stuff
 		WSADATA wsaData;
 		WORD wVersionRequested = MAKEWORD(1, 1);
 
@@ -16,7 +16,7 @@ namespace stk {
 			oStream_ << "TcpClient: Incompatible Windows socket library version!";
 			handleError(StkError::PROCESS_SOCKET);
 		}
-	#endif
+	//#endif
 
 		// Create a socket client connection.
 		connect(port, hostname);
@@ -45,16 +45,10 @@ namespace stk {
 			handleError(StkError::PROCESS_SOCKET);
 		}
 
-		struct hostent* hostp;
-		if ((hostp = gethostbyname(hostname.c_str())) == 0) {
-			oStream_ << "TcpClient: unknown host (" << hostname << ")!";
-			handleError(StkError::PROCESS_SOCKET_IPADDR);
-		}
-
 		// Fill in the address structure
 		struct sockaddr_in server_address;
 		server_address.sin_family = AF_INET;
-		memcpy((void*)&server_address.sin_addr, hostp->h_addr, hostp->h_length);
+		server_address.sin_addr.s_addr = inet_addr(hostname.c_str());
 		server_address.sin_port = htons(port);
 
 		// Connect to the server

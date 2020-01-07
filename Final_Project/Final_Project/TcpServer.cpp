@@ -5,7 +5,7 @@ namespace stk {
 	TcpServer::TcpServer(int port)
 	{
 		// Create a socket server.
-	#if defined(__OS_WINDOWS__)  // windoze-only stuff
+	//#if defined(__OS_WINDOWS__)  // windoze-only stuff
 		WSADATA wsaData;
 		WORD wVersionRequested = MAKEWORD(1, 1);
 
@@ -14,7 +14,7 @@ namespace stk {
 			oStream_ << "TcpServer: Incompatible Windows socket library version!";
 			handleError(StkError::PROCESS_SOCKET);
 		}
-	#endif
+	//#endif
 
 		// Create the server-side socket
 		_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
