@@ -17,17 +17,16 @@ void Party::connectToAllParties() {
 	
 	short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
-	//setup a server socket //ignore1
-	TcpServer from = TcpServer(65000);
-	from.accept();
-	char buffer[20];
-	from.readBuffer(buffer, 20);
-	cout << buffer << endl;
+	////setup a server socket //ignore1
+	//TcpServer from = TcpServer(65000);
+	//from.accept();
+	//char buffer[20];
+	//from.readBuffer(buffer, 20);
+	//cout << buffer << endl;
 
 	//setup a client socket
-	TcpClient to = TcpClient(65010);
-	to.connect(65001, "192.168.43.241");
-	
+	TcpClient to = TcpClient(5500,"192.168.43.241");
+	to.writeBuffer("12345",6);
 
 
 }

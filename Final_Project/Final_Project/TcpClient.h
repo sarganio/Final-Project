@@ -3,6 +3,7 @@
 #include "TcpSocket.h"
 
 
+
 	/***************************************************/
 	/*! \class TcpClient
 		\brief STK TCP socket client class.
@@ -28,10 +29,7 @@
 	{
 	public:
 		//! Default class constructor creates a socket client connection to the specified host and port.
-		TcpClient(int port, std::string hostname = "localhost");
-
-		//! The class destructor closes the socket instance, breaking any existing connections.
-		~TcpClient();
+		TcpClient(int port, std::string hostname = INADDR_ANY);
 
 		//! Connect the socket client to the specified host and port and returns the resulting socket descriptor.
 		/*!
@@ -41,5 +39,4 @@
 		int connect(int port, std::string hostname = "localhost");
 
 	protected:
-
 	};

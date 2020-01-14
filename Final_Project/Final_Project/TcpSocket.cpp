@@ -1,10 +1,20 @@
 #include "TcpSocket.h"
+#include <iostream>
 
-	TcpSocket::TcpSocket()
-	{
-		_socket = -1;
-		_port = -1;
-	}
+using std::cerr;
+
+TcpSocket::TcpSocket(int socket, int port) :_port(_port)
+{
+	WSADATA wsaData;
+	WORD wVersionRequested = MAKEWORD(1, 1);
+	WSAStartup(wVersionRequested, &wsaData);
+	if (wsaData.wVersion != wVersionRequested)
+		cerr << "TcpServer: Incompatible Windows socket library version!";
+
+	if (_socket = ::socket(AF_INET, SOCK_STREAM, 0) < 0)
+		cerr << "TcpClient: Couldn't create socket client!";
+
+}
 
 	TcpSocket :: ~TcpSocket()
 	{
@@ -15,20 +25,10 @@
 
 	}
 
-	void TcpSocket::setBlocking(int socket, bool enable)
-	{
-		if (!isValid()) return;
-
-		unsigned long non_block = !enable;
-		ioctlsocket(socket, FIONBIO, &non_block);
-
-	}
-
-
 	int TcpSocket::writeBuffer(const void* buffer, long bufferSize, int flags)
 	{
 		if (!isValid()) return -1;
-		return send(_socket, (const char*)buffer, bufferSize, flags);
+		return send(_socket, (const char*)buffer, sizeof(buffer), 0);
 	}
 
 	int TcpSocket::readBuffer(void* buffer, long bufferSize, int flags)

@@ -1,19 +1,18 @@
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <winsock2.h>
+#include <iostream>
 #pragma comment(lib, "Ws2_32.lib")
-
+#define IP_LEN 15
+using std::cerr;
+using std::cout;
+using std::endl;
 	class TcpSocket 
 	{
 	public:
 
-		enum ProtocolType {
-			PROTO_TCP,
-			PROTO_UDP
-		};
-
 		//! Class constructor
-		TcpSocket();
+		TcpSocket(int socket, int port);
 
 		//! Class destructor.
 		~TcpSocket();
@@ -33,13 +32,12 @@
 		//! Returns true if the socket descriptor is valid.
 		bool isValid() { return _socket != -1; };
 
-		void setBlocking(int socket, bool enable);
-
 		void close();
 
 	protected:
 
 		int _socket;
 		int _port;
+		std::string _hostAddress;
 
 	};
