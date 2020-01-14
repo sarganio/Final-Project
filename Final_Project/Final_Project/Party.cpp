@@ -17,7 +17,7 @@ void Party::connectToAllParties() {
 	
 	short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
-	//setup a server socket //ignore
+	//setup a server socket //ignore1
 	TcpServer from = TcpServer(65000);
 	from.accept();
 	char buffer[20];
