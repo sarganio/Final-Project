@@ -1,2 +1,2 @@
 #Ignore folder .vs
-/Final_Project/.vs
+.vs/
