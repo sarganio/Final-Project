@@ -1,2 +1,2 @@
 #Ignore folder .vs
-.vs/
+/.vs
