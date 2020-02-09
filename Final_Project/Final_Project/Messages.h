@@ -8,6 +8,10 @@
 
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."
+
+#define MAX_MESSAGE_SIZE 50
+#define HEADER_SIZE 3
+
 //enum ipAddresses{'192.168.0.' };
 enum types{SEQ = 0,KEY,RECONSTRUCT};
 

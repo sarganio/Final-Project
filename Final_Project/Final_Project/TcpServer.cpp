@@ -1,10 +1,10 @@
 #include "TcpServer.h"
 #include <iostream>
 #include <thread>
+#include "Messages.h"
 
 #define BLOCKING -1
-#define MAX_MESSAGE_SIZE 50
-#define HEADER_SIZE 3
+
 using std::thread;
 	TcpServer::TcpServer(int port):TcpSocket(-1,port)
 	{

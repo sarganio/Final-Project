@@ -24,18 +24,9 @@ void Party::connectToAllParties() {
 	////setup a server socket 
 	TcpServer from = TcpServer(myPort);
 	from.serve();
-	char buffer[5] = { 0 };
-	int test = from.readBuffer(buffer, 4);
-	while (TRUE) {
-		from.readBuffer(buffer, 4);
-		cout << buffer << endl;
-	}
-	getchar();
-	//setup a client socket
-	////TcpClient to = TcpClient(65000,"192.168.43.241");
-	//TcpClient to = TcpClient(myPort,toPort, "127.0.0.1");
-	//char buffer[5] = { '1','2','3','4',0 };
-	//to.writeBuffer(buffer,5);
 
+	//setup a client socket
+	//TcpClient to = TcpClient(65000,"192.168.43.241");
+	TcpClient to = TcpClient(myPort,toPort, "127.0.0.1");
 
 }
