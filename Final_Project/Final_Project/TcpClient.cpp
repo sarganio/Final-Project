@@ -7,8 +7,9 @@
 	{
 		_hostAddress = hostIp;
 		// Create a socket client connection.
-		if ((_socket = ::socket(AF_INET, SOCK_STREAM, 0) )<= 0)
-			cerr << "TcpClient: Couldn't create socket client!";
+		if ((_socket = ::socket(AF_INET, SOCK_STREAM, 0)) <= 0)
+			//cerr << "TcpClient: Couldn't create socket client!";
+			throw std::exception("TcpClient: Couldn't create socket client!");
 
 		struct sockaddr_in myAddr;
 		// Explicitly assigning port number by 
