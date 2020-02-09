@@ -28,8 +28,13 @@
 
 	void TcpServer::accept(void)
 	{
+		//backup the welcome socket for later deletetion
+		SOCKET s = _socket;
 		// this accepts the client and create a specific socket from server to this client
 		_socket = ::accept(_socket, NULL, NULL);
+
+		//close welcome socket
+		::closesocket(s);
 
 		if (_socket == INVALID_SOCKET)
 			throw std::exception(__FUNCTION__);
