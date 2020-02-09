@@ -4,7 +4,7 @@
 using std::cout;
 using std::endl;
 
-//Just for vitaly!
+//Just for vitaly & Osher!
 int main() {
 	try {
 		Party p = Party(2, 122323);
