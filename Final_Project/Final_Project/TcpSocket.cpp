@@ -2,7 +2,7 @@
 #include <iostream>
 
 using std::cerr;
-//WSAInitializer TcpSocket::_WSAinit;
+WSAInitializer TcpSocket::_WSAinit;
 TcpSocket::TcpSocket(int socket, int port) :_port(port)
 {
 	_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);

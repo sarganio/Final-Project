@@ -1,6 +1,9 @@
 #include "TcpServer.h"
 #include <iostream>
+#include <thread>
 
+#define BLOCKING -1
+using std::thread;
 	TcpServer::TcpServer(int port):TcpSocket(-1,port)
 	{
 		_hostAddress = "";
@@ -38,6 +41,19 @@
 
 		if (_socket == INVALID_SOCKET)
 			throw std::exception(__FUNCTION__);
-
+		
+		thread a(&TcpServer::messagesHandler, this);
+		a.detach();
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
+	}
+	void TcpServer::messagesHandler() {
+		cout << "Got message from client!" << endl;
+		WSAPOLLFD FDs = {};
+		FDs.fd = _socket;
+		FDs.events = POLLRDNORM;
+		FDs.revents = 0;
+		while (1) {
+			WSAPoll(&FDs, 1, BLOCKING);
+			cout << "Got message from client!" << endl;
+		}
 	}

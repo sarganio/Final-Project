@@ -10,7 +10,7 @@ using std::cout;
 using std::endl;
 	class TcpSocket 
 	{
-		//static WSAInitializer _WSAinit;
+		static WSAInitializer _WSAinit;
 	public: 
 		//! Class constructor
 		TcpSocket(int socket, int port);

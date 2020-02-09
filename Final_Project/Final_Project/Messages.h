@@ -6,7 +6,7 @@
 #define RECONSTRUCT_LEN 64
 #define NUM_OF_PARTIES 3
 
-#define BASE_PORT 8000
+#define BASE_PORT 62000
 #define BASE_IP "192.168.0."
 //enum ipAddresses{'192.168.0.' };
 enum types{SEQ = 0,KEY,RECONSTRUCT};
