@@ -18,6 +18,7 @@ void Party::connectToAllParties() {
 	//myIP = "192.168.43.41";
 	string IP = "127.0.0.1";
 	
+	//toPort - 61002 myPort - 61001
 	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
 	////setup a server socket 
@@ -25,8 +26,11 @@ void Party::connectToAllParties() {
 	from.serve();
 	char buffer[5] = { 0 };
 	int test = from.readBuffer(buffer, 4);
-	cout << test << endl;
-
+	while (TRUE) {
+		from.readBuffer(buffer, 4);
+		cout << buffer << endl;
+	}
+	getchar();
 	//setup a client socket
 	////TcpClient to = TcpClient(65000,"192.168.43.241");
 	//TcpClient to = TcpClient(myPort,toPort, "127.0.0.1");

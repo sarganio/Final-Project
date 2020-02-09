@@ -3,6 +3,8 @@
 #include <thread>
 
 #define BLOCKING -1
+#define MAX_MESSAGE_SIZE 50
+#define HEADER_SIZE 3
 using std::thread;
 	TcpServer::TcpServer(int port):TcpSocket(-1,port)
 	{
@@ -47,13 +49,31 @@ using std::thread;
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
 	}
 	void TcpServer::messagesHandler() {
-		cout << "Got message from client!" << endl;
-		WSAPOLLFD FDs = {};
-		FDs.fd = _socket;
-		FDs.events = POLLRDNORM;
-		FDs.revents = 0;
-		while (1) {
-			WSAPoll(&FDs, 1, BLOCKING);
+
+		unsigned short messageSize = -1;
+		uint8_t messageType = -1;
+		// Setup timeval variable
+		struct fd_set FDs;
+		char buffer[MAX_MESSAGE_SIZE] = {};
+		while (TRUE) {
+			// Setup fd_set structure
+			FD_ZERO(&FDs);
+			FD_SET(_socket, &FDs);
+			//wait for messages from socket
+			select(_socket + 1, &FDs, NULL, NULL, NULL);
+			//read the header: type(1) + size of message(2)
+			this->readBuffer(buffer, HEADER_SIZE);
+
+			messageType = buffer[0];
+			messageSize  = (buffer[1] << 8) | buffer[2];
+
+			//read rest of message
+			this->readBuffer(buffer, messageSize);
+
+			//reset buffer
+			memset(buffer, 0, messageSize + HEADER_SIZE);
+
+
 			cout << "Got message from client!" << endl;
 		}
 	}
