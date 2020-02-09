@@ -4,6 +4,7 @@
 using std::cout;
 using std::endl;
 
+//Just for vitaly!
 int main() {
 	try {
 		Party p = Party(2, 122323);
