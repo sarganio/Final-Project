@@ -33,6 +33,18 @@ using std::thread;
 
 	void TcpServer::accept(void)
 	{
+
+		thread a(&TcpServer::messagesHandler, this);
+		a.detach();
+	}
+	void TcpServer::messagesHandler() {
+
+		unsigned short messageSize = -1;
+		uint8_t messageType = -1;
+		// Setup timeval variable
+		struct fd_set FDs;
+		char buffer[MAX_MESSAGE_SIZE] = {};
+
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
 		// this accepts the client and create a specific socket from server to this client
@@ -43,18 +55,9 @@ using std::thread;
 
 		if (_socket == INVALID_SOCKET)
 			throw std::exception(__FUNCTION__);
-		
-		thread a(&TcpServer::messagesHandler, this);
-		a.detach();
-		std::cout << "Client accepted. Server and client can speak" << std::endl;
-	}
-	void TcpServer::messagesHandler() {
 
-		unsigned short messageSize = -1;
-		uint8_t messageType = -1;
-		// Setup timeval variable
-		struct fd_set FDs;
-		char buffer[MAX_MESSAGE_SIZE] = {};
+		std::cout << "Client accepted. Server and client can speak" << std::endl;
+
 		while (TRUE) {
 			// Setup fd_set structure
 			FD_ZERO(&FDs);

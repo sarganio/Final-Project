@@ -35,7 +35,12 @@
 
 		// notice that we step out to the global namespace
 		// for the resolution of the function socket
-		int status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa));
+		int status,i = 0;
+		cout << "Trying to connent the server.." << endl;
+		while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {
+			cout << "Attempt #" << ++i << endl;
+			Sleep(500);
+		}
 
 		if (status == INVALID_SOCKET)
 			throw std::exception("Cant connect to server");
