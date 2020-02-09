@@ -2,17 +2,13 @@
 #include <iostream>
 
 using std::cerr;
-
-TcpSocket::TcpSocket(int socket, int port) :_port(_port)
+//WSAInitializer TcpSocket::_WSAinit;
+TcpSocket::TcpSocket(int socket, int port) :_port(port)
 {
-	WSADATA wsaData;
-	WORD wVersionRequested = MAKEWORD(1, 1);
-	WSAStartup(wVersionRequested, &wsaData);
-	if (wsaData.wVersion != wVersionRequested)
-		cerr << "TcpServer: Incompatible Windows socket library version!";
+	_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-	if (_socket = ::socket(AF_INET, SOCK_STREAM, 0) < 0)
-		cerr << "TcpClient: Couldn't create socket client!";
+	if (_socket == INVALID_SOCKET)
+		throw std::exception(__FUNCTION__ " - socket");
 
 }
 
@@ -21,14 +17,12 @@ TcpSocket::TcpSocket(int socket, int port) :_port(_port)
 		if(isValid())
 			this->close();
 
-		WSACleanup();
-
 	}
 
 	int TcpSocket::writeBuffer(const void* buffer, long bufferSize, int flags)
 	{
 		if (!isValid()) return -1;
-		return send(_socket, (const char*)buffer, sizeof(buffer), 0);
+		return send(_socket, (const char*)buffer, sizeof(buffer), flags);
 	}
 
 	int TcpSocket::readBuffer(void* buffer, long bufferSize, int flags)

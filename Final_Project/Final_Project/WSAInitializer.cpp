@@ -4,9 +4,12 @@
 
 WSAInitializer::WSAInitializer()
 {
-	WSADATA wsa_data = { };
-	if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
+	WSADATA wsaData = {};
+	WORD wVersionRequested = WSAStartup(MAKEWORD(2, 2),&wsaData);
+	if (wVersionRequested)
 		throw std::exception("WSAStartup Failed");
+	if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
+		throw std::exception("TcpServer: Incompatible Windows socket library version!");
 }
 
 

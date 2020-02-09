@@ -5,28 +5,34 @@
 	{
 		_hostAddress = "";
 		_port = port;
-	}
-	void TcpServer::bind()const
-	{
-		struct sockaddr_in address;
-		address.sin_family = AF_INET;
-		address.sin_addr.s_addr = INADDR_ANY;
-		address.sin_port = htons(_port);
 
-		// Bind socket to the appropriate port and interface (INADDR_ANY)
-		if (::bind(_socket, (struct sockaddr*) & address, sizeof(address)) < 0)
-			cerr << "TcpServer: Couldn't bind socket!";
 	}
-	void TcpServer::listen()const {
-		// Listen for incoming connection(s)
-		if (::listen(_socket, 1) < 0)
-			cerr << "TcpServer: Couldn't start server listening!";
+	void TcpServer::serve() {
+		struct sockaddr_in sa = { 0 };
+		sa.sin_port = htons(_port);
+		sa.sin_family = AF_INET;
+		sa.sin_addr.s_addr = INADDR_ANY;
+
+		std::cout << "Binding..." << std::endl;
+		if (::bind(_socket, (struct sockaddr*) & sa, sizeof(sa)) == SOCKET_ERROR)
+			throw std::exception(__FUNCTION__ " - bind");
+
+		std::cout << "Listening..." << std::endl;
+		if (listen(_socket, SOMAXCONN) == SOCKET_ERROR)
+			throw std::exception(__FUNCTION__ " - listen");
+
+		std::cout << "Accepiting clients..." << std::endl;
+
+			accept();
 	}
 
 	void TcpServer::accept(void)
 	{
-		SOCKADDR_IN clientAddress;
-		int clientAddrSize = sizeof(clientAddress);
-		if (::accept(_socket, (SOCKADDR*)&clientAddress, &clientAddrSize) != INVALID_SOCKET)
-			cout << "Client connected!" << endl;
+		// this accepts the client and create a specific socket from server to this client
+		_socket = ::accept(_socket, NULL, NULL);
+
+		if (_socket == INVALID_SOCKET)
+			throw std::exception(__FUNCTION__);
+
+		std::cout << "Client accepted. Server and client can speak" << std::endl;
 	}

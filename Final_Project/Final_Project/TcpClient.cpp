@@ -3,30 +3,41 @@
 #include "TcpClient.h"
 #include <iostream>
 
-	TcpClient::TcpClient(int port, std::string hostIp):TcpSocket(-1,port)
+	TcpClient::TcpClient(int myPort,int hostPort, std::string hostIp):TcpSocket(-1,myPort)
 	{
 		_hostAddress = hostIp;
 		// Create a socket client connection.
-		connect(port, hostIp);
+		if ((_socket = ::socket(AF_INET, SOCK_STREAM, 0) )<= 0)
+			cerr << "TcpClient: Couldn't create socket client!";
+
+		struct sockaddr_in myAddr;
+		// Explicitly assigning port number by 
+		// binding client with that port  
+		myAddr.sin_family = AF_INET;
+		myAddr.sin_addr.s_addr = INADDR_ANY;
+		myAddr.sin_port = htons(myPort);
+
+		// This ip address will change according to the machine 
+		myAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
+			throw std::exception("Client bind failed (port assighnment)");
+		connect(hostPort, hostIp);
 	}
 
 	int TcpClient::connect(int port, std::string hostname)
 	{
-		SOCKADDR_IN addr;
-		addr.sin_addr.s_addr = inet_addr(_hostAddress.c_str()); // replace the ip with your futur server ip address. If server AND client are running on the same computer, you can use the local ip 127.0.0.1
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(5555);
+		struct sockaddr_in sa = { 0 };
 
-		if(::connect(_socket, (SOCKADDR*)&addr, sizeof(addr)) < 0)
-			cout << "Connected to server!" << endl;
-		// Close any existing connections.
-		this->close();
+		sa.sin_port = htons(port); // port that server will listen to
+		sa.sin_family = AF_INET;   // must be AF_INET
+		sa.sin_addr.s_addr = inet_addr(hostname.c_str());    // the IP of the server
 
-		// Fill in the address structure
-		struct sockaddr_in server_address;
-		server_address.sin_family = AF_INET;
-		server_address.sin_addr.s_addr = inet_addr(hostname.c_str());
-		server_address.sin_port = htons(_port);
+		// notice that we step out to the global namespace
+		// for the resolution of the function socket
+		int status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa));
+
+		if (status == INVALID_SOCKET)
+			throw std::exception("Cant connect to server");
 
 		return _socket;
 	}
