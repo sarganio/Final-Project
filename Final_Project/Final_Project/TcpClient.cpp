@@ -19,7 +19,7 @@
 		myAddr.sin_port = htons(myPort);
 
 		// This ip address will change according to the machine 
-		myAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		myAddr.sin_addr.s_addr = inet_addr("192.168.43.41");
 		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 			throw std::exception("Client bind failed (port assighnment)");
 		connect(hostPort, hostIp);
