@@ -3,7 +3,7 @@
 #include "TcpClient.h"
 #include <iostream>
 
-	TcpClient::TcpClient(int myPort,int hostPort, std::string hostIp):TcpSocket(-1,myPort)
+	TcpClient::TcpClient(std::string myIP, int myPort,int hostPort, std::string hostIp):TcpSocket(-1,myPort)
 	{
 		_hostAddress = hostIp;
 		// Create a socket client connection.
@@ -18,8 +18,13 @@
 		myAddr.sin_addr.s_addr = INADDR_ANY;
 		myAddr.sin_port = htons(myPort);
 
+		/////////////////////////////////////////////////
+		char szBuffer[1024];
+		gethostname(szBuffer, sizeof(szBuffer));
+		struct hostent* host = gethostbyname(szBuffer);
+		////////////////////////////////////////////////
 		// This ip address will change according to the machine 
-		myAddr.sin_addr.s_addr = inet_addr("192.168.43.41");
+		myAddr.sin_addr.s_addr = *(long*)(host->h_addr_list[1]);
 		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 			throw std::exception("Client bind failed (port assighnment)");
 		connect(hostPort, hostIp);
@@ -39,6 +44,7 @@
 		cout << "Trying to connent the server.." << endl;
 		while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {
 			cout << "Attempt #" << ++i << endl;
+			cout << status << endl;
 			Sleep(500);
 		}
 

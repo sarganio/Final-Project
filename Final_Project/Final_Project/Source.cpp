@@ -8,7 +8,7 @@ using std::endl;
 int main() {
 
 	try {
-		Party p = Party(0, 122323);
+		Party p = Party(2, 122323);
 		p.connectToAllParties();
 	}
 	catch (std::exception & exc) {

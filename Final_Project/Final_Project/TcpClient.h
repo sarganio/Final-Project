@@ -29,7 +29,7 @@
 	{
 	public:
 		//! Default class constructor creates a socket client connection to the specified host and port.
-		TcpClient(int myPort,int port, std::string hostname);
+		TcpClient(std::string myIP ,int myPort,int toPort, std::string hostname);
 
 		//! Connect the socket client to the specified host and port and returns the resulting socket descriptor.
 		/*!

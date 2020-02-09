@@ -3,6 +3,7 @@
 #include "Party.h"
 #include "TcpClient.h"
 #include "TcpServer.h"
+//#include <ws2tcpip.h>
 
 using std::string;
 using std::cout;
@@ -18,6 +19,7 @@ void Party::connectToAllParties() {
 	//myIP = "192.168.43.41";
 	string IP = "127.0.0.1";
 	string toIP = "192.168.43.241";
+	string myIP = "192.168.43.41";
 	
 	//toPort - 62001 myPort - 62000
 	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
@@ -28,7 +30,7 @@ void Party::connectToAllParties() {
 	cout << "Waiting for clients.." << endl;
 	//setup a client socket
 	//TcpClient to = TcpClient(65000,"192.168.43.241");
-	TcpClient to = TcpClient(myPort,toPort, toIP);
+	TcpClient to = TcpClient(myIP,myPort,toPort, toIP);
 	cout << "Sent a message forward" << endl;
 	getchar();
 
