@@ -3,35 +3,35 @@
 #include "Party.h"
 #include "TcpClient.h"
 #include "TcpServer.h"
-//#include <ws2tcpip.h>
+#include <openssl/rand.h>
+
+
+#define SEQ_LEN 4
 
 using std::string;
 using std::cout;
 using std::endl;
 
-Party::Party(short id,long input):_id(id),_input(input){}
-void Party::connectToAllParties() {
-	//WSAInitializer wsainit;
+Party::Party(int myID,long input):_id(myID),_input(input){}
+void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 	short idToConnect = (_id + 1) % NUM_OF_PARTIES;
-	//string toIP = BASE_IP + std::to_string(idToConnect);
-	//string myIP = BASE_IP + std::to_string(_id);
-	//myIP = "192.168.43.41";
-	string IP = "127.0.0.1";
-	string toIP = "192.168.43.241";
-	string myIP = "192.168.43.41";
+	string toIP = max(IPs[1], IPs[2]);
+	string myIP = IPs[0];
 	
-	//toPort - 62001 myPort - 62000
+	//toPort - 6200[id + 1] myPort - 6200[id]
 	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
-	////setup a server socket 
+	//setup a server socket 
 	TcpServer from = TcpServer(myPort);
+	this->_sockets.push_back(from.socketFd());
 	from.serve();
 	cout << "Waiting for clients.." << endl;
 	//setup a client socket
-	//TcpClient to = TcpClient(65000,"192.168.43.241");
 	TcpClient to = TcpClient(myIP,myPort,toPort, toIP);
+	this->_sockets.push_back(to.socketFd());
 	cout << "Sent a message forward" << endl;
+
 	getchar();
 
 }

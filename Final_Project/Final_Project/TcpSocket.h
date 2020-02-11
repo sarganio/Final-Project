@@ -31,7 +31,9 @@ using std::endl;
 		int readBuffer(void* buffer, long bufferSize, int flags = NULL);
 
 		//! Returns true if the socket descriptor is valid.
-		bool isValid() { return _socket != -1; };
+		bool isValid()const;
+
+		int socketFd()const;
 
 		void close();
 

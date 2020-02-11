@@ -2,6 +2,7 @@
 
 #include "TcpSocket.h"
 
+using std::string;
 
 
 	/***************************************************/
@@ -29,7 +30,7 @@
 	{
 	public:
 		//! Default class constructor creates a socket client connection to the specified host and port.
-		TcpClient(std::string myIP ,int myPort,int toPort, std::string hostname);
+		TcpClient(string myIP,int myPort,int toPort, string hostname);
 
 		//! Connect the socket client to the specified host and port and returns the resulting socket descriptor.
 		/*!

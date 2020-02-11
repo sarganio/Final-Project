@@ -2,8 +2,9 @@
 #include <sstream>
 #include "TcpClient.h"
 #include <iostream>
+#define IP_INDEX 1
 
-	TcpClient::TcpClient(std::string myIP, int myPort,int hostPort, std::string hostIp):TcpSocket(-1,myPort)
+	TcpClient::TcpClient(string myIP,int myPort,int hostPort, std::string hostIp):TcpSocket(-1,myPort)
 	{
 		_hostAddress = hostIp;
 		// Create a socket client connection.
@@ -17,14 +18,14 @@
 		myAddr.sin_family = AF_INET;
 		myAddr.sin_addr.s_addr = INADDR_ANY;
 		myAddr.sin_port = htons(myPort);
-
-		/////////////////////////////////////////////////
-		char szBuffer[1024];
-		gethostname(szBuffer, sizeof(szBuffer));
-		struct hostent* host = gethostbyname(szBuffer);
-		////////////////////////////////////////////////
-		// This ip address will change according to the machine 
-		myAddr.sin_addr.s_addr = *(long*)(host->h_addr_list[1]);
+		myAddr.sin_addr.s_addr = inet_addr(hostIp.c_str());
+		///////////////////////////////////////////////////
+		//char szBuffer[1024];
+		//gethostname(szBuffer, sizeof(szBuffer));
+		//struct hostent* host = gethostbyname(szBuffer);
+		//////////////////////////////////////////////////
+		//// This ip address will change according to the machine 
+		//myAddr.sin_addr.s_addr = *(long*)(host->h_addr_list[IP_INDEX]);
 		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 			throw std::exception("Client bind failed (port assighnment)");
 		connect(hostPort, hostIp);

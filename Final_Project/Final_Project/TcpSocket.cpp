@@ -37,3 +37,9 @@ TcpSocket::TcpSocket(int socket, int port) :_port(port)
 		::closesocket(_socket);
 
 	}
+	bool TcpSocket::isValid()const {
+		return this->_socket != -1;
+	}
+	int TcpSocket::socketFd()const { 
+		return isValid() ? _socket : -1; 
+	}
