@@ -25,7 +25,7 @@ using std::set;
 
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
-	int i,myID = 0;
+	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	for (i = 2; i < argc; i++)
 		if (IPs[0] > (IPs[i - 1] = string(argv[i])))//if my IP is bigger than the other IP increment my ID

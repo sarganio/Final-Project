@@ -13,7 +13,7 @@ using std::endl;
 		static WSAInitializer _WSAinit;
 	public: 
 		//! Class constructor
-		TcpSocket(int socket, int port);
+		TcpSocket(int socket, unsigned short port);
 
 		//! Class destructor.
 		~TcpSocket();
@@ -22,7 +22,7 @@ using std::endl;
 		int id(void) const { return _socket; };
 
 		//! Return the socket port number.
-		int port(void) const { return _port; };
+		unsigned short port(void) const { return _port; };
 
 		//! Write a buffer over the socket connection.  Returns the number of bytes written or -1 if an error occurs.
 		int writeBuffer(const void* buffer, long bufferSize, int flags = NULL);
@@ -40,7 +40,7 @@ using std::endl;
 	protected:
 
 		int _socket;
-		int _port;
+		unsigned short _port;
 		std::string _hostAddress;
 
 	};

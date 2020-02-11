@@ -13,7 +13,7 @@ using std::endl;
 		static WSAInitializer _WSAinit;
 	public: 
 		//! Class constructor
-		TcpSocket(int socket, int port);
+		TcpSocket(int socket, unsigned short port);
 
 		//! Class destructor.
 		~TcpSocket();

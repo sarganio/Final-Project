@@ -4,7 +4,7 @@
 #include <iostream>
 #define IP_INDEX 1
 
-	TcpClient::TcpClient(string myIP,int myPort,int hostPort, std::string hostIp):TcpSocket(-1,myPort)
+	TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp):TcpSocket(-1,myPort)
 	{
 		_hostAddress = hostIp;
 		// Create a socket client connection.
@@ -31,7 +31,7 @@
 		connect(hostPort, hostIp);
 	}
 
-	int TcpClient::connect(int port, std::string hostname)
+	int TcpClient::connect(unsigned short port, std::string hostname)
 	{
 		struct sockaddr_in sa = { 0 };
 

@@ -30,14 +30,14 @@ using std::string;
 	{
 	public:
 		//! Default class constructor creates a socket client connection to the specified host and port.
-		TcpClient(string myIP,int myPort,int toPort, string hostname);
+		TcpClient(string myIP, unsigned short myPort, unsigned short toPort, string hostname);
 
 		//! Connect the socket client to the specified host and port and returns the resulting socket descriptor.
 		/*!
 		  If the socket client is already connected, that connection is
 		  terminated and a new connection is attempted.
 		*/
-		int connect(int port, std::string hostname = "localhost");
+		int connect(unsigned short port, std::string hostname = "localhost");
 
 	protected:
 	};

@@ -12,10 +12,10 @@ using std::string;
 using std::cout;
 using std::endl;
 
-Party::Party(int myID,long input):_id(myID),_input(input){}
+Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
-	short idToConnect = (_id + 1) % NUM_OF_PARTIES;
+	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
 	string toIP = max(IPs[1], IPs[2]);
 	string myIP = IPs[0];
 	
@@ -36,10 +36,8 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 }
 void Party::broadcast(char* msg)const {
-	//from
-	_sockets[0]->writeBuffer(msg, strlen(msg));
-	//to
-	_sockets[1]->writeBuffer(msg, strlen(msg));
+	for (int i = 0; i < NUM_OF_PARTIES - 1; i++)
+		_sockets[i]->writeBuffer(msg, strlen(msg));
 }
 Party::~Party() {
 	int i = 0;
