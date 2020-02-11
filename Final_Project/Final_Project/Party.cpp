@@ -23,15 +23,27 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
 	//setup a server socket 
-	TcpServer from = TcpServer(myPort);
-	this->_sockets.push_back(from.socketFd());
-	from.serve();
+	TcpServer* from =new TcpServer(myPort);
+	this->_sockets.push_back(from);
+	from->serve();
 	cout << "Waiting for clients.." << endl;
 	//setup a client socket
-	TcpClient to = TcpClient(myIP,myPort,toPort, toIP);
-	this->_sockets.push_back(to.socketFd());
+	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
+	this->_sockets.push_back(to);
 	cout << "Sent a message forward" << endl;
 
 	getchar();
 
+}
+void Party::broadcast(char* msg)const {
+	//from
+	_sockets[0]->writeBuffer(msg, strlen(msg));
+	//to
+	_sockets[1]->writeBuffer(msg, strlen(msg));
+}
+Party::~Party() {
+	int i = 0;
+	//delete all the sockets of the party
+	while (_sockets.size())
+		delete _sockets[i++];
 }
