@@ -43,7 +43,10 @@ Party::~Party() {
 	int i = 0;
 	//delete all the sockets of the party
 	while (_sockets.size()) {
-		delete _sockets.back();
+		TcpSocket* toFree = _sockets.back();
+		//safety check before using delete
+		if(toFree)
+			delete _sockets.back();
 		_sockets.pop_back();
 	}
 }
