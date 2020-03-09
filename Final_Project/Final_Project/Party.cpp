@@ -42,6 +42,8 @@ void Party::broadcast(char* msg)const {
 Party::~Party() {
 	int i = 0;
 	//delete all the sockets of the party
-	while (_sockets.size())
-		delete _sockets[i++];
+	while (_sockets.size()) {
+		delete _sockets.back();
+		_sockets.pop_back();
+	}
 }
