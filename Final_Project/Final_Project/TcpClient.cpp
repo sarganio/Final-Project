@@ -18,7 +18,7 @@
 		myAddr.sin_family = AF_INET;
 		myAddr.sin_addr.s_addr = INADDR_ANY;
 		myAddr.sin_port = htons(myPort);
-		myAddr.sin_addr.s_addr = inet_addr(hostIp.c_str());
+		myAddr.sin_addr.s_addr = inet_addr(myIP.c_str());
 		///////////////////////////////////////////////////
 		//char szBuffer[1024];
 		//gethostname(szBuffer, sizeof(szBuffer));

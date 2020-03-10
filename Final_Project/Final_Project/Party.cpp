@@ -17,7 +17,8 @@ Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
-	string toIP = Helper::IPCompare(IPs[1], IPs[2])?IPs[1]:IPs[2];
+	boolean isMaxID = _id == NUM_OF_PARTIES - 1;
+	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ isMaxID?IPs[1]:IPs[2];
 	string myIP = IPs[0];
 	
 	//toPort - 6200[id + 1] myPort - 6200[id]
@@ -46,7 +47,7 @@ Party::~Party() {
 		TcpSocket* toFree = _sockets.back();
 		//safety check before using delete
 		if (toFree) {
-			delete toFree;
+			//delete toFree;
 			toFree = nullptr;
 		}
 		_sockets.pop_back();
