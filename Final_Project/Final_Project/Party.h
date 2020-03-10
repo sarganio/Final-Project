@@ -11,7 +11,7 @@ using std::string;
 class Party
 {
 private:
-	short _id;//unique identifier, lowest ip receive id = 1. 
+	short _id;//unique identifier, lowest ip receive id = 1 and so on. 
 	long _input;//secret input 
 	char _fromSeq[SEQ_LEN];
 	vector<TcpSocket*> _sockets;//socket for all TCP connection. sockets[0] is a UDP soket

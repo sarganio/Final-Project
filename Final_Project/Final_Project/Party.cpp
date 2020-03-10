@@ -40,13 +40,14 @@ void Party::broadcast(char* msg)const {
 		_sockets[i]->writeBuffer(msg, strlen(msg));
 }
 Party::~Party() {
-	int i = 0;
 	//delete all the sockets of the party
 	while (_sockets.size()) {
 		TcpSocket* toFree = _sockets.back();
 		//safety check before using delete
-		if(toFree)
-			delete _sockets.back();
+		if (toFree) {
+			delete toFree;
+			toFree = nullptr;
+		}
 		_sockets.pop_back();
 	}
 }
