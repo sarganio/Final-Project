@@ -4,6 +4,7 @@
 #include "TcpClient.h"
 #include "TcpServer.h"
 #include <openssl/rand.h>
+#include "Helper.h"
 
 
 #define SEQ_LEN 4
@@ -16,7 +17,7 @@ Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
-	string toIP = max(IPs[1], IPs[2]);
+	string toIP = Helper::IPCompare(IPs[1], IPs[2])?IPs[1]:IPs[2];
 	string myIP = IPs[0];
 	
 	//toPort - 6200[id + 1] myPort - 6200[id]

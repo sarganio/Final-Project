@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Party.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="TcpClient.cpp" />
@@ -134,6 +135,7 @@
     <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Helper.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="Party.h" />
     <ClInclude Include="TcpClient.h" />
