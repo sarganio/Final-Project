@@ -17,8 +17,7 @@ Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
-	boolean isMaxID = _id == NUM_OF_PARTIES - 1;
-	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ isMaxID?IPs[1]:IPs[2];
+	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
 	string myIP = IPs[0];
 	
 	//toPort - 6200[id + 1] myPort - 6200[id]
@@ -32,7 +31,11 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//setup a client socket
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets.push_back(to);
-	cout << "Sent a message forward" << endl;
+	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+		string messge = "This is a message from" + _id;
+		_sockets[i]->writeBuffer(messge.c_str(),messge.size());
+	}
+	cout << "Sent a messages forward" << endl;
 
 	getchar();
 

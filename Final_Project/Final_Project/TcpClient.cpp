@@ -44,7 +44,7 @@
 		int status,i = 0;
 		cout << "Trying to connent the server.." << endl;
 		while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {
-			cout << "Attempt #" << ++i << endl;
+			cout <<"ID to connect "<< port-62000<<": Attempt #" << ++i << endl;
 			cout << status << endl;
 			Sleep(500);
 		}
