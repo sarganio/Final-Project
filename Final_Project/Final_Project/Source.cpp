@@ -22,7 +22,9 @@ using std::set;
 //to.readBuffer(toSeq, SEQ_LEN);
 ////waiting for thread to receive the seq number of _id-1 party
 //while (!fromSeq[0]);
-
+/*
+TODO: get the header of the message correctly.
+*/
 /*
 argv[1] - my IP
 argv[2],argv[3] - IPs of other parties

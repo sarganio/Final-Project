@@ -3,7 +3,7 @@
 #include "Party.h"
 #include "TcpClient.h"
 #include "TcpServer.h"
-#include <openssl/rand.h>
+//#include <openssl/rand.h>
 #include "Helper.h"
 
 
@@ -32,9 +32,10 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets.push_back(to);
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
-		string messge = "This is a message from" + _id;
+		string messge = "024This is a message from" + _id;
 		_sockets[i]->writeBuffer(messge.c_str(),messge.size());
 	}
+	cout << "Sent all messages" << endl;
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
 		char buff[100];
 		if (_sockets[i]->readBuffer(buff, 24) == -1)
