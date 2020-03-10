@@ -35,6 +35,11 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 		string messge = "This is a message from" + _id;
 		_sockets[i]->writeBuffer(messge.c_str(),messge.size());
 	}
+	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+		char buff[100];
+		if (_sockets[i]->readBuffer(buff, 24) == -1)
+			i--;
+	}
 	cout << "Sent a messages forward" << endl;
 
 	getchar();
