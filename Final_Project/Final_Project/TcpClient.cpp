@@ -2,6 +2,7 @@
 #include <sstream>
 #include "TcpClient.h"
 #include <iostream>
+#include "Messages.h"
 #define IP_INDEX 1
 
 	TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp):TcpSocket(-1,myPort)
@@ -44,7 +45,7 @@
 		int status,i = 0;
 		cout << "Trying to connent the server.." << endl;
 		while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {
-			cout <<"ID to connect "<< port-62000<<": Attempt #" << ++i << endl;
+			cout <<"ID to connect "<< port-BASE_PORT<<": Attempt #" << ++i << endl;
 			cout << status << endl;
 			Sleep(500);
 		}

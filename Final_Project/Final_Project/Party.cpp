@@ -28,8 +28,9 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	this->_sockets.push_back(from);
 	from->serve();
 	cout << "Waiting for clients.." << endl;
+	getchar();
 	//setup a client socket
-	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
+	/*TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets.push_back(to);
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
 		string messge = "024This is a message from" + _id;
@@ -41,7 +42,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 		if (_sockets[i]->readBuffer(buff, 24) == -1)
 			i--;
 	}
-	cout << "Sent a messages forward" << endl;
+	cout << "Sent a messages forward" << endl;*/
 
 	getchar();
 
@@ -62,3 +63,4 @@ Party::~Party() {
 		_sockets.pop_back();
 	}
 }
+unsigned short Party::getID()const { return this->_id; }

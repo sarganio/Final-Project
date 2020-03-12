@@ -5,32 +5,34 @@ VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Final_Project", "Final_Project\Final_Project.vcxproj", "{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{D1201984-A521-49CF-87C6-FCEF800C1163}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Client", "Client\Client.pyproj", "{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Debug|x64.ActiveCfg = Debug|x64
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Debug|x64.Build.0 = Debug|x64
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Debug|x86.ActiveCfg = Debug|Win32
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Debug|x86.Build.0 = Debug|Win32
+		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Release|Any CPU.ActiveCfg = Release|Win32
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Release|x64.ActiveCfg = Release|x64
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Release|x64.Build.0 = Release|x64
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Release|x86.ActiveCfg = Release|Win32
 		{56B6FB99-383D-4D3D-A5EA-A652EDE5A147}.Release|x86.Build.0 = Release|Win32
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Debug|x64.ActiveCfg = Debug|x64
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Debug|x64.Build.0 = Debug|x64
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Debug|x86.ActiveCfg = Debug|Win32
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Debug|x86.Build.0 = Debug|Win32
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Release|x64.ActiveCfg = Release|x64
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Release|x64.Build.0 = Release|x64
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Release|x86.ActiveCfg = Release|Win32
-		{D1201984-A521-49CF-87C6-FCEF800C1163}.Release|x86.Build.0 = Release|Win32
+		{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}.Release|x64.ActiveCfg = Release|Any CPU
+		{294DBFBD-2EEC-4076-A57F-B6BD495EDA5A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

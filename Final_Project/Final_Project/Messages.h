@@ -3,6 +3,7 @@
 
 #define KEY_LEN 32
 #define SEQ_LEN 4
+#define WELCOME_LEN 1
 #define RECONSTRUCT_LEN 64
 #define NUM_OF_PARTIES 3
 
@@ -13,7 +14,7 @@
 #define HEADER_SIZE 3
 
 //enum ipAddresses{'192.168.0.' };
-enum types{SEQ = 0,KEY,RECONSTRUCT};
+enum types{WELCOM = 0, SEQ,KEY,RECONSTRUCT};
 
 class Message {
 private:
@@ -24,6 +25,8 @@ public:
 	Message(uint8_t type):_type(type) {
 		switch (type)
 		{
+		case WELCOM:
+			_size = WELCOME_LEN;
 		case SEQ:
 			_size = SEQ_LEN;
 			break;

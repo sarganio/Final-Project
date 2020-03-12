@@ -33,9 +33,9 @@ using std::thread;
 
 	void TcpServer::accept(void)
 	{
-
-		thread a(&TcpServer::messagesHandler, this);
-		a.detach();
+		std::unique_ptr<thread>t(new thread(&TcpServer::messagesHandler, this));
+		//thread a(&TcpServer::messagesHandler, this);
+		t->detach();
 	}
 	void TcpServer::messagesHandler() {
 
@@ -72,6 +72,8 @@ using std::thread;
 
 			//read rest of message
 			this->readBuffer(buffer, messageSize);
+
+			cout << "Got a new message from "<<this->_port - BASE_PORT<<".\nThe message is: " << buffer << endl;
 
 			//reset buffer
 			memset(buffer, 0, messageSize + HEADER_SIZE);
