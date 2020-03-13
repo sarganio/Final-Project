@@ -39,11 +39,8 @@ using std::thread;
 	}
 	void TcpServer::messagesHandler() {
 
-		unsigned short messageSize = -1;
-		uint8_t messageType = -1;
 		// Setup timeval variable
 		struct fd_set FDs;
-		char buffer[MAX_MESSAGE_SIZE] = {};
 
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
@@ -64,19 +61,18 @@ using std::thread;
 			FD_SET(_socket, &FDs);
 			//wait for messages from socket
 			select(_socket + 1, &FDs, NULL, NULL, NULL);
-			//read the header: type(1) + size of message(2)
-			this->readBuffer(buffer, HEADER_SIZE);
 
-			messageType = buffer[0];
-			messageSize  = (buffer[1] << 8) | buffer[2];
+			//read the header: type(1) + size of message(2)
+			Message rcv(1);
+			this->readBuffer(&rcv, HEADER_SIZE);
 
 			//read rest of message
-			this->readBuffer(buffer, messageSize);
+			this->readBuffer(rcv.getData(), rcv.getSize());
 
-			cout << "Got a new message from "<<this->_port - BASE_PORT<<".\nThe message is: " << buffer << endl;
+			cout << "Got a new message from "<<this->_port - BASE_PORT<<".\nThe message is: " << rcv.getData() << endl;
 
 			//reset buffer
-			memset(buffer, 0, messageSize + HEADER_SIZE);
+			memset(&rcv, 0, sizeof(rcv));
 
 
 			cout << "Got message from client!" << endl;

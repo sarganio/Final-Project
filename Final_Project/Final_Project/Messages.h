@@ -1,9 +1,9 @@
 #pragma once
+#define WINDOWS_IGNORE_PACKING_MISMATCH
 #include<cstdint>
 
 #define KEY_LEN 32
 #define SEQ_LEN 4
-#define WELCOME_LEN 1
 #define RECONSTRUCT_LEN 64
 #define NUM_OF_PARTIES 3
 
@@ -13,20 +13,19 @@
 #define MAX_MESSAGE_SIZE 50
 #define HEADER_SIZE 3
 
-//enum ipAddresses{'192.168.0.' };
-enum types{WELCOM = 0, SEQ,KEY,RECONSTRUCT};
 
-class Message {
+//enum ipAddresses{'192.168.0.' };
+enum types{SEQ = 1,KEY,RECONSTRUCT};
+#pragma pack(1)
+typedef class Message {
 private:
 	uint8_t _type;
-	short _size;
-	char* _data;
+	unsigned short _size;
+	char* _data; 
 public:
-	Message(uint8_t type):_type(type) {
+	Message(uint8_t type = 0):_type(type){
 		switch (type)
 		{
-		case WELCOM:
-			_size = WELCOME_LEN;
 		case SEQ:
 			_size = SEQ_LEN;
 			break;
@@ -39,22 +38,18 @@ public:
 		default:
 			break;
 		}
-		_data = new char[_size + 1];//increment for type first field
-		_data[0] = _type;
+		_data = new char[_size + 1];//Increment by 1 for null character
+
 	}
+	short getSize()const { return _size; }
 	void setData(const char* dataPtr) {
 		memcpy(_data + 1, dataPtr, _size);
 	}
-	/*bool sendMsg(SOCKET& sock, Message& msg) {
-		short size = msg._size;
-		int wasSent = 
-			
-			(sock, _data,size , 0);
-		return wasSent == size;
-	}
+	char* getData()const { return _data; }
+
 	~Message(){
 		if(_data)
 			delete[] _data;
 		_data = nullptr;
-	}*/
-};
+	}
+} Message;
