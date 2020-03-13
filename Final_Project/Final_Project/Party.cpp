@@ -28,7 +28,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	this->_sockets.push_back(from);
 	from->serve();
 	cout << "Waiting for clients.." << endl;
-	getchar();
+
 	//setup a client socket
 	/*TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets.push_back(to);
