@@ -43,6 +43,8 @@ using std::thread;
 		// Setup timeval variable
 		struct fd_set FDs;
 
+		unsigned short fromID = this->port - BASE_PORT;
+
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
 		// this accepts the client and create a specific socket from server to this client
@@ -69,17 +71,17 @@ using std::thread;
 
 			//read the header: size of message - 2B
 			Message rcv(type);
-			short expectedSize = rcv.getSize();
+			unsigned short expectedSize = rcv.getSize();
 			this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
 			if (expectedSize != rcv.getSize()) {
-				std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(this->_port - BASE_PORT) + "-Message's size is invalid!"));
+				std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(fromID) + "-Message's size is invalid!"));
 				throw std::exception(errorMsg.c_str());
 			}
 
 			//read rest of message
 			this->readBuffer(rcv.getData(), rcv.getSize());
 
-			cout << "Got a new message from "<<this->_port - BASE_PORT<<".\nThe message is: " << rcv.getData() << endl;
+			cout << "Got a new message from "<<fromID<<".\nThe message is: " << rcv.getData() << endl;
 
 			//reset buffer
 			memset(&rcv, 0, sizeof(rcv));
