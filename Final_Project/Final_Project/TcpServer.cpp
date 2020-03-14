@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include "Messages.h"
+#include <string>
 
 #define BLOCKING -1
 
@@ -64,7 +65,12 @@ using std::thread;
 
 			//read the header: type(1) + size of message(2)
 			Message rcv(1);
+			short expectedSize = rcv.getSize();
 			this->readBuffer(&rcv, HEADER_SIZE);
+			if (expectedSize != rcv.getSize()) {
+				std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(this->_port - BASE_PORT) + "-Message's size is invalid!"));
+				throw std::exception(errorMsg.c_str());
+			}
 
 			//read rest of message
 			this->readBuffer(rcv.getData(), rcv.getSize());
