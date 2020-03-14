@@ -63,10 +63,14 @@ using std::thread;
 			//wait for messages from socket
 			select(_socket + 1, &FDs, NULL, NULL, NULL);
 
-			//read the header: type(1) + size of message(2)
-			Message rcv(1);
+			//read message type - 1B
+			char type;
+			this->readBuffer(&type, 1);
+
+			//read the header: size of message - 2B
+			Message rcv(type);
 			short expectedSize = rcv.getSize();
-			this->readBuffer(&rcv, HEADER_SIZE);
+			this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
 			if (expectedSize != rcv.getSize()) {
 				std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(this->_port - BASE_PORT) + "-Message's size is invalid!"));
 				throw std::exception(errorMsg.c_str());
