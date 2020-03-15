@@ -3,12 +3,14 @@
 #include <winsock2.h>
 #include <iostream>
 #include "WSAInitializer.h"
+#include <thread>
 
 #pragma comment(lib, "Ws2_32.lib")
 #define IP_LEN 15
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::thread;
 class TcpSocket 
 {
 protected:
@@ -16,6 +18,8 @@ protected:
 	unsigned short _port;
 	std::string _hostAddress;
 	static WSAInitializer _WSAinit;
+	thread* _t = nullptr;
+
 public: 
 	//! Class constructor
 	TcpSocket(int socket, unsigned short port);

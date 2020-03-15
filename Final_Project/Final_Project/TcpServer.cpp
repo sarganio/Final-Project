@@ -27,9 +27,9 @@ using std::thread;
 		if (listen(_socket, SOMAXCONN) == SOCKET_ERROR)
 			throw std::exception(__FUNCTION__ " - listen");
 
-		std::unique_ptr<thread>t(new thread(&TcpServer::accept, this));
+		this->_t = new thread(&TcpServer::accept, this);
 		//thread a(&TcpServer::messagesHandler, this);
-		t->detach();
+		_t->detach();
 	}
 
 	void TcpServer::accept(void)

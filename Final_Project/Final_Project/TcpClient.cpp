@@ -33,9 +33,9 @@ using std::thread;
 		if(connect(hostPort, hostIp) != 0)
 			throw std::exception(__FUNCTION__"Client connect failed (port assighnment)");
 
-		std::unique_ptr<thread>t(new thread(&TcpSocket::messagesHandler, this));
+		this->_t = new thread(&TcpSocket::messagesHandler, this);
 		//thread a(&TcpServer::messagesHandler, this);
-		t->detach();
+		_t->detach();
 	}
 
 	int TcpClient::connect(unsigned short port, std::string hostname)
