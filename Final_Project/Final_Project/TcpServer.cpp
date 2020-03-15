@@ -34,59 +34,21 @@ using std::thread;
 
 	void TcpServer::accept(void)
 	{
-		std::unique_ptr<thread>t(new thread(&TcpServer::messagesHandler, this));
-		//thread a(&TcpServer::messagesHandler, this);
-		t->detach();
-	}
-	void TcpServer::messagesHandler() {
-
-		// Setup timeval variable
-		struct fd_set FDs;
-
-		unsigned short fromID = this->_port - BASE_PORT;
-
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
 		// this accepts the client and create a specific socket from server to this client
 		_socket = ::accept(_socket, NULL, NULL);
 
-		//close welcome socket
-		::closesocket(s);
-
 		if (_socket == INVALID_SOCKET)
 			throw std::exception(__FUNCTION__);
 
+		//close welcome socket
+		::closesocket(s);
+
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
 
-		while (TRUE) {
-			// Setup fd_set structure
-			FD_ZERO(&FDs);
-			FD_SET(_socket, &FDs);
-			//wait for messages from socket
-			select(_socket + 1, &FDs, NULL, NULL, NULL);
-
-			//read message type - 1B
-			char type;
-			this->readBuffer(&type, 1);
-
-			//read the header: size of message - 2B
-			Message rcv(type);
-			unsigned short expectedSize = rcv.getSize();
-			this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
-			if (expectedSize != rcv.getSize()) {
-				std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(fromID) + "-Message's size is invalid!"));
-				throw std::exception(errorMsg.c_str());
-			}
-
-			//read rest of message
-			this->readBuffer(rcv.getData(), rcv.getSize());
-
-			cout << "Got a new message from "<<fromID<<".\nThe message is: " << rcv.getData() << endl;
-
-			//reset buffer
-			memset(&rcv, 0, sizeof(rcv));
-
-
-			cout << "Got message from client!" << endl;
-		}
+		std::unique_ptr<thread>t(new thread(&TcpServer::messagesHandler, this));
+		//thread a(&TcpServer::messagesHandler, this);
+		t->detach();
 	}
+	

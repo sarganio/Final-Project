@@ -3,15 +3,16 @@
 #include "TcpClient.h"
 #include <iostream>
 #include "Messages.h"
+#include <thread>
 #define IP_INDEX 1
-
+using std::thread;
 	TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp):TcpSocket(-1,myPort)
 	{
 		_hostAddress = hostIp;
 		// Create a socket client connection.
 		if ((_socket = ::socket(AF_INET, SOCK_STREAM, 0)) <= 0)
 			//cerr << "TcpClient: Couldn't create socket client!";
-			throw std::exception("TcpClient: Couldn't create socket client!");
+			throw std::exception(__FUNCTION__"Couldn't create socket client!");
 
 		struct sockaddr_in myAddr;
 		// Explicitly assigning port number by 
@@ -28,8 +29,13 @@
 		//// This ip address will change according to the machine 
 		//myAddr.sin_addr.s_addr = *(long*)(host->h_addr_list[IP_INDEX]);
 		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
-			throw std::exception("Client bind failed (port assighnment)");
-		connect(hostPort, hostIp);
+			throw std::exception(__FUNCTION__"Client bind failed (port assighnment)");
+		if(connect(hostPort, hostIp) != 0)
+			throw std::exception(__FUNCTION__"Client connect failed (port assighnment)");
+
+		std::unique_ptr<thread>t(new thread(&TcpSocket::messagesHandler, this));
+		//thread a(&TcpServer::messagesHandler, this);
+		t->detach();
 	}
 
 	int TcpClient::connect(unsigned short port, std::string hostname)
