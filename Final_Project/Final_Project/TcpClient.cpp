@@ -29,7 +29,10 @@
 		//myAddr.sin_addr.s_addr = *(long*)(host->h_addr_list[IP_INDEX]);
 		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 			throw std::exception("Client bind failed (port assighnment)");
-		connect(hostPort, hostIp);
+
+		_t = new thread(&TcpClient::connect, this,hostPort,hostIp);
+		//thread a(&TcpServer::messagesHandler, this);
+		_t->detach();
 	}
 
 	int TcpClient::connect(unsigned short port, std::string hostname)
@@ -52,6 +55,7 @@
 
 		if (status == INVALID_SOCKET)
 			throw std::exception("Cant connect to server");
+		messagesHandler();
 
 		return _socket;
 	}
