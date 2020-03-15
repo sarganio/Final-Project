@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
 		if (Helper::IPCompare(IPs[0], IPs[i - 1]))//if my IP is bigger than the other IP increment my ID
 			myID++;
 	}
+	cout << myID << endl;
 	try {
 		Party p = Party(myID,122323);
 		p.connectToAllParties(IPs);

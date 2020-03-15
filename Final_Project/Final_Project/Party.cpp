@@ -30,19 +30,22 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	cout << "Waiting for clients.." << endl;
 
 	//setup a client socket
-	/*TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
+	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets.push_back(to);
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
-		string messge = "024This is a message from" + _id;
-		_sockets[i]->writeBuffer(messge.c_str(),messge.size());
+		//string messge = char(1)+unsigned short(4)+"   " + char(_id);
+		Message toSend(1);
+		string data = "999" + std::to_string(_id);
+		toSend.setData(data.c_str());
+		_sockets[i]->writeBuffer(&toSend,toSend.getSize()+HEADER_SIZE);
 	}
 	cout << "Sent all messages" << endl;
-	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
-		char buff[100];
-		if (_sockets[i]->readBuffer(buff, 24) == -1)
-			i--;
-	}
-	cout << "Sent a messages forward" << endl;*/
+	//for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+	//	char buff[100];
+	//	if (_sockets[i]->readBuffer(buff, 24) == -1)
+	//		i--;
+	//}
+	//cout << "Sent a messages forward" << endl;
 
 	getchar();
 
