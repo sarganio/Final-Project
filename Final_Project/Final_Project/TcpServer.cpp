@@ -43,7 +43,7 @@ using std::thread;
 		// Setup timeval variable
 		struct fd_set FDs;
 
-		unsigned short fromID = this->port - BASE_PORT;
+		unsigned short fromID = this->_port - BASE_PORT;
 
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
