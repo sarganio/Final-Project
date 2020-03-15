@@ -51,42 +51,4 @@ using std::thread;
 
 		messagesHandler();
 	}
-	void TcpServer::messagesHandler() {
-
-		// Setup timeval variable
-		struct fd_set FDs;
-
-		unsigned short fromID = this->_port - BASE_PORT;
-
-		while (TRUE) {
-			// Setup fd_set structure
-			FD_ZERO(&FDs);
-			FD_SET(_socket, &FDs);
-			//wait for messages from socket
-			select(_socket + 1, &FDs, NULL, NULL, NULL);
-
-			//read message type - 1B
-			char type;
-			this->readBuffer(&type, 1);
-
-			//read the header: size of message - 2B
-			Message rcv(type);
-			unsigned short expectedSize = rcv.getSize();
-			this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
-			if (expectedSize != rcv.getSize()) {
-				std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(fromID) + "-Message's size is invalid!"));
-				throw std::exception(errorMsg.c_str());
-			}
-
-			//read rest of message
-			this->readBuffer(rcv.getData(), rcv.getSize());
-
-			cout << "Got a new message from "<<fromID<<".\nThe message is: " << rcv.getData() << endl;
-
-			//reset buffer
-			memset(&rcv, 0, sizeof(rcv));
-
-
-			cout << "Got message from client!" << endl;
-		}
-	}
+	

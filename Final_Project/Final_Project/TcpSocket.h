@@ -44,4 +44,6 @@ public:
 
 	void close();
 
+	void messagesHandler();
+
 };
