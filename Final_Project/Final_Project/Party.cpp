@@ -19,25 +19,47 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
 	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
 	string myIP = IPs[0];
+	_sockets.resize(NUM_OF_PARTIES);
 	
 	//toPort - 6200[id + 1] myPort - 6200[id]
 	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
 	//setup a server socket 
 	TcpServer* from =new TcpServer(myPort);
-	this->_sockets.push_back(from);
+	this->_sockets[idToConnect] = from;
 	from->serve();
 	cout << "Waiting for clients.." << endl;
 
 	//setup a client socket
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
-	this->_sockets.push_back(to);
-	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
-		//string messge = char(1)+unsigned short(4)+"   " + char(_id);
-		Message toSend(1);
-		string data = "999" + std::to_string(_id);
+	this->_sockets[(_id - 1) % NUM_OF_PARTIES] = to;
+	while (!from->isValid());
+	int IDtoSend,typeToSend;
+	while (true) {
+		cout << "ID to send:";
+		std::cin >> IDtoSend;
+		//IDtoSend--;
+		cout << "Type to send:";
+		std::cin >> typeToSend;
+		string data;
+		Message toSend(typeToSend);
+		switch (typeToSend) {
+		case SEQ:
+			data = "987" + std::to_string(_id);
+			break;
+		case KEY:
+			data = "1011121314151617181920212223242" + std::to_string(_id);
+			break;
+		case RECONSTRUCT:
+			data = "10111213141516171819202122232421011121314151617181920212223242" + std::to_string(_id);
+			break;
+		default:
+			break;
+		}
+		std::reverse(data.begin(), data.end());
 		toSend.setData(data.c_str());
-		_sockets[i]->writeBuffer(&toSend,toSend.getSize()+HEADER_SIZE);
+		_sockets[IDtoSend]->writeBuffer(&toSend, HEADER_SIZE);
+		_sockets[IDtoSend]->writeBuffer(toSend.getData(), toSend.getSize());
 	}
 	cout << "Sent all messages" << endl;
 	//for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {

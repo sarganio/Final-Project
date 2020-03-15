@@ -22,7 +22,7 @@ TcpSocket :: ~TcpSocket()
 int TcpSocket::writeBuffer(const void* buffer, long bufferSize, int flags)
 {
 	if (!isValid()) return -1;
-	return send(_socket, (const char*)buffer, sizeof(buffer), flags);
+	return send(_socket, (const char*)buffer, bufferSize, flags);
 }
 
 int TcpSocket::readBuffer(void* buffer, long bufferSize, int flags)
