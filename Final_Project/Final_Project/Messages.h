@@ -38,7 +38,7 @@ public:
 		default:
 			break;
 		}
-		_data = new char[_size + 1];//Increment by 1 for null character
+		_data = new char[_size + 1]();//Increment by 1 for null character
 
 	}
 	short getSize()const { return _size; }

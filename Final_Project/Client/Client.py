@@ -19,7 +19,7 @@ s.connect((TCP_IP, TCP_PORT))
 
 while(True):
     type = input('Insert type of message:')
-    toSend = 'TO: '+toID+' Type: '+type
+    toSend = toID+': '+type
     Len = len(toSend) 
     header = type + Len.to_bytes(2,'big').decode()
     MESSAGE = header + toSend
