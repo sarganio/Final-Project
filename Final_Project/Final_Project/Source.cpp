@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 	catch (std::exception & exc) {
 		cout << exc.what() << endl;
 	}
-	cout << "Bye Bye!" << endl;
+	TRACE("Bye Bye!");
 	getchar();
 	return 0;
 }

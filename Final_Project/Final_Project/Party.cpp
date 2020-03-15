@@ -15,11 +15,15 @@ using std::endl;
 
 Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
-
+	//compute the party's id this party needs to initiate communication and the party's id this party needs to wait for a connection
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
 	unsigned short idFromConnect = (_id + 2) % NUM_OF_PARTIES;
+
+	//as mentioned abobe only with IPs
 	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
 	string myIP = IPs[0];
+
+	//expend the vector to contain all parties' sockets
 	_sockets.resize(NUM_OF_PARTIES);
 	
 	//toPort - 6200[id + 1] myPort - 6200[id]
@@ -29,11 +33,13 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	TcpServer* from =new TcpServer(myPort);
 	this->_sockets[idFromConnect] = from;
 	from->serve();
-	cout << "Waiting for clients.." << endl;
+	TRACE("Waiting for clients..");
 
 	//setup a client socket
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets[idToConnect] = to;
+
+	//wait for party id - 1 to connect to this party
 	while (!from->isValid())
 		Sleep(100);
 
@@ -41,9 +47,9 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	while (true) {
 		cout << "ID to send:";
 		std::cin >> IDtoSend;
-		//IDtoSend--;
 		cout << "Type to send:";
 		std::cin >> typeToSend;
+
 		string data;
 		Message toSend(typeToSend);
 		switch (typeToSend) {
@@ -59,18 +65,12 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 		default:
 			break;
 		}
-		//std::reverse(data.begin(), data.end());
+		
+		//send message to requested party
 		toSend.setData(data.c_str());
 		_sockets[IDtoSend]->writeBuffer(&toSend, HEADER_SIZE);
 		_sockets[IDtoSend]->writeBuffer(toSend.getData(), toSend.getSize());
 	}
-	cout << "Sent all messages" << endl;
-	//for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
-	//	char buff[100];
-	//	if (_sockets[i]->readBuffer(buff, 24) == -1)
-	//		i--;
-	//}
-	//cout << "Sent a messages forward" << endl;
 
 	getchar();
 

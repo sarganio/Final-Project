@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Messages.h"
 #include <string>
+#include "Helper.h"
 
 using std::cerr;
 WSAInitializer TcpSocket::_WSAinit;
@@ -49,12 +50,12 @@ int TcpSocket::socketFd()const {
 }
 void TcpSocket::messagesHandler() {
 
-	// Setup timeval variable
-	struct fd_set FDs;
+// Setup timeval variable
+struct fd_set FDs;
 
-	unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;
+unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
 
-	while (TRUE) {
+	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
 		FD_SET(_socket, &FDs);
@@ -69,6 +70,8 @@ void TcpSocket::messagesHandler() {
 		Message rcv(type);
 		unsigned short expectedSize = rcv.getSize();
 		this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
+
+		//check if the message hase a proper size field
 		if (expectedSize != rcv.getSize()) {
 			std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(fromID) + "-Message's size is invalid!"));
 			throw std::exception(errorMsg.c_str());
@@ -77,11 +80,10 @@ void TcpSocket::messagesHandler() {
 		//read rest of message
 		this->readBuffer(rcv.getData(), rcv.getSize());
 
-		cout << "Got a new message from " << fromID << ".\nThe message is: " << rcv.getData() << endl;
+		TRACE("Got a new message from %d.\nThe message is: %s", fromID, rcv.getData());
 
 		//reset buffer
 		memset(&rcv, 0, sizeof(rcv));
-
 
 		cout << "Got message from client!" << endl;
 	}
