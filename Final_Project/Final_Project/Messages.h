@@ -13,10 +13,9 @@
 #define MAX_MESSAGE_SIZE 50
 #define HEADER_SIZE 3
 
-
-//enum ipAddresses{'192.168.0.' };
 enum types{SEQ = 1,KEY,RECONSTRUCT};
-#pragma pack(1)
+
+#pragma pack(1)//allow no padding
 typedef class Message {
 private:
 	uint8_t _type;

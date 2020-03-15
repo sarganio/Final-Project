@@ -17,7 +17,7 @@ protected:
 	unsigned short _port;
 	std::string _hostAddress;
 	static WSAInitializer _WSAinit;
-	thread* _t = nullptr;
+	thread* _t = nullptr;//thread for receiving messages
 public: 
 	//! Class constructor
 	TcpSocket(int socket, unsigned short port);
@@ -44,6 +44,7 @@ public:
 
 	void close();
 
+	//receive all messages comming via _socket
 	void messagesHandler();
 
 };

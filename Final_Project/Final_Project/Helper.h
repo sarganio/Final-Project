@@ -1,3 +1,4 @@
+#pragma once
 #ifdef _DEBUG // vs add this define in debug mode
 #include <stdio.h>
 // Q: why do we need traces ?
@@ -12,12 +13,15 @@
 #define TRACE(msg, ...) printf(msg "\n", __VA_ARGS__);
 #define TRACE(msg, ...) // do nothing
 #endif
-#pragma once
+
 #include <string>
+
 using std::string;
+
 class Helper
 {
 public:
+	//returns true if last octet is bigger that second's
 	static bool IPCompare(string first, string second);
 };
 

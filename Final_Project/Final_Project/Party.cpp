@@ -1,9 +1,10 @@
 #include <string>
 #include <iostream>
+//#include <openssl/rand.h>
+
 #include "Party.h"
 #include "TcpClient.h"
 #include "TcpServer.h"
-//#include <openssl/rand.h>
 #include "Helper.h"
 
 
@@ -17,7 +18,7 @@ Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//compute the party's id this party needs to initiate communication and the party's id this party needs to wait for a connection
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
-	unsigned short idFromConnect = (_id + 2) % NUM_OF_PARTIES;
+	unsigned short idFromConnect = (_id + 2) % NUM_OF_PARTIES;//-1 mod 3 = 2
 
 	//as mentioned abobe only with IPs
 	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
