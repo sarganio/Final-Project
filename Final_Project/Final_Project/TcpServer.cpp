@@ -34,17 +34,6 @@ using std::thread;
 
 	void TcpServer::accept(void)
 	{
-		std::unique_ptr<thread>t(new thread(&TcpServer::messagesHandler, this));
-		//thread a(&TcpServer::messagesHandler, this);
-		t->detach();
-	}
-	void TcpServer::messagesHandler() {
-
-		// Setup timeval variable
-		struct fd_set FDs;
-
-		unsigned short fromID = this->_port - BASE_PORT;
-
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
 		// this accepts the client and create a specific socket from server to this client
@@ -57,6 +46,16 @@ using std::thread;
 			throw std::exception(__FUNCTION__);
 
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
+		_t = new thread(&TcpServer::messagesHandler, this);
+		//thread a(&TcpServer::messagesHandler, this);
+		_t->detach();
+	}
+	void TcpServer::messagesHandler() {
+
+		// Setup timeval variable
+		struct fd_set FDs;
+
+		unsigned short fromID = this->_port - BASE_PORT;
 
 		while (TRUE) {
 			// Setup fd_set structure

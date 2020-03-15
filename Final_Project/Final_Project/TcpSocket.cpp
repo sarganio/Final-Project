@@ -16,6 +16,8 @@ TcpSocket :: ~TcpSocket()
 {
 	if(isValid())
 		this->close();
+	if (_t)
+		delete _t;
 
 }
 
