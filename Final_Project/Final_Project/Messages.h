@@ -43,7 +43,7 @@ public:
 	}
 	short getSize()const { return _size; }
 	void setData(const char* dataPtr) {
-		memcpy(_data + 1, dataPtr, _size);
+		memcpy(_data , dataPtr, _size);
 	}
 	char* getData()const { return _data; }
 

@@ -52,7 +52,7 @@ void TcpSocket::messagesHandler() {
 	// Setup timeval variable
 	struct fd_set FDs;
 
-	unsigned short fromID = this->_port - BASE_PORT;
+	unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;
 
 	while (TRUE) {
 		// Setup fd_set structure

@@ -20,13 +20,7 @@
 		myAddr.sin_addr.s_addr = INADDR_ANY;
 		myAddr.sin_port = htons(myPort);
 		myAddr.sin_addr.s_addr = inet_addr(myIP.c_str());
-		///////////////////////////////////////////////////
-		//char szBuffer[1024];
-		//gethostname(szBuffer, sizeof(szBuffer));
-		//struct hostent* host = gethostbyname(szBuffer);
-		//////////////////////////////////////////////////
-		//// This ip address will change according to the machine 
-		//myAddr.sin_addr.s_addr = *(long*)(host->h_addr_list[IP_INDEX]);
+
 		if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 			throw std::exception("Client bind failed (port assighnment)");
 
