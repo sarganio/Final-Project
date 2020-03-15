@@ -4,7 +4,6 @@
 #include <iostream>
 #include "WSAInitializer.h"
 #include <thread>
-
 #pragma comment(lib, "Ws2_32.lib")
 #define IP_LEN 15
 using std::cerr;
@@ -19,7 +18,6 @@ protected:
 	std::string _hostAddress;
 	static WSAInitializer _WSAinit;
 	thread* _t = nullptr;
-
 public: 
 	//! Class constructor
 	TcpSocket(int socket, unsigned short port);

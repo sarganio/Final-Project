@@ -27,15 +27,15 @@ using std::thread;
 		if (listen(_socket, SOMAXCONN) == SOCKET_ERROR)
 			throw std::exception(__FUNCTION__ " - listen");
 
-		this->_t = new thread(&TcpServer::accept, this);
+		std::cout << "Accepiting clients..." << std::endl;
+
+		_t = new thread(&TcpServer::accept, this);
 		//thread a(&TcpServer::messagesHandler, this);
 		_t->detach();
 	}
 
 	void TcpServer::accept(void)
 	{
-		std::cout << "Accepiting clients..." << std::endl;
-
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
 		// this accepts the client and create a specific socket from server to this client
@@ -44,12 +44,8 @@ using std::thread;
 		if (_socket == INVALID_SOCKET)
 			throw std::exception(__FUNCTION__);
 
-		//close welcome socket
-		::closesocket(s);
-
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
 
 		messagesHandler();
-
 	}
 	

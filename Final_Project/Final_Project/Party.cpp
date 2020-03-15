@@ -34,7 +34,9 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//setup a client socket
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets[idToConnect] = to;
-	while (!from->isValid());
+	while (!from->isValid())
+		Sleep(100);
+
 	int IDtoSend,typeToSend;
 	while (true) {
 		cout << "ID to send:";
