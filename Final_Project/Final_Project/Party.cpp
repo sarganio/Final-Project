@@ -17,6 +17,7 @@ Party::Party(short myID,long input):_id(myID),_input(input){}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
+	unsigned short idFromConnect = (_id - 1) % NUM_OF_PARTIES;
 	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
 	string myIP = IPs[0];
 	_sockets.resize(NUM_OF_PARTIES);
@@ -26,13 +27,13 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	
 	//setup a server socket 
 	TcpServer* from =new TcpServer(myPort);
-	this->_sockets[idToConnect] = from;
+	this->_sockets[idFromConnect] = from;
 	from->serve();
 	cout << "Waiting for clients.." << endl;
 
 	//setup a client socket
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
-	this->_sockets[(_id - 1) % NUM_OF_PARTIES] = to;
+	this->_sockets[idToConnect] = to;
 	while (!from->isValid());
 	int IDtoSend,typeToSend;
 	while (true) {
