@@ -29,7 +29,9 @@ using std::thread;
 
 		std::cout << "Accepiting clients..." << std::endl;
 
-			accept();
+		_t = new thread(&TcpServer::accept, this);
+		//thread a(&TcpServer::messagesHandler, this);
+		_t->detach();
 	}
 
 	void TcpServer::accept(void)
@@ -46,9 +48,8 @@ using std::thread;
 			throw std::exception(__FUNCTION__);
 
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
-		_t = new thread(&TcpServer::messagesHandler, this);
-		//thread a(&TcpServer::messagesHandler, this);
-		_t->detach();
+
+		messagesHandler();
 	}
 	void TcpServer::messagesHandler() {
 
