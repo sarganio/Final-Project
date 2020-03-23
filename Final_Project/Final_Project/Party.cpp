@@ -40,45 +40,22 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
 	this->_sockets[idToConnect] = to;
 
-	//wait for party id - 1 to connect to this party
-	while (!from->isValid())
-		Sleep(100);
+	//check that the sockect to the other parties were created succssesfully
+	while (!from->isValid());
+	while (!to->isValid());
 
-	int IDtoSend,typeToSend;
-	while (true) {
-		cout << "ID to send:";
-		std::cin >> IDtoSend;
-		cout << "Type to send:";
-		std::cin >> typeToSend;
-
-		string data;
-		Message toSend(typeToSend);
-		switch (typeToSend) {
-		case SEQ:
-			data = "987" + std::to_string(_id);
-			break;
-		case KEY:
-			data = "1011121314151617181920212223242" + std::to_string(_id);
-			break;
-		case RECONSTRUCT:
-			data = "10111213141516171819202122232421011121314151617181920212223242" + std::to_string(_id);
-			break;
-		default:
-			break;
-		}
-		
-		//send message to requested party
-		toSend.setData(data.c_str());
-		_sockets[IDtoSend]->writeBuffer(&toSend, HEADER_SIZE);
-		_sockets[IDtoSend]->writeBuffer(toSend.getData(), toSend.getSize());
-	}
 
 	getchar();
 
 }
 void Party::broadcast(char* msg)const {
-	for (int i = 0; i < NUM_OF_PARTIES - 1; i++)
-		_sockets[i]->writeBuffer(msg, strlen(msg));
+	Message bc(SEQ);
+	string data = msg;
+	bc.setData(data.c_str());
+	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+		_sockets[i]->writeBuffer(&bc, HEADER_SIZE);
+		_sockets[i]->writeBuffer(bc.getData(), bc.getSize());
+	}
 }
 Party::~Party() {
 	//delete all the sockets of the party
