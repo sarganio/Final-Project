@@ -1,3 +1,14 @@
-﻿  Party.cpp
+﻿  Helper.cpp
+  Party.cpp
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(4,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
-  Final_Project.vcxproj -> C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Debug\Final_Project.exe
+  Share.cpp
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Share.h(5,6): error C2143: syntax error: missing ';' before '<'
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Share.h(5,17): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Share.h(5,23): error C2238: unexpected token(s) preceding ';'
+  Source.cpp
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(4,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
+  TcpClient.cpp
+  TcpServer.cpp
+  TcpSocket.cpp
+  WSAInitializer.cpp
+  Generating Code...

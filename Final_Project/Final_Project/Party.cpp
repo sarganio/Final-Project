@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-//#include <openssl/rand.h>
+#include <openssl/rand.h>
 
 #include "Party.h"
 #include "TcpClient.h"
@@ -44,7 +44,6 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	while (!from->isValid());
 	while (!to->isValid());
 
-
 	getchar();
 
 }
@@ -70,3 +69,10 @@ Party::~Party() {
 	}
 }
 unsigned short Party::getID()const { return this->_id; }
+void Party::fInput() {
+	unsigned char mySeq[SEQ_LEN];
+	unsigned char myKey[SEQ_LEN];
+	RAND_bytes(mySeq, SEQ_LEN);
+
+	
+}
