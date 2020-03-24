@@ -9,6 +9,7 @@
 
 
 #define SEQ_LEN 4
+#define SUCCESS 1
 
 using std::string;
 using std::cout;
@@ -47,9 +48,9 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	getchar();
 
 }
-void Party::broadcast(char* msg)const {
-	Message bc(SEQ);
-	string data = msg;
+void Party::broadcast(void* msg,unsigned short messageType)const {
+	Message bc(messageType);
+	string data =(char*) msg;
 	bc.setData(data.c_str());
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
 		_sockets[i]->writeBuffer(&bc, HEADER_SIZE);
@@ -72,7 +73,24 @@ unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
 	unsigned char mySeq[SEQ_LEN];
 	unsigned char myKey[SEQ_LEN];
-	RAND_bytes(mySeq, SEQ_LEN);
+
+	//generate random key and seq
+	if(RAND_priv_bytes(mySeq, SEQ_LEN) != SUCCESS)
+		throw std::exception(__FUNCTION__"Generate random SEQ failed!");
+	if(RAND_priv_bytes(myKey, KEY_LEN) != SUCCESS)
+		throw std::exception(__FUNCTION__"Generate random key failed!");
+	//broadcast seq to other parties
+	broadcast(mySeq,SEQ);
+	//send this party key to the next party
+	sendTo(_id + 1 % NUM_OF_PARTIES, myKey);
+
 
 	
+}
+bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg){
+	Message toSend(messageType);
+	string data = (char*)msg;
+	toSend.setData(data.c_str());
+	_sockets[id]->writeBuffer(&toSend,HEADER_SIZE);
+	_sockets[id]->writeBuffer(toSend.getData(),toSend.getSize());
 }
