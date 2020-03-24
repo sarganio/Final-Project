@@ -1,10 +1,11 @@
-#include "TcpSocket.h"
 #include <iostream>
-#include "Messages.h"
 #include <string>
+#include "TcpSocket.h"
 #include "Helper.h"
 
+
 using std::cerr;
+
 WSAInitializer TcpSocket::_WSAinit;
 TcpSocket::TcpSocket(int socket, unsigned short port):_port(port)
 {
@@ -48,13 +49,15 @@ bool TcpSocket::isValid()const {
 int TcpSocket::socketFd()const { 
 	return isValid() ? _socket : -1; 
 }
-void TcpSocket::messagesHandler() {
+void TcpSocket::messagesHandler(unsigned char type[RECONSTRUCT_LEN + 1])// , mutex& m_type)
+{
 
 // Setup timeval variable
 struct fd_set FDs;
 
-unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
-
+unsigned short fromID = (this->_port - BASE_PORT + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
+//std::unique_lock<std::mutex> lk(m_type);
+//std::condition_variable cv;
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
@@ -63,11 +66,11 @@ unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;///////////
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
 
 		//read message type - 1B
-		char type;
+		//lk.lock();
 		this->readBuffer(&type, 1);
 
 		//read the header: size of message - 2B
-		Message rcv(type);
+		Message rcv(type[0]);
 		unsigned short expectedSize = rcv.getSize();
 		this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
 
@@ -79,7 +82,10 @@ unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;///////////
 
 		//read rest of message
 		this->readBuffer(rcv.getData(), rcv.getSize());
-
+		//put the message in the mutual variable of main thread and this thread
+		memcpy_s(type, RECONSTRUCT_LEN + 1,rcv.getData(),rcv.getSize());
+		//lk.unlock();
+		//cv.notify_one();
 		TRACE("Got a new message from %d.\nThe message is: %s", fromID, rcv.getData());
 
 		//reset buffer

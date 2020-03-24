@@ -1,6 +1,7 @@
+#include <openssl/rand.h>
 #include <string>
 #include <iostream>
-#include <openssl/rand.h>
+
 
 #include "Party.h"
 #include "TcpClient.h"
@@ -15,7 +16,13 @@ using std::string;
 using std::cout;
 using std::endl;
 
-Party::Party(short myID,long input):_id(myID),_input(input){}
+
+Party::Party(short myID,long input):_id(myID),_input(input){
+	//this->_mtx.resize(NUM_OF_PARTIES);
+	//this->_mess.resize(NUM_OF_PARTIES);
+	//expend the vector to contain all parties' sockets
+	this->_sockets.resize(NUM_OF_PARTIES);
+}
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//compute the party's id this party needs to initiate communication and the party's id this party needs to wait for a connection
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
@@ -24,9 +31,6 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//as mentioned abobe only with IPs
 	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
 	string myIP = IPs[0];
-
-	//expend the vector to contain all parties' sockets
-	_sockets.resize(NUM_OF_PARTIES);
 	
 	//toPort - 6200[id + 1] myPort - 6200[id]
 	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
@@ -34,11 +38,11 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//setup a server socket 
 	TcpServer* from =new TcpServer(myPort);
 	this->_sockets[idFromConnect] = from;
-	from->serve();
+	from->serve(_mess[idFromConnect]);// , _mtx[idFromConnect]);
 	TRACE("Waiting for clients..");
 
 	//setup a client socket
-	TcpClient* to = new TcpClient(myIP,myPort,toPort, toIP);
+	TcpClient* to = new TcpClient(myIP, myPort, toPort, toIP, _mess[idToConnect]);// , _mtx[idToConnect]);
 	this->_sockets[idToConnect] = to;
 
 	//check that the sockect to the other parties were created succssesfully
@@ -69,28 +73,43 @@ Party::~Party() {
 		_sockets.pop_back();
 	}
 }
-unsigned short Party::getID()const { return this->_id; }
-void Party::fInput() {
-	unsigned char mySeq[SEQ_LEN];
-	unsigned char myKey[SEQ_LEN];
-
-	//generate random key and seq
-	if(RAND_priv_bytes(mySeq, SEQ_LEN) != SUCCESS)
-		throw std::exception(__FUNCTION__"Generate random SEQ failed!");
-	if(RAND_priv_bytes(myKey, KEY_LEN) != SUCCESS)
-		throw std::exception(__FUNCTION__"Generate random key failed!");
-	//broadcast seq to other parties
-	broadcast(mySeq,SEQ);
-	//send this party key to the next party
-	sendTo(_id + 1 % NUM_OF_PARTIES, myKey);
-
-
-	
-}
-bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg){
+bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg) {
 	Message toSend(messageType);
 	string data = (char*)msg;
 	toSend.setData(data.c_str());
-	_sockets[id]->writeBuffer(&toSend,HEADER_SIZE);
-	_sockets[id]->writeBuffer(toSend.getData(),toSend.getSize());
+	_sockets[id]->writeBuffer(&toSend, HEADER_SIZE);
+	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
+	return true;
+}
+unsigned short Party::getID()const { return this->_id; }
+void Party::fInput() {
+	unsigned char Seq[SEQ_LEN];
+	unsigned char seqMy[SEQ_LEN];
+	unsigned char seqTo[SEQ_LEN];
+	unsigned char seqFrom[SEQ_LEN];
+	unsigned char myKey[SEQ_LEN];
+
+	//generate random key and seq
+	//if(RAND_priv_bytes(seqMy, SEQ_LEN) != SUCCESS)
+	//	throw std::exception(__FUNCTION__"Generate random SEQ failed!");
+	//if(RAND_priv_bytes(myKey, KEY_LEN) != SUCCESS)
+	//	throw std::exception(__FUNCTION__"Generate random key failed!");
+	//broadcast seq to other parties
+	broadcast(seqMy,SEQ);
+	//send this party key to the next party
+	sendTo(_id + 1 % NUM_OF_PARTIES,KEY, myKey);
+	/*
+	while(_mess.at())
+	*/
+	
+
+
+	/*
+	AES examples:
+	*http://c-cpp-notes-snippets.blogspot.com/2017/02/aes-encryptiondecryption-using-openssl.html
+	*https://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption
+	*/
+	
+	
+	
 }

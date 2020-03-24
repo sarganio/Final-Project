@@ -1,8 +1,8 @@
 ﻿  Party.cpp
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(4,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(52,13): warning C4244: 'argument': conversion from 'unsigned short' to 'uint8_t', possible loss of data
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(88,77): error C2511: 'bool Party::sendTo(unsigned short,unsigned short,void *)': overloaded member function not found in 'Party'
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(11): message : see declaration of 'Party'
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(89,17): warning C4244: 'argument': conversion from 'unsigned short' to 'uint8_t', possible loss of data
-  WSAInitializer.cpp
-  Generating Code...
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(7,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(56,13): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(77,17): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(89,16): warning C4101: 'seqFrom': unreferenced local variable
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(86,16): warning C4101: 'Seq': unreferenced local variable
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(88,16): warning C4101: 'seqTo': unreferenced local variable
+  Final_Project.vcxproj -> C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Debug\Final_Project.exe

@@ -5,12 +5,12 @@
 #define KEY_LEN 32
 #define SEQ_LEN 4
 #define RECONSTRUCT_LEN 64
+#define MAX_MESSAGE_SIZE 65
 #define NUM_OF_PARTIES 3
 
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."
 
-#define MAX_MESSAGE_SIZE 50
 #define HEADER_SIZE 3
 
 enum types{SEQ = 1,KEY,RECONSTRUCT};
@@ -22,7 +22,7 @@ private:
 	unsigned short _size;
 	char* _data; 
 public:
-	Message(uint8_t type = 0):_type(type){
+	Message(unsigned char type = 0):_type(type),_size(0){
 		switch (type)
 		{
 		case SEQ:
