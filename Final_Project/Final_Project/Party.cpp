@@ -92,9 +92,9 @@ bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg) {
 	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
 	return true;
 }
-void Party::readRecievedMsg(unsigned short id,char* msg) {
+void Party::readFrom(unsigned short id,char* msg) {
 	while (!this->_msgs[id]->getIsRead());
-	//memcpy(msg,_mess[id]-);
+	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 }
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {

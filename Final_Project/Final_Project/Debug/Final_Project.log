@@ -5,6 +5,4 @@ C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\P
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(104,16): warning C4101: 'seqFrom': unreferenced local variable
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(101,16): warning C4101: 'Seq': unreferenced local variable
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(103,16): warning C4101: 'seqTo': unreferenced local variable
-  TcpServer.cpp
-  Generating Code...
   Final_Project.vcxproj -> C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Debug\Final_Project.exe
