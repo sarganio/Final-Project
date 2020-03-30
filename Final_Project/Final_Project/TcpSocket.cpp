@@ -49,9 +49,9 @@ bool TcpSocket::isValid()const {
 int TcpSocket::socketFd()const { 
 	return isValid() ? _socket : -1; 
 }
-void TcpSocket::messagesHandler(unsigned char type[RECONSTRUCT_LEN + 1])// , mutex& m_type)
+void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
 {
-
+	char type;
 // Setup timeval variable
 struct fd_set FDs;
 
@@ -67,29 +67,33 @@ unsigned short fromID = (this->_port - BASE_PORT + 2)%NUM_OF_PARTIES;///////////
 
 		//read message type - 1B
 		//lk.lock();
+		//wait until the previous message is read 
+		while (!mess->getIsRead());
 		this->readBuffer(&type, 1);
 
 		//read the header: size of message - 2B
-		Message rcv(type[0]);
-		unsigned short expectedSize = rcv.getSize();
-		this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
+		mess->setSize(type);
+		unsigned short expectedSize = mess->getSize();
+		this->readBuffer(mess + 1, HEADER_SIZE - 1);
 
 		//check if the message hase a proper size field
-		if (expectedSize != rcv.getSize()) {
+		if (expectedSize != mess->getSize()) {
 			std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(fromID) + "-Message's size is invalid!"));
 			throw std::exception(errorMsg.c_str());
 		}
 
 		//read rest of message
-		this->readBuffer(rcv.getData(), rcv.getSize());
+		this->readBuffer(mess->getData(), mess->getSize());
 		//put the message in the mutual variable of main thread and this thread
-		memcpy_s(type, RECONSTRUCT_LEN + 1,rcv.getData(),rcv.getSize());
+		memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
 		//lk.unlock();
 		//cv.notify_one();
-		TRACE("Got a new message from %d.\nThe message is: %s", fromID, rcv.getData());
+		//mark message as read buffer
+		mess->setIsRead(false);
+		TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
 
 		//reset buffer
-		memset(&rcv, 0, sizeof(rcv));
+		memset(mess->getData(), 0, mess->getSize());
 
 		cout << "Got message from client!" << endl;
 	}

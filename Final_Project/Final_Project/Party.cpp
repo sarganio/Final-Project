@@ -19,7 +19,8 @@ using std::endl;
 
 Party::Party(short myID,long input):_id(myID),_input(input){
 	//this->_mtx.resize(NUM_OF_PARTIES);
-	//this->_mess.resize(NUM_OF_PARTIES);
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		this->_msgs.push_back(new Message);
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
 }
@@ -38,11 +39,11 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	//setup a server socket 
 	TcpServer* from =new TcpServer(myPort);
 	this->_sockets[idFromConnect] = from;
-	from->serve(_mess[idFromConnect]);// , _mtx[idFromConnect]);
+	from->serve(_msgs[idFromConnect]);// , _mtx[idFromConnect]);
 	TRACE("Waiting for clients..");
 
 	//setup a client socket
-	TcpClient* to = new TcpClient(myIP, myPort, toPort, toIP, _mess[idToConnect]);// , _mtx[idToConnect]);
+	TcpClient* to = new TcpClient(myIP, myPort, toPort, toIP, _msgs[idToConnect]);// , _mtx[idToConnect]);
 	this->_sockets[idToConnect] = to;
 
 	//check that the sockect to the other parties were created succssesfully
@@ -67,10 +68,20 @@ Party::~Party() {
 		TcpSocket* toFree = _sockets.back();
 		//safety check before using delete
 		if (toFree) {
-			//delete toFree;
+			delete toFree;
 			toFree = nullptr;
 		}
 		_sockets.pop_back();
+	}
+	//delete all the sockets of the party
+	while (_msgs.size()) {
+		Message* toFree = _msgs.back();
+		//safety check before using delete
+		if (toFree) {
+			delete toFree;
+			toFree = nullptr;
+		}
+		_msgs.pop_back();
 	}
 }
 bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg) {
@@ -80,6 +91,10 @@ bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg) {
 	_sockets[id]->writeBuffer(&toSend, HEADER_SIZE);
 	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
 	return true;
+}
+void Party::readRecievedMsg(unsigned short id,char* msg) {
+	while (!this->_msgs[id]->getIsRead());
+	//memcpy(msg,_mess[id]-);
 }
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {

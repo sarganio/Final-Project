@@ -7,7 +7,7 @@
 #include <thread>
 #define IP_INDEX 1
 using std::thread;
-TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp, unsigned char messBuffer[MAX_MESSAGE_SIZE]) :TcpSocket(-1, myPort)//, mutex& m):TcpSocket(-1,myPort)
+TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp, Message* mess) :TcpSocket(-1, myPort)//, mutex& m):TcpSocket(-1,myPort)
 {
 	_hostAddress = hostIp;
 	// Create a socket client connection.
@@ -26,11 +26,11 @@ TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort,
 	if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 		throw std::exception("Client bind failed (port assighnment)");
 
-	_t = new thread(&TcpClient::connect, this, hostPort, hostIp, messBuffer);// , m);
+	_t = new thread(&TcpClient::connect, this, hostPort, hostIp, mess);// , m);
 	_t->detach();
 }
 
-int TcpClient::connect(unsigned short port, std::string hostname, unsigned char messBuffer[MAX_MESSAGE_SIZE])//, mutex& m)
+int TcpClient::connect(unsigned short port, std::string hostname, Message* mess)//, mutex& m)
 {
 	struct sockaddr_in sa = { 0 };
 
@@ -47,7 +47,7 @@ int TcpClient::connect(unsigned short port, std::string hostname, unsigned char 
 
 	if (status == INVALID_SOCKET)
 		throw std::exception("Cant connect to server");
-	messagesHandler(messBuffer);//,m);
+	messagesHandler(mess);//,m);
 
 	return _socket;
 }

@@ -13,7 +13,7 @@ using std::thread;
 		_port = port;
 
 	}
-	void TcpServer::serve(unsigned char messBuffer[MAX_MESSAGE_SIZE])//,mutex& m) {
+	void TcpServer::serve(Message* mess)//,mutex& m) {
 	{
 		struct sockaddr_in sa = { 0 };
 		sa.sin_port = htons(_port);
@@ -30,12 +30,12 @@ using std::thread;
 
 		std::cout << "Accepiting clients..." << std::endl;
 
-		_t = new thread(&TcpServer::accept, this,messBuffer);
+		_t = new thread(&TcpServer::accept, this,mess);
 		//thread a(&TcpServer::messagesHandler, this);
 		_t->detach();
 	}
 
-	void TcpServer::accept(unsigned char messBuffer[MAX_MESSAGE_SIZE])//,mutex& m)
+	void TcpServer::accept(Message* mess)//,mutex& m)
 	{
 		//backup the welcome socket for later deletetion
 		SOCKET s = _socket;
@@ -47,6 +47,6 @@ using std::thread;
 
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
 
-		messagesHandler(messBuffer);//,m);
+		messagesHandler(mess);//,m);
 	}
 	

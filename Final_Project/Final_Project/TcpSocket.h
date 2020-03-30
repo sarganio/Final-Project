@@ -50,6 +50,6 @@ public:
 	void close();
 
 	//receive all messages comming via _socket
-	void messagesHandler(unsigned char type[RECONSTRUCT_LEN + 1]);// , mutex& m_type);
+	void messagesHandler(Message* mess);// , mutex& m_type);
 
 };
