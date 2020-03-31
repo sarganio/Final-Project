@@ -20,6 +20,7 @@ using std::endl;
 Party::Party(short myID,long input):_id(myID),_input(input){
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
+	this->_msgs.resize(NUM_OF_PARTIES);
 	//this->_mtx.resize(NUM_OF_PARTIES);
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
@@ -95,7 +96,7 @@ bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg)cons
 	return true;
 }
 void Party::readFrom(unsigned short id,unsigned char* msg) {
-	while (!this->_msgs[id]->getIsRead());
+	while (this->_msgs[id]->getIsRead());
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	//update thread that the message was read
 	this->_msgs[id]->setIsRead(true);
@@ -103,17 +104,18 @@ void Party::readFrom(unsigned short id,unsigned char* msg) {
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
 	unsigned int* Seq[NUM_OF_PARTIES + 1];
-	unsigned char seqMy[SEQ_LEN + 1] = {"HOMO"};
+	unsigned char seqMy[SEQ_LEN] = {"HOM"};
 	unsigned char seqTo[SEQ_LEN];
 	unsigned char seqFrom[SEQ_LEN];
-	unsigned char myKey[KEY_LEN + 1] = { "Hi vitali fuck little sucker1234" };
-	unsigned char fromKey[KEY_LEN + 1];
+	unsigned char myKey[KEY_LEN ] = { "Hi vitali fucking little sucker" };
+	unsigned char fromKey[KEY_LEN ];
 	//generate random key and seq
 	//if(rand_priv_bytes(seqmy, seq_len) != success)
 	//	throw std::exception(__function__"generate random seq failed!");
 	//if(rand_priv_bytes(mykey, key_len) != success)
 	//	throw std::exception(__function__"generate random key failed!");
 	//broadcast seq to other parties
+	Sleep(1000);
 	broadcast(seqMy,SEQ);
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
