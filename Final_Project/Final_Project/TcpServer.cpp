@@ -7,7 +7,7 @@
 #define BLOCKING -1
 
 using std::thread;
-	TcpServer::TcpServer(int port):TcpSocket(-1,port)
+	TcpServer::TcpServer(int port):TcpSocket(-1,port),_welcomSocketFD(_socket)
 	{
 		_hostAddress = "";
 		_port = port;
@@ -48,5 +48,10 @@ using std::thread;
 		std::cout << "Client accepted. Server and client can speak" << std::endl;
 
 		messagesHandler(mess);//,m);
+	}
+	bool TcpServer::isValid()const {
+		if (_socket != -1 || _socket == _welcomSocketFD)
+			return false;
+		return true;
 	}
 	

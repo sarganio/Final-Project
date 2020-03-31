@@ -33,8 +33,8 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	string toIP = Helper::IPCompare(IPs[1], IPs[2]) ^ (_id % 2 == 0) ? IPs[1] : IPs[2];
 	string myIP = IPs[0];
 	
-	//toPort - 6200[id + 1] myPort - 6200[id]
-	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
+	//toPort - 6200[id + 1] myPort - 62000 - [id]
+	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT - _id;
 	
 	//setup a server socket 
 	TcpServer* from =new TcpServer(myPort);
@@ -50,7 +50,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	while (!from->isValid());
 	while (!to->isValid());
 
-	getchar();
+	TRACE("Succssesfully connected to all parties!\n");
 
 }
 void Party::broadcast(void* msg,unsigned short messageType)const {
@@ -105,10 +105,10 @@ void Party::fInput() {
 	unsigned char myKey[SEQ_LEN];
 
 	//generate random key and seq
-	//if(RAND_priv_bytes(seqMy, SEQ_LEN) != SUCCESS)
-	//	throw std::exception(__FUNCTION__"Generate random SEQ failed!");
-	//if(RAND_priv_bytes(myKey, KEY_LEN) != SUCCESS)
-	//	throw std::exception(__FUNCTION__"Generate random key failed!");
+	//if(rand_priv_bytes(seqmy, seq_len) != success)
+	//	throw std::exception(__function__"generate random seq failed!");
+	//if(rand_priv_bytes(mykey, key_len) != success)
+	//	throw std::exception(__function__"generate random key failed!");
 	//broadcast seq to other parties
 	broadcast(seqMy,SEQ);
 	//send this party key to the next party
