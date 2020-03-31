@@ -1,8 +1,4 @@
 ﻿  Party.cpp
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(7,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(91,17): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(106,16): warning C4101: 'Seq': unreferenced local variable
-  Source.cpp
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(7,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
-  Generating Code...
   Final_Project.vcxproj -> C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Debug\Final_Project.exe

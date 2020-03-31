@@ -103,7 +103,7 @@ void Party::readFrom(unsigned short id,unsigned char* msg) {
 }
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
-	unsigned int* Seq[NUM_OF_PARTIES + 1];
+	unsigned int finalSeq;
 	unsigned char seqMy[SEQ_LEN] = {"HOM"};
 	unsigned char seqTo[SEQ_LEN];
 	unsigned char seqFrom[SEQ_LEN];
@@ -115,18 +115,14 @@ void Party::fInput() {
 	//if(rand_priv_bytes(mykey, key_len) != success)
 	//	throw std::exception(__function__"generate random key failed!");
 	//broadcast seq to other parties
-	Sleep(1000);
+
 	broadcast(seqMy,SEQ);
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
 
-	//Seq[(_id + 2) % NUM_OF_PARTIES] = (unsigned int*)seqFrom;
-	//Seq[_id] = (unsigned int*)seqMy;
-	//Seq[(_id + 1) % NUM_OF_PARTIES] = (unsigned int*)seqTo;
+	finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
 
-	//*Seq[NUM_OF_PARTIES] = *Seq[(_id + 2) % NUM_OF_PARTIES] + *Seq[_id] + *Seq[(_id + 1) % NUM_OF_PARTIES];
-
-	//TRACE("SEQ = %d", *Seq[NUM_OF_PARTIES]);
+	TRACE("SEQ = %u", finalSeq);
 
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, myKey);
