@@ -24,7 +24,7 @@ private:
 	//vector<mutex> _mtx;
 public:
 	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters
-	bool sendTo(unsigned short id, unsigned short messageType, void* msg);//send message to party[id]
+	bool sendTo(unsigned short id, unsigned short messageType, void* msg)const;//send message to party[id]
 	void readFrom(unsigned short id, char* msg);//read message from party number id. this is a blocking function.
 	//bool sendTo(unsigned short id, void* msg);//send a message to a party number id
 	void connectToAllParties(string IPs[NUM_OF_PARTIES]);//connect to all 3 parties

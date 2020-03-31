@@ -55,14 +55,10 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 }
 void Party::broadcast(void* msg,unsigned short messageType)const {
-	Message bc(messageType);
-	string data =(char*) msg;
-	bc.setData(data.c_str());
 	for (int i = 0; i < NUM_OF_PARTIES ; i++) {
 		if (i == _id)
 			continue;
-		_sockets[i]->writeBuffer(&bc, HEADER_SIZE);
-		_sockets[i]->writeBuffer(bc.getData(), bc.getSize());
+		sendTo(i, messageType, msg);
 	}
 }
 Party::~Party() {
@@ -87,7 +83,7 @@ Party::~Party() {
 		_msgs.pop_back();
 	}
 }
-bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg) {
+bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg)const {
 	Message toSend(messageType);
 	string data = (char*)msg;
 	toSend.setData(data.c_str());
@@ -105,7 +101,7 @@ void Party::fInput() {
 	unsigned char seqMy[SEQ_LEN + 1] = {"HOMO"};
 	unsigned char seqTo[SEQ_LEN];
 	unsigned char seqFrom[SEQ_LEN];
-	unsigned char myKey[SEQ_LEN];
+	unsigned char myKey[KEY_LEN + 1] = { "Hi vitali fuck little sucker1234" };
 
 	//generate random key and seq
 	//if(rand_priv_bytes(seqmy, seq_len) != success)
@@ -116,7 +112,8 @@ void Party::fInput() {
 	broadcast(seqMy,SEQ);
 	while (true);
 	//send this party key to the next party
-	sendTo(_id + 1 % NUM_OF_PARTIES,KEY, myKey);
+	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, myKey);
+
 	/*
 	while(_mess.at())
 	*/

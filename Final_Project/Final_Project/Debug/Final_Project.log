@@ -5,10 +5,4 @@ C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\P
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(107,16): warning C4101: 'seqFrom': unreferenced local variable
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(104,16): warning C4101: 'Seq': unreferenced local variable
 C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(106,16): warning C4101: 'seqTo': unreferenced local variable
-  Source.cpp
-C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(7,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
-  TcpClient.cpp
-  TcpServer.cpp
-  TcpSocket.cpp
-  Generating Code...
   Final_Project.vcxproj -> C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Debug\Final_Project.exe
