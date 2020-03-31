@@ -1,4 +1,4 @@
-#include <openssl/rand.h>
+//#include <openssl/rand.h>
 #include <string>
 #include <iostream>
 
@@ -34,7 +34,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	string myIP = IPs[0];
 	
 	//toPort - 6200[id + 1] myPort - 62000 - [id]
-	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT - _id;
+	unsigned short toPort = BASE_PORT + idToConnect, myPort = BASE_PORT + _id;
 	
 	//setup a server socket 
 	TcpServer* from =new TcpServer(myPort);

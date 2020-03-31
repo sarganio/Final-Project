@@ -50,7 +50,7 @@ using std::thread;
 		messagesHandler(mess);//,m);
 	}
 	bool TcpServer::isValid()const {
-		if (_socket != -1 || _socket == _welcomSocketFD)
+		if (_socket == -1 || _socket == _welcomSocketFD)
 			return false;
 		return true;
 	}

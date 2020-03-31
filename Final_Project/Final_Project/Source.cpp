@@ -43,8 +43,7 @@ int main(int argc, char* argv[]) {
 	try {
 		Party p = Party(myID,122323);
 		p.connectToAllParties(IPs);
-		p.fInput();
-		
+		p.fInput();	
 	}
 	catch (std::exception & exc) {
 		cout << exc.what() << endl;
