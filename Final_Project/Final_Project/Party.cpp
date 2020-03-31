@@ -58,7 +58,9 @@ void Party::broadcast(void* msg,unsigned short messageType)const {
 	Message bc(messageType);
 	string data =(char*) msg;
 	bc.setData(data.c_str());
-	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+	for (int i = 0; i < NUM_OF_PARTIES ; i++) {
+		if (i == _id)
+			continue;
 		_sockets[i]->writeBuffer(&bc, HEADER_SIZE);
 		_sockets[i]->writeBuffer(bc.getData(), bc.getSize());
 	}

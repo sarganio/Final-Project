@@ -1,2 +1,8 @@
-﻿  TcpClient.cpp
+﻿  Party.cpp
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.h(7,1): warning C4103: alignment changed after including header, may be due to missing #pragma pack(pop)
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(58,13): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(89,17): warning C4244: 'argument': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(105,16): warning C4101: 'seqFrom': unreferenced local variable
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(102,16): warning C4101: 'Seq': unreferenced local variable
+C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Final_Project\Party.cpp(104,16): warning C4101: 'seqTo': unreferenced local variable
   Final_Project.vcxproj -> C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\Debug\Final_Project.exe
