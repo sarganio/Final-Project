@@ -102,7 +102,7 @@ void Party::readFrom(unsigned short id,char* msg) {
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
 	unsigned char Seq[SEQ_LEN];
-	unsigned char seqMy[SEQ_LEN];
+	unsigned char seqMy[SEQ_LEN + 1] = {"HOMO"};
 	unsigned char seqTo[SEQ_LEN];
 	unsigned char seqFrom[SEQ_LEN];
 	unsigned char myKey[SEQ_LEN];
@@ -114,6 +114,7 @@ void Party::fInput() {
 	//	throw std::exception(__function__"generate random key failed!");
 	//broadcast seq to other parties
 	broadcast(seqMy,SEQ);
+	while (true);
 	//send this party key to the next party
 	sendTo(_id + 1 % NUM_OF_PARTIES,KEY, myKey);
 	/*

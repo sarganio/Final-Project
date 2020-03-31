@@ -21,7 +21,7 @@ private:
 	uint8_t _type;
 	unsigned short _size;
 	char* _data; 
-	bool _isRead = false;
+	bool _isRead = true;
 public:
 	Message(unsigned char type = 0):_type(type),_size(0){
 		setSize(type);
