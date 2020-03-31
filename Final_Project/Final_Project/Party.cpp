@@ -18,11 +18,14 @@ using std::endl;
 
 
 Party::Party(short myID,long input):_id(myID),_input(input){
-	//this->_mtx.resize(NUM_OF_PARTIES);
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		this->_msgs.push_back(new Message);
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
+	//this->_mtx.resize(NUM_OF_PARTIES);
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i == _id)
+			continue;
+		_msgs[i] = new Message;
+	}
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	bool isConnected = false;
@@ -115,13 +118,13 @@ void Party::fInput() {
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
 
-	Seq[(_id + 2) % NUM_OF_PARTIES] = (unsigned int*)seqFrom;
-	Seq[_id] = (unsigned int*)seqMy;
-	Seq[(_id + 1) % NUM_OF_PARTIES] = (unsigned int*)seqTo;
+	//Seq[(_id + 2) % NUM_OF_PARTIES] = (unsigned int*)seqFrom;
+	//Seq[_id] = (unsigned int*)seqMy;
+	//Seq[(_id + 1) % NUM_OF_PARTIES] = (unsigned int*)seqTo;
 
-	*Seq[NUM_OF_PARTIES] = *Seq[(_id + 2) % NUM_OF_PARTIES] + *Seq[_id] + *Seq[(_id + 1) % NUM_OF_PARTIES];
+	//*Seq[NUM_OF_PARTIES] = *Seq[(_id + 2) % NUM_OF_PARTIES] + *Seq[_id] + *Seq[(_id + 1) % NUM_OF_PARTIES];
 
-	TRACE("SEQ = %d", *Seq[NUM_OF_PARTIES]);
+	//TRACE("SEQ = %d", *Seq[NUM_OF_PARTIES]);
 
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, myKey);
