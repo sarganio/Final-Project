@@ -44,7 +44,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	TRACE("Waiting for clients..");
 
 	//setup a client socket
-	TcpClient* to = new TcpClient(myIP, myPort, toPort, toIP, _msgs[idToConnect]);// , _mtx[idToConnect]);
+	TcpClient* to = new TcpClient(myIP, myPort, toPort, toIP, _msgs[idToConnect],isConnected);// , _mtx[idToConnect]);
 	this->_sockets[idToConnect] = to;
 
 	//check that the sockect to the other parties were created succssesfully

@@ -8,7 +8,7 @@ using std::string;
 	{
 	public:
 		//! Default class constructor creates a socket client connection to the specified host and port.
-		TcpClient(string myIP, unsigned short myPort, unsigned short toPort, string hostname, Message* mess,bool& IsConnected);//,mutex& m);
+		TcpClient(string myIP, unsigned short myPort, unsigned short toPort, string hostname, Message* mess,bool& isConnected);//,mutex& m);
 
 		//! Connect the socket client to the specified host and port and returns the resulting socket descriptor.
 		/*!

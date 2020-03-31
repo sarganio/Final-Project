@@ -22,7 +22,7 @@ TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort,
 	//if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
 	//	throw std::exception("Client bind failed (port assighnment)");
 
-	_t = new thread(&TcpClient::connect, this, hostPort, hostIp, mess);// , m);
+	_t = new thread(&TcpClient::connect, this, hostPort, hostIp, mess,std::ref(isConnected));// , m);
 	_t->detach();
 }
 
