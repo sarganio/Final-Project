@@ -25,6 +25,7 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 	this->_sockets.resize(NUM_OF_PARTIES);
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
+	bool isConnected = false;
 	//compute the party's id this party needs to initiate communication and the party's id this party needs to wait for a connection
 	unsigned short idToConnect = (_id + 1) % NUM_OF_PARTIES;
 	unsigned short idFromConnect = (_id + 2) % NUM_OF_PARTIES;//-1 mod 3 = 2
@@ -48,7 +49,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 
 	//check that the sockect to the other parties were created succssesfully
 	while (!from->isValid());
-	while (!to->isValid());
+	while (!isConnected);
 
 	TRACE("Succssesfully connected to all parties!\n");
 

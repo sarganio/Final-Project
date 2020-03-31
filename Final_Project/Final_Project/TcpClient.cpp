@@ -7,7 +7,7 @@
 #include <thread>
 #define IP_INDEX 1
 using std::thread;
-TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp, Message* mess) :TcpSocket(-1, myPort)//, mutex& m):TcpSocket(-1,myPort)
+TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp, Message* mess,bool& isConnected) :TcpSocket(-1, hostPort)//, mutex& m):TcpSocket(-1,myPort)
 {
 	_hostAddress = hostIp;
 
@@ -26,7 +26,7 @@ TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort,
 	_t->detach();
 }
 
-int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* mess)//, mutex& m)
+int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* mess,bool& isConnected)//, mutex& m)
 {
 	struct sockaddr_in sa = { 0 };
 
@@ -43,6 +43,7 @@ int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* m
 
 	if (status == INVALID_SOCKET)
 		throw std::exception("Cant connect to server");
+	isConnected = true;
 	messagesHandler(mess);//,m);
 
 	return _socket;
