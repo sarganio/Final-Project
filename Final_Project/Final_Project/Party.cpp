@@ -124,8 +124,8 @@ void Party::fInput() {
 	byte seqTo[SEQ_LEN];
 	byte seqFrom[SEQ_LEN];
 	byte fromKey[KEY_LEN];
-
-
+	
+	//genereting random seq
 	rnd.GenerateBlock(seqMy, seqMy.size());
 
 	//broadcast seq to other parties
@@ -147,7 +147,4 @@ void Party::fInput() {
 		Helper::encryptAES(alpha[i], SEQ_LEN, *_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
 		TRACE("Alpha %d:%s", (_id + 2 + i) % NUM_OF_PARTIES,alpha[i]);
 	}
-	
-
-	
 }
