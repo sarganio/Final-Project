@@ -9,21 +9,10 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::set;
-//for F_{input}
-//unsigned char seq[SEQ_LEN] = {};
-//if (!RAND_bytes(seq, SEQ_LEN))
-//throw std::exception("Failed to generate random bytes at" __FUNCTION__);
-//
-////"broadcast" the seq number to the other parties
-//from.writeBuffer(seq, SEQ_LEN);
-//to.writeBuffer(seq, SEQ_LEN);
-//
-//char toSeq[SEQ_LEN] = {};
-//to.readBuffer(toSeq, SEQ_LEN);
-////waiting for thread to receive the seq number of _id-1 party
-//while (!fromSeq[0]);
+
 /*
-TODO: get the header of the message correctly.
+TODO: add encryption (TLS).
+	  D'tor of Party.
 */
 /*
 argv[1] - my IP

@@ -6,6 +6,7 @@
 
 #include "Messages.h"
 #include "TcpSocket.h"
+#include "Helper.h"
 
 using std::vector;
 using std::pair;
@@ -21,6 +22,7 @@ private:
 	vector<TcpSocket*> _sockets;//socket for all TCP connection. sockets[0] is a UDP soket
 	vector<pair<long, long>> _shares;//index of vector is the id of input's party
 	vector<Message*>_msgs;
+	vector<SecByteBlock*>_keys;
 	//vector<mutex> _mtx;
 public:
 	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters

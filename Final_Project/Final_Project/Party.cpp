@@ -21,12 +21,16 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
 	this->_msgs.resize(NUM_OF_PARTIES);
+	this->_keys.resize(NUM_OF_PARTIES);
 	//this->_mtx.resize(NUM_OF_PARTIES);
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
 		_msgs[i] = new Message;
 	}
+	AutoSeededRandomPool rnd;
+	_keys[_id] = new SecByteBlock(0x00, KEY_LEN);
+	rnd.GenerateBlock(*_keys[_id], _keys[_id]->size());
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	bool isConnected = false;
@@ -86,6 +90,16 @@ Party::~Party() {
 		}
 		_msgs.pop_back();
 	}
+	//delete all the sockets of the party
+	while (_sockets.size()) {
+		SecByteBlock* toFree = _keys.back();
+		//safety check before using delete
+		if (toFree) {
+			delete toFree;
+			toFree = nullptr;
+		}
+		_keys.pop_back();
+	}
 }
 bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg)const {
 	Message toSend(messageType);
@@ -103,43 +117,37 @@ void Party::readFrom(unsigned short id,unsigned char* msg) {
 }
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
-	unsigned int finalSeq;
-	unsigned char seqMy[SEQ_LEN] = {"HOM"};
-	unsigned char seqTo[SEQ_LEN];
-	unsigned char seqFrom[SEQ_LEN];
-	unsigned char myKey[KEY_LEN ] = { "Hi vitali fucking little sucker" };
-	unsigned char fromKey[KEY_LEN ];
-	//generate random key and seq
-	//if(rand_priv_bytes(seqmy, seq_len) != success)
-	//	throw std::exception(__function__"generate random seq failed!");
-	//if(rand_priv_bytes(mykey, key_len) != success)
-	//	throw std::exception(__function__"generate random key failed!");
-	//broadcast seq to other parties
+	AutoSeededRandomPool rnd;
+	byte finalSeq[AES_SIZE]{};
+	byte alpha[NUM_OF_PARTIES - 1][AES_SIZE];//TODO: conver to Share!
+	CryptoPP::SecByteBlock seqMy(SEQ_LEN);
+	byte seqTo[SEQ_LEN];
+	byte seqFrom[SEQ_LEN];
+	byte fromKey[KEY_LEN];
 
+
+	rnd.GenerateBlock(seqMy, seqMy.size());
+
+	//broadcast seq to other parties
 	broadcast(seqMy,SEQ);
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
-
-	finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
+	*finalSeq = *(unsigned int*)seqFrom + *seqMy.data() + *(unsigned int*)seqTo;
 
 	TRACE("SEQ = %u", finalSeq);
 
 	//send this party key to the next party
-	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, myKey);
+	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
-	while (true);
-	/*
-	while(_mess.at())
-	*/
+	TRACE("Key of id - 1:%s", fromKey);
+	TRACE("My key:%s", fromKey);
+	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey, KEY_LEN);
+	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
+		Helper::encryptAES(alpha[i], SEQ_LEN, *_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
+		TRACE("Alpha %d:%s", (_id + 2 + i) % NUM_OF_PARTIES,alpha[i]);
+	}
 	
 
-
-	/*
-	AES examples:
-	*http://c-cpp-notes-snippets.blogspot.com/2017/02/aes-encryptiondecryption-using-openssl.html
-	*https://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption
-	*/
-	
-	
 	
 }

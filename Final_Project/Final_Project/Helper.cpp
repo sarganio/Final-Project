@@ -8,3 +8,33 @@ bool Helper::IPCompare(string first, string second) {
 	return first.size() > second.size();
 }
 
+void Helper::encryptAES(byte* plainText, size_t messageLen,SecByteBlock key) {
+	AutoSeededRandomPool rnd;
+	cout << "Plain text: " << plainText << endl;
+	//Generate a random key
+	//CryptoPP::SecByteBlock key1(0x00, AES::DEFAULT_KEYLENGTH);
+	//rnd.GenerateBlock(key1, key1.size());
+
+	// Generate a random IV
+	CryptoPP::SecByteBlock iv(AES::BLOCKSIZE);
+	rnd.GenerateBlock(iv, iv.size());
+
+	//byte plainText[] = "Hello! How are you.";
+	//size_t messageLen = std::strlen((char*)plainText) + 1;
+
+
+	// EncryptAES
+	CryptoPP::CFB_Mode<AES>::Encryption cbcEncryption(key, key.size(), iv);
+	cbcEncryption.ProcessData(plainText, plainText, messageLen);
+	cout << "CipherText: " << plainText << endl;
+
+	//decryptAES(plainText, messageLen, key, iv);
+	//cout << "Decrypted text: " << plainText << endl;
+}
+//void Helper::decryptAES(byte* chiperText, size_t messageLen, CryptoPP::SecByteBlock key, CryptoPP::SecByteBlock iv) {
+//	 //Decrypt AES
+//	CryptoPP::CFB_Mode<AES>::Decryption cfbDecryption(key, key.size(), iv);
+//	cfbDecryption.ProcessData(chiperText, chiperText, messageLen);
+//	cout << chiperText << endl;
+//
+//}
