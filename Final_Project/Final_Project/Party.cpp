@@ -29,7 +29,7 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 		_msgs[i] = new Message;
 	}
 	AutoSeededRandomPool rnd;
-	_keys[_id] = new SecByteBlock(KEY_LEN);
+	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
 	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
@@ -119,7 +119,7 @@ unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
 	AutoSeededRandomPool rnd;
 	byte finalSeq[SEQ_LEN]{};
-	byte alpha[NUM_OF_PARTIES - 1][AES_SIZE];//TODO: conver to Share!
+	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte seqMy[SEQ_LEN];
 	byte seqTo[SEQ_LEN];
 	byte seqFrom[SEQ_LEN];
@@ -140,13 +140,14 @@ void Party::fInput() {
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
-	TRACE("Key of id - 1:%s", fromKey);
-	TRACE("My key:%s", fromKey);
-	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(*fromKey);
 
-	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey,KEY_LEN);
+
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i == _id)
+			continue;
 		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
+		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[(i) % NUM_OF_PARTIES]);
 		TRACE("Alpha %d:%s", (_id + 2 + i) % NUM_OF_PARTIES,alpha[i]);
 	}
 }
