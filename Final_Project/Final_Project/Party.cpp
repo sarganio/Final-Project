@@ -29,8 +29,8 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 		_msgs[i] = new Message;
 	}
 	AutoSeededRandomPool rnd;
-	_keys[_id] = new byte(KEY_LEN);
-	rnd.GenerateBlock(_keys[_id],KEY_LEN);
+	_keys[_id] = new SecByteBlock(KEY_LEN);
+	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	bool isConnected = false;
@@ -92,7 +92,7 @@ Party::~Party() {
 	}
 	//delete all the sockets of the party
 	while (_sockets.size()) {
-		byte* toFree = _keys.back();
+		SecByteBlock* toFree = _keys.back();
 		//safety check before using delete
 		if (toFree) {
 			delete toFree;
@@ -118,7 +118,7 @@ void Party::readFrom(unsigned short id,unsigned char* msg) {
 unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
 	AutoSeededRandomPool rnd;
-	byte finalSeq[AES_SIZE]{};
+	byte finalSeq[SEQ_LEN]{};
 	byte alpha[NUM_OF_PARTIES - 1][AES_SIZE];//TODO: conver to Share!
 	byte seqMy[SEQ_LEN];
 	byte seqTo[SEQ_LEN];
@@ -132,19 +132,21 @@ void Party::fInput() {
 	broadcast(seqMy,SEQ);
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
-	*finalSeq = *(unsigned int*)seqFrom + *seqMy + *(unsigned int*)seqTo;
+	
+	*(unsigned int*)finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
 
-	TRACE("SEQ = %u", finalSeq);
+	TRACE("SEQ = %u", *(unsigned int*)finalSeq);
 
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
 	TRACE("Key of id - 1:%s", fromKey);
 	TRACE("My key:%s", fromKey);
-	_keys[(_id + 2) % NUM_OF_PARTIES] = new byte(*fromKey);
+	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(*fromKey);
+
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
 		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], SEQ_LEN,(SecByteBlock) *_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
+		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
 		TRACE("Alpha %d:%s", (_id + 2 + i) % NUM_OF_PARTIES,alpha[i]);
 	}
 }
