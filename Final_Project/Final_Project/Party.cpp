@@ -29,8 +29,8 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 		_msgs[i] = new Message;
 	}
 	AutoSeededRandomPool rnd;
-	_keys[_id] = new SecByteBlock(0x00, KEY_LEN);
-	rnd.GenerateBlock(*_keys[_id], _keys[_id]->size());
+	_keys[_id] = new byte(KEY_LEN);
+	rnd.GenerateBlock(_keys[_id],KEY_LEN);
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	bool isConnected = false;
@@ -92,7 +92,7 @@ Party::~Party() {
 	}
 	//delete all the sockets of the party
 	while (_sockets.size()) {
-		SecByteBlock* toFree = _keys.back();
+		byte* toFree = _keys.back();
 		//safety check before using delete
 		if (toFree) {
 			delete toFree;
@@ -120,19 +120,19 @@ void Party::fInput() {
 	AutoSeededRandomPool rnd;
 	byte finalSeq[AES_SIZE]{};
 	byte alpha[NUM_OF_PARTIES - 1][AES_SIZE];//TODO: conver to Share!
-	CryptoPP::SecByteBlock seqMy(SEQ_LEN);
+	byte seqMy[SEQ_LEN];
 	byte seqTo[SEQ_LEN];
 	byte seqFrom[SEQ_LEN];
 	byte fromKey[KEY_LEN];
 	
 	//genereting random seq
-	rnd.GenerateBlock(seqMy, seqMy.size());
+	rnd.GenerateBlock(seqMy, SEQ_LEN);
 
 	//broadcast seq to other parties
 	broadcast(seqMy,SEQ);
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
-	*finalSeq = *(unsigned int*)seqFrom + *seqMy.data() + *(unsigned int*)seqTo;
+	*finalSeq = *(unsigned int*)seqFrom + *seqMy + *(unsigned int*)seqTo;
 
 	TRACE("SEQ = %u", finalSeq);
 
@@ -141,10 +141,10 @@ void Party::fInput() {
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
 	TRACE("Key of id - 1:%s", fromKey);
 	TRACE("My key:%s", fromKey);
-	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey, KEY_LEN);
+	_keys[(_id + 2) % NUM_OF_PARTIES] = new byte(*fromKey);
 	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
 		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], SEQ_LEN, *_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
+		Helper::encryptAES(alpha[i], SEQ_LEN,(SecByteBlock) *_keys[(_id + 2 + i) % NUM_OF_PARTIES]);
 		TRACE("Alpha %d:%s", (_id + 2 + i) % NUM_OF_PARTIES,alpha[i]);
 	}
 }
