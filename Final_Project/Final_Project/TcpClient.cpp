@@ -43,6 +43,7 @@ int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* m
 
 	if (status == INVALID_SOCKET)
 		throw std::exception("Cant connect to server");
+	cout << "Connected to server! id=" << ((BASE_PORT-hostPort) + 1) % NUM_OF_PARTIES << endl;
 	isConnected = true;
 	messagesHandler(mess);//,m);
 

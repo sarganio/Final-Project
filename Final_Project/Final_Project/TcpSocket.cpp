@@ -55,7 +55,7 @@ void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
 // Setup timeval variable
 struct fd_set FDs;
 
-unsigned short fromID = (this->_port - BASE_PORT + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
+unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
 //std::unique_lock<std::mutex> lk(m_type);
 //std::condition_variable cv;
 	while (true) {
