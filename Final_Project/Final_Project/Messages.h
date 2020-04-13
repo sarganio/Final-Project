@@ -5,8 +5,9 @@
 #define KEY_LEN 32
 #define SEQ_LEN 4
 #define RECONSTRUCT_LEN 64
-#define MAX_MESSAGE_SIZE 64
+#define MAX_MESSAGE_SIZE 32
 #define NUM_OF_PARTIES 3
+#define AES_SIZE 32
 
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."

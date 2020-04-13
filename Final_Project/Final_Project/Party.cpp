@@ -8,8 +8,6 @@
 #include "TcpServer.h"
 #include "Helper.h"
 
-
-#define SEQ_LEN 4
 #define SUCCESS 1
 
 using std::string;
@@ -124,7 +122,7 @@ void Party::fInput() {
 	byte seqTo[SEQ_LEN];
 	byte seqFrom[SEQ_LEN];
 	byte fromKey[KEY_LEN];
-	
+	byte IV[KEY_LEN];
 	//genereting random seq
 	rnd.GenerateBlock(seqMy, SEQ_LEN);
 
@@ -137,17 +135,20 @@ void Party::fInput() {
 
 	TRACE("SEQ = %u", *(unsigned int*)finalSeq);
 
+	for (int i = 0; i < KEY_LEN / SEQ_LEN; i++)
+		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)finalSeq;
+
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
 
 	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey,KEY_LEN);
 
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (i == _id)
+	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[(i) % NUM_OF_PARTIES]);
-		TRACE("Alpha %d:%s", (_id + 2 + i) % NUM_OF_PARTIES,alpha[i]);
+		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV);
+		TRACE("Alpha %d:%s", i,alpha[i]);
 	}
 }

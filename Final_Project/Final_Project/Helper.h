@@ -61,6 +61,6 @@ class Helper
 public:
 	//returns true if last octet is bigger that second's
 	static bool IPCompare(string first, string second);
-	static void encryptAES(byte* plainText, size_t messageLen, SecByteBlock key);
+	static void encryptAES(byte* plainText, size_t messageLen, SecByteBlock key,byte* IV);
 };
 
