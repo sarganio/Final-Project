@@ -139,16 +139,21 @@ void Party::fInput() {
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)finalSeq;
 
 	//send this party key to the next party
-	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
+	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]->data());
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
 
 	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey,KEY_LEN);
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i == (_id + 1) % NUM_OF_PARTIES)
+			continue;
+		printf("Key %d: %u\n", i, *(unsigned int*)_keys[i]->data());
+	}
 
-	for (int i = 0; i < NUM_OF_PARTIES - 1; i++) {
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV);
-		TRACE("Alpha %d:%s", i,alpha[i]);
+		TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
 }
