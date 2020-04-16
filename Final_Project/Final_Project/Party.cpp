@@ -113,30 +113,33 @@ void Party::readFrom(unsigned short id,unsigned char* msg) {
 	//update thread that the message was read
 	this->_msgs[id]->setIsRead(true);
 }
-unsigned short Party::getID()const { return this->_id; }
-void Party::fInput() {
+void Party::calcSeq() {
 	AutoSeededRandomPool rnd;
-	byte finalSeq[SEQ_LEN]{};
-	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte seqMy[SEQ_LEN];
 	byte seqTo[SEQ_LEN];
 	byte seqFrom[SEQ_LEN];
-	byte fromKey[KEY_LEN];
-	byte IV[KEY_LEN];
+
 	//genereting random seq
 	rnd.GenerateBlock(seqMy, SEQ_LEN);
 
 	//broadcast seq to other parties
-	broadcast(seqMy,SEQ);
+	broadcast(seqMy, SEQ);
+
 	readFrom((_id + 1) % NUM_OF_PARTIES, seqTo);
 	readFrom((_id + 2) % NUM_OF_PARTIES, seqFrom);
-	
-	*(unsigned int*)finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
 
-	TRACE("SEQ = %u", *(unsigned int*)finalSeq);
+	*(unsigned int*)_finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
+
+	TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
+}
+unsigned short Party::getID()const { return this->_id; }
+void Party::fInput() {
+	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
+	byte fromKey[KEY_LEN];
+	byte IV[KEY_LEN];
 
 	for (int i = 0; i < KEY_LEN / SEQ_LEN; i++)
-		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)finalSeq;
+		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]->data());
@@ -152,7 +155,7 @@ void Party::fInput() {
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
-		memcpy_s(alpha[i], sizeof(int), &finalSeq, sizeof(int));
+		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV);
 		TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}

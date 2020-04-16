@@ -17,6 +17,7 @@ public:
 	inline long getValue()const;
 	inline char getName()const;
 	inline void setValue(long value);
+	string toString()const;
 };
 class Share {
 private:
@@ -32,4 +33,6 @@ public:
 	Part& operator[](unsigned short index);
 
 	Share operator*(int b);
+
+	string toString()const;
 };
