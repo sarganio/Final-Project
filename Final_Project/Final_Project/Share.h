@@ -18,12 +18,17 @@ public:
 	inline char getName()const;
 };
 class BytePart:public Part {
+private:
 	vector<byte> _value;
-	BytePart(byte* value = 0, unsigned short index = 0, char name = 0);
+	unsigned short _size;
+public:
+	BytePart(byte* value = 0,unsigned short numOfBytes = 0, unsigned short index = 0, char name = 0);
+	inline unsigned short getSize()const;
+	inline vector<byte> getByteValue()const;
 };
 class InputPart :public Part {
 private:
-	long _value;
+	long _value = 0;
 
 public:
 	InputPart(long value = 0, unsigned short index = 0, char name = 0);
@@ -33,18 +38,20 @@ public:
 };
 class Share {
 private:
-	pair<Part&, Part&> _value;
+	pair<Part*, Part*> _value;
 public:
-	Share(const Part& v1, const Part& v2);
+	~Share();
+	Share();
+	Share( Part* v1,Part* v2);
 
 	bool isAddable(const Share& other)const;
 
 	Share operator+(const Share& b) const;
-	Share operator+(long scalar);
+	Share operator+(long scalar)const;
 
-	Part& operator[](unsigned short index);
+	Part& operator[](unsigned short index)const;
 
-	Share operator*(int b);
+	Share operator*(int b)const;
 
 	string toString()const;
 };
