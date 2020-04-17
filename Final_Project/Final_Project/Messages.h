@@ -1,13 +1,15 @@
 #pragma once
 #define WINDOWS_IGNORE_PACKING_MISMATCH
 #include<cstdint>
+#include "secblock.h"
+#include <cstddef>
+using CryptoPP::byte;
 
 #define KEY_LEN 32
 #define SEQ_LEN 4
 #define RECONSTRUCT_LEN 64
-#define MAX_MESSAGE_SIZE 32
 #define NUM_OF_PARTIES 3
-#define AES_SIZE 32
+#define MAX_MESSAGE_SIZE 64
 
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."
@@ -19,14 +21,14 @@ enum types{SEQ = 1,KEY,RECONSTRUCT};
 #pragma pack(1)//allow no padding
 typedef class Message {
 private:
-	uint8_t _type;
+	byte _type;
 	unsigned short _size;
-	char* _data; 
+	byte* _data; 
 	bool _isRead = true;
 public:
-	Message(unsigned char type = 0):_type(type),_size(0){
+	Message(byte type = 0):_type(type),_size(0){
 		setSize(type);
-		_data = new char[1+(type?_size :MAX_MESSAGE_SIZE)]();//Increment by 1 for null character. Allocate MAX_MESSAGE_SIZE in case type = 0.
+		_data = new byte[1+(type?_size :MAX_MESSAGE_SIZE)]();//Increment by 1 for null character. Allocate MAX_MESSAGE_SIZE in case type = 0.
 	}
 	void setSize(int type) {
 		switch (type)
@@ -46,11 +48,11 @@ public:
 	}
 	short getSize()const { return _size; }
 	bool getIsRead()const { return _isRead; }
-	void setData(const char* dataPtr) {
+	void setData(const byte* dataPtr) {
 		memcpy(_data , dataPtr, _size);
 	}
 	void setIsRead(bool val) { this->_isRead = val; }
-	char* getData()const { return _data; }
+	byte* getData()const { return _data; }
 
 	~Message(){
 		if(_data)

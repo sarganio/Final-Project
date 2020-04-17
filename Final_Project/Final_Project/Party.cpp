@@ -29,6 +29,15 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 	AutoSeededRandomPool rnd;
 	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
 	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
+	//cout<<std::dec << endl;
+
+}
+void Party::printKey(unsigned short index)const {
+	if (index < 0 || index > NUM_OF_PARTIES)
+		return;
+	string a((char*)_keys[index]->begin(), KEY_LEN);
+	for (int i = 0; i < a.length(); i++)
+		printf("%u ", (byte)a[i]);
 }
 void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	bool isConnected = false;
@@ -60,7 +69,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	TRACE("Succssesfully connected to all parties!\n");
 
 }
-void Party::broadcast(void* msg,unsigned short messageType)const {
+void Party::broadcast(byte* msg,unsigned short messageType)const {
 	for (int i = 0; i < NUM_OF_PARTIES ; i++) {
 		if (i == _id)
 			continue;
@@ -99,15 +108,11 @@ Party::~Party() {
 		_keys.pop_back();
 	}
 }
-bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg)const {
+bool Party::sendTo(unsigned short id, unsigned short messageType, byte* msg)const {
 	Message toSend(messageType);
-	char* data = new char[toSend.getSize()];
-	memcpy(data, msg, toSend.getSize());
-	toSend.setData(data);
+	toSend.setData(msg);
 	_sockets[id]->writeBuffer(&toSend, HEADER_SIZE);
 	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
-	delete data;
-	data = nullptr;
 	return true;
 }
 void Party::readFrom(unsigned short id,unsigned char* msg) {
@@ -145,6 +150,7 @@ void Party::fInput() {
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 
 	//send this party key to the next party
+	printKey(_id);
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]->data());
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
 

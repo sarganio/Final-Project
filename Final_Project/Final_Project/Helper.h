@@ -48,6 +48,7 @@ using CryptoPP::CBC_Mode;
 
 //byte variable type
 #include <cstddef>
+using CryptoPP::byte;
 
 #include "secblock.h"
 using CryptoPP::SecByteBlock;
