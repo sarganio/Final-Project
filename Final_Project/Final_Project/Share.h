@@ -4,24 +4,36 @@
 #include "Helper.h"
 
 using std::pair;
-
+using std::vector;
 class Part {
-private:
-	long _value;
+protected:
 	unsigned short _index;
 	char _name;
+public:
+	Part(unsigned short index = 0, char name = 0);
+	virtual ~Part() {};
+	virtual long getValue()const = 0;
+	virtual string toString()const = 0;
+	inline unsigned short getIndex()const;
+	inline char getName()const;
+};
+class BytePart:public Part {
+	vector<byte> _value;
+	BytePart(byte* value = 0, unsigned short index = 0, char name = 0);
+};
+class InputPart :public Part {
+private:
+	long _value;
 
 public:
-	Part(long value = 0, unsigned short index = 0, char name = 0);
-	inline unsigned short getIndex()const;
+	InputPart(long value = 0, unsigned short index = 0, char name = 0);
 	inline long getValue()const;
-	inline char getName()const;
 	inline void setValue(long value);
 	string toString()const;
 };
 class Share {
 private:
-	pair<Part, Part> _value;
+	pair<Part&, Part&> _value;
 public:
 	Share(const Part& v1, const Part& v2);
 
