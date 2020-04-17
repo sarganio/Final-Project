@@ -101,10 +101,13 @@ Party::~Party() {
 }
 bool Party::sendTo(unsigned short id, unsigned short messageType, void* msg)const {
 	Message toSend(messageType);
-	string data = (char*)msg;
-	toSend.setData(data.c_str());
+	char* data = new char[toSend.getSize()];
+	memcpy(data, msg, toSend.getSize());
+	toSend.setData(data);
 	_sockets[id]->writeBuffer(&toSend, HEADER_SIZE);
 	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
+	delete data;
+	data = nullptr;
 	return true;
 }
 void Party::readFrom(unsigned short id,unsigned char* msg) {
@@ -113,6 +116,7 @@ void Party::readFrom(unsigned short id,unsigned char* msg) {
 	//update thread that the message was read
 	this->_msgs[id]->setIsRead(true);
 }
+unsigned short Party::getID()const { return this->_id; }
 void Party::calcSeq() {
 	AutoSeededRandomPool rnd;
 	byte seqMy[SEQ_LEN];
@@ -132,7 +136,6 @@ void Party::calcSeq() {
 
 	TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
 }
-unsigned short Party::getID()const { return this->_id; }
 void Party::fInput() {
 	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte fromKey[KEY_LEN];

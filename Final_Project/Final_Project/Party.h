@@ -24,7 +24,7 @@ private:
 	vector<pair<long, long>> _shares;//index of vector is the id of input's party
 	vector<Message*>_msgs;
 	vector<SecByteBlock*>_keys;
-	//vector<mutex> _mtx;
+	//vector<Share*> _shares;
 public:
 	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters
 	bool sendTo(unsigned short id, unsigned short messageType, void* msg)const;//send message to party[id]
