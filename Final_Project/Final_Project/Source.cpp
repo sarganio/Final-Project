@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 		Party p = Party(myID,122323);
 		p.connectToAllParties(IPs);
 		p.calcSeq();
-		p.fInput();	
+		//p.fInput();	
 	}
 	catch (std::exception & exc) {
 		cout << exc.what() << endl;

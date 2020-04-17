@@ -7,6 +7,7 @@
 #include "Messages.h"
 #include "TcpSocket.h"
 #include "Helper.h"
+#include "Share.h"
 
 using std::vector;
 using std::pair;
@@ -35,7 +36,7 @@ public:
 	void broadcast(byte * msg, unsigned short messageType)const;//send message to all parties connected to this party
 	unsigned short getID()const;
 	void calcSeq();
-	void fInput();
+	void fRand();
 	~Party();
 
 };

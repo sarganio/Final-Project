@@ -98,7 +98,7 @@ Party::~Party() {
 		_msgs.pop_back();
 	}
 	//delete all the sockets of the party
-	while (_sockets.size()) {
+	while (_keys.size()) {
 		SecByteBlock* toFree = _keys.back();
 		//safety check before using delete
 		if (toFree) {
@@ -141,7 +141,7 @@ void Party::calcSeq() {
 
 	TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
 }
-void Party::fInput() {
+void Party::fRand() {
 	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte fromKey[KEY_LEN];
 	byte IV[KEY_LEN];
@@ -165,7 +165,7 @@ void Party::fInput() {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV);
+		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV);  
 		TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
 }
