@@ -22,10 +22,9 @@ private:
 	unsigned char _seq[SEQ_LEN];
 	byte _finalSeq[SEQ_LEN]{};
 	vector<TcpSocket*> _sockets;//socket for all TCP connection. sockets[0] is a UDP soket
-	vector<pair<long, long>> _shares;//index of vector is the id of input's party
 	vector<Message*>_msgs;
 	vector<SecByteBlock*>_keys;
-	//vector<Share*> _shares;
+	vector<Share*> _shares;//index of vector is the id of input's party
 	void printKey(unsigned short index)const;
 public:
 	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters
@@ -36,7 +35,8 @@ public:
 	void broadcast(byte * msg, unsigned short messageType)const;//send message to all parties connected to this party
 	unsigned short getID()const;
 	void calcSeq();
-	void fRand();
+	Share* fRand();
+	void fInput();
 	~Party();
 
 };

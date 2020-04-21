@@ -141,7 +141,8 @@ void Party::calcSeq() {
 
 	TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
 }
-void Party::fRand() {
+Share* Party::fRand() {
+	Share* ans = new Share(_id,'a'+_id);
 	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte fromKey[KEY_LEN];
 	byte IV[KEY_LEN];
@@ -165,7 +166,16 @@ void Party::fRand() {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV);  
+		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV); 
+		(*ans)[i] = *(long*)alpha[i];
 		TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
+	return ans;
+}
+void Party::fInput() {
+	vector<Share*> randomShares;
+	randomShares.resize(NUM_OF_PARTIES);
+	calcSeq();
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		randomShares[i] = fRand();//randomShares[i] - the random number for input #i
 }

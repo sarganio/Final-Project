@@ -1,22 +1,13 @@
 #include "Share.h"
 
-Part::Part(unsigned short index, char name) :_index(index), _name(name) {}
+Part::Part(unsigned short index, char name,long value) :_value(value),_index(index), _name(name) {}
 unsigned short Part::getIndex()const { return this->_index; }
 char Part::getName()const { return _name; }
-
-InputPart::InputPart(long value, unsigned short index, char name) :Part(index,name), _value(value){}
-long InputPart::getValue()const { return this->_value; }
+long Part::getValue()const { return this->_value; }
 bool Share::isAddable(const Share& other) const{
 	return this->_value.first->getIndex() == other._value.first->getIndex() && this->_value.second->getIndex() == other._value.second->getIndex();
 }
-Part& Share::operator[](unsigned short index) const{
-	if (this->_value.first->getIndex() == index)
-		return *this->_value.first;
-	if (this->_value.second->getIndex() == index)
-		return *this->_value.second;
-	throw std::exception(__FUNCTION__ "Index is invalid!");
-}
-void InputPart::setValue(long value) {this->_value = value;}
+void Part::setValue(long value) {this->_value = value;}
 Share::Share(Part* v1, Part* v2) {
 	if(v1->getName() != v2->getName())
 		throw std::exception(__FUNCTION__ "name of shares is not the same!");
@@ -26,50 +17,51 @@ Share::Share(Part* v1, Part* v2) {
 		this->_value = std::make_pair(v2, v1);
 
 }
-string InputPart::toString()const {
+string Part::toString()const {
 	//return string(" Index:"+std::to_string(_index)  + "Value:" + std::to_string(_value) + " Part Name:" + std::to_string(_name)+"\n");
-	return string("("+ std::to_string(_index)+","+std::to_string(_value)+","+ std::to_string(_name) +")");
+	return string("("+ std::to_string(_value)+","+std::to_string(_index)+","+ std::to_string(_name) +")");
+}
+Part& Share::operator[](unsigned short index) const {
+	if (this->_value.first->getIndex() == index)
+		return *this->_value.first;
+	if (this->_value.second->getIndex() == index)
+		return *this->_value.second;
+	throw std::exception(__FUNCTION__ "Index is invalid!");
 }
 Share Share::operator+(const Share& other) const {
+	Part* a = nullptr, * b = nullptr;
 	if(!isAddable(other))
 		throw std::exception(__FUNCTION__ "Shares are not addible!");
 	if (this->_value.first->getName() != other._value.first->getName())
 		throw std::exception(__FUNCTION__ "Shares name is not same!");
-	if (this->_value.first)
-		delete _value.first;
-	if (this->_value.second)
-		delete _value.second;
-	InputPart* a = new InputPart(this->_value.first->getValue() + other._value.first->getValue(), this->_value.first->getIndex(),other._value.first->getName());
-	InputPart* b = new InputPart(this->_value.second->getValue() + other._value.second->getValue(), this->_value.second->getIndex(),other._value.first->getName());
+
+	a = new Part(this->_value.first->getValue() + other._value.first->getValue(), this->_value.first->getIndex(), this->_value.first->getName());
+	b = new Part(this->_value.second->getValue() + other._value.second->getValue(), this->_value.second->getIndex(), other._value.first->getName());
+
 	return Share(a, b);
 }
 Share Share::operator+(long scalar) const{
+	Part* a = nullptr, * b = nullptr;
 	if (this->_value.first->getIndex() != 0)
 		return *this;
-	if (this->_value.first)
-		delete _value.first;
-	if (this->_value.second)
-		delete _value.second;
-	InputPart* a = new InputPart(this->_value.first->getValue() + scalar, this->_value.first->getIndex(), _value.first->getName());
-	InputPart* b = new InputPart(this->_value.second->getValue(), this->_value.second->getIndex(), _value.second->getName());
+	if (this->_value.first) {
+		a = new Part(this->_value.first->getValue() + scalar, this->_value.first->getIndex(), _value.first->getName());
+	}
 	return Share(a,b);
 
 }
 Share Share::operator*(int constant)const {
-	if (this->_value.first)
-		delete _value.first;
-	if (this->_value.second)
-		delete _value.second;
-	InputPart* a = new InputPart(this->_value.first->getValue()*constant, this->_value.first->getIndex(),_value.first->getName());
-	InputPart* b = new InputPart(this->_value.second->getValue()*constant, this->_value.second->getIndex(), _value.second->getName());
+	Part* a = nullptr,* b = nullptr;
+	if (this->_value.first) 
+		a = new Part(this->_value.first->getValue() * constant, this->_value.first->getIndex(), _value.first->getName());
+
+	if (this->_value.second) 
+		b = new Part(this->_value.second->getValue() * constant, this->_value.second->getIndex(), _value.second->getName());
+
 	return Share(a, b);
 }
 string Share::toString()const {
 	return "("+string(this->_value.first->toString() +","+ this->_value.second->toString())+")";
-}
-BytePart::BytePart(byte* value, unsigned short numOfBytes, unsigned short index, char name):_size(numOfBytes) {
-	for (int i = 0; i < numOfBytes; i++)
-		_value[i] = value[i];
 }
 Share::~Share() {
 	delete this->_value.first;
@@ -77,8 +69,10 @@ Share::~Share() {
 	delete this->_value.second;
 	this->_value.second = nullptr;
 }
-Share::Share() {
-	this->_value = std::make_pair(new InputPart(), new InputPart());
+Share::Share(unsigned short index,char name) {
+	this->_value = std::make_pair(new Part(index,name), new Part((index+2)% NUM_OF_PARTIES,name));
 }
-unsigned short BytePart::getSize()const { return _size; }
-vector<byte> BytePart::getByteValue()const { return _value; }
+Part& Part::operator=(long newVal) {
+	this->setValue(newVal);
+	return *this;
+}
