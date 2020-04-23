@@ -155,16 +155,10 @@ Share* Party::fRand() {
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 
 	//send this party key to the next party
-	printKey(_id);
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]->data());
 	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
 
 	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey,KEY_LEN);
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (i == (_id + 1) % NUM_OF_PARTIES)
-			continue;
-		printf("Key %d: %u\n", i, *(unsigned int*)_keys[i]->data());
-	}
 
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
@@ -172,7 +166,7 @@ Share* Party::fRand() {
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV); 
 		(*ans)[i] = *(long*)alpha[i];
-		TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
+		//TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
 	//free vector of keys
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
@@ -185,12 +179,47 @@ Share* Party::fRand() {
 }
 void Party::fInput() {
 	vector<Share*> randomShares;
+	long randomNum;
+	byte partiesInputs[NUM_OF_PARTIES][ENC_INPUT_LEN];
 	randomShares.resize(NUM_OF_PARTIES);
 	calcSeq();
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		randomShares[i] = fRand();//randomShares[i] - the random number for input #i
 		cout << "Share #" << i << " " << randomShares[i]->toString() << endl;
 	}
+	randomNum = reconstruct(*randomShares[_id]);
+	randomNum = _input - randomNum;
+	broadcast((byte*)&randomNum,ENC_INPUT);
 
+	readFrom((_id + 2) % NUM_OF_PARTIES, partiesInputs[(_id + 2) % NUM_OF_PARTIES]);
+	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
 
+}
+long Party::reconstruct(Share& myShare) {
+	byte name = myShare[_id].getName();
+	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_ANS_LEN];//the answers from the other parties
+	vector<Share> myShares;
+
+	myShares.resize(NUM_OF_PARTIES);
+
+	broadcast(&name, RECONSTRUCT_REQ);
+	//read answers from other parties
+	for (int i = NUM_OF_PARTIES - 1; i >=0; i--) {
+		if (i == _id)
+			continue;										  //(2B,8B,1B)X2
+		readFrom((_id + 2 + i) % NUM_OF_PARTIES, rawData[i]);//(index,value,name),(index,value,name)
+		myShares[i] = Share(*(unsigned short*)rawData[i], rawData[i][10]);
+		myShares[i][0] = *(long*)(rawData[i] + 2);//put the value recievied in the share
+		myShares[i][0] = *(long*)(rawData[i] + 13);//put the value recievied in the share
+	}
+
+	//perform validity check that the answers we got 
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if(i == (_id + 1) % NUM_OF_PARTIES)
+			if(myShares[(i+2)%NUM_OF_PARTIES][(_id + 1) % NUM_OF_PARTIES].getValue() != myShares[(i + 1) % NUM_OF_PARTIES][(_id + 1) % NUM_OF_PARTIES].getValue())
+				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
+		if (myShare[(i + 2) % NUM_OF_PARTIES].getValue() != myShares[(i + 2) % NUM_OF_PARTIES][(i + 2) % NUM_OF_PARTIES].getValue() )
+			throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
+	}
+	return myShare[(_id + 2) % NUM_OF_PARTIES].getValue() + myShare[(_id + 1) % NUM_OF_PARTIES].getValue() + myShare[_id].getValue();
 }

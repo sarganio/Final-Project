@@ -19,7 +19,7 @@ Share::Share(Part* v1, Part* v2) {
 }
 string Part::toString()const {
 	//return string(" Index:"+std::to_string(_index)  + "Value:" + std::to_string(_value) + " Part Name:" + std::to_string(_name)+"\n");
-	return string("("+ std::to_string(_value)+","+std::to_string(_index)+","+ std::to_string(_name) +")");
+	return string("("+ std::to_string(_value)+","+std::to_string(_index)+","+ _name +")");
 }
 Part& Share::operator[](unsigned short index) const {
 	if (this->_value.first->getIndex() == index)

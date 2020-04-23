@@ -26,7 +26,7 @@ private:
 	pair<Part*, Part*> _value;
 public:
 	~Share();
-	Share(unsigned short index,char name);
+	Share(unsigned short index = 0,char name = 0);
 	Share( Part* v1,Part* v2);
 
 	bool isAddable(const Share& other)const;
