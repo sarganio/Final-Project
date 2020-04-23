@@ -143,7 +143,7 @@ void Party::calcSeq() {
 }
 Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;
-	Share* ans = new Share(_id,'a'+calledThisFunc);
+	Share* ans = new Share((_id+2)%NUM_OF_PARTIES,'a'+calledThisFunc);
 	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte fromKey[KEY_LEN];
 	byte IV[KEY_LEN];
@@ -187,7 +187,7 @@ void Party::fInput() {
 		randomShares[i] = fRand();//randomShares[i] - the random number for input #i
 		cout << "Share #" << i << " " << randomShares[i]->toString() << endl;
 	}
-	randomNum = reconstruct(*randomShares[_id]);
+	randomNum = reconstruct(randomShares);
 	randomNum = _input - randomNum;
 	broadcast((byte*)&randomNum,ENC_INPUT);
 
@@ -195,60 +195,62 @@ void Party::fInput() {
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
 
 }
-long Party::reconstruct(Share& myShare) {
-	byte name = myShare[_id].getName();
+long Party::reconstruct(vector<Share*>& shares) {
+	byte name = (*shares[_id])[_id].getName();
 	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_LEN];//the answers from the other parties
 	byte sendShare[RECONSTRUCT_LEN];
 	vector<Share*> otherShares;
 
 	otherShares.resize(NUM_OF_PARTIES);
-	unsigned short smallerId = (_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES-1?_id: (_id + 2) % NUM_OF_PARTIES;
-	unsigned short biggerId = !((_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES - 1) ? _id : (_id + 2) % NUM_OF_PARTIES;
 
-	*(unsigned short*)sendShare= myShare[smallerId].getIndex();
-	*(long*)(sendShare+2) = myShare[smallerId].getValue();
-	sendShare[10] = myShare[smallerId].getName();
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i == _id)
+			continue;
+		*(unsigned short*)sendShare = (*shares[i])[(_id+2)%NUM_OF_PARTIES].getIndex();
+		*(long*)(sendShare + 2) = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getValue();
+		sendShare[10] = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getName();
+		
+		*(unsigned short*)(sendShare+11) = (*shares[i])[_id].getIndex();
+		*(long*)(sendShare + 13) = (*shares[i])[_id].getValue();
+		sendShare[21] = (*shares[i])[_id].getName();
+		sendTo(i,RECONSTRUCT,sendShare);
+	}
 
-	*(unsigned short*)(sendShare+ 11) = myShare[biggerId].getIndex();
-	*(long*)(sendShare+13) = myShare[biggerId].getValue();
-	sendShare[21] = myShare[biggerId].getName();
-
-	broadcast(sendShare, RECONSTRUCT);
 	//read answers from other parties
 	for (int i = 0; i <NUM_OF_PARTIES; i++) {
 		if (i == _id) {
-			otherShares[i] = nullptr;						  //(2B,8B,1B)X2
+			otherShares[i] = nullptr;			
 			continue;
 		}
-		readFrom(i % NUM_OF_PARTIES, rawData[i]);//(index,value,name),(index,value,name)
-		int index = *(unsigned short*)rawData[i];
-		otherShares[i] = new Share(i!=0?++index:index, rawData[i][10]);
+		readFrom(i, rawData[i]);//(index,value,name)
+		otherShares[i] = new Share(*(unsigned short*)rawData[i], rawData[i][10]);
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 2);//put the value recievied in the share
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
 	}
-	bool isValid;
-	switch (_id) {
-	case 0:
-		isValid = (*otherShares[1])[1].getValue() != (*otherShares[2])[1].getValue() || myShare[0].getValue() != (*otherShares[1])[0].getValue() || myShare[2].getValue() != (*otherShares[2])[2].getValue();
-		break;
-	case 1:
-		isValid = (*otherShares[2])[2].getValue() != (*otherShares[0])[2].getValue() || myShare[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[2])[1].getValue();
-		break;
-	case 2:
-		isValid = (*otherShares[1])[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[1])[1].getValue() || myShare[2].getValue() != (*otherShares[0])[2].getValue();
-		break;
-	}
-	if(!isValid)
-		throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
-	////perform validity check that the answers we got 
-	//for (int i = 0; i < NUM_OF_PARTIES; i++) {
-	//	if(i == (_id + 1) % NUM_OF_PARTIES)
-	//		if((*otherShares[(i+2)%NUM_OF_PARTIES])[i].getValue() != (*otherShares[(i + 1) % NUM_OF_PARTIES])[i].getValue())
-	//			throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
-	//	if (myShare[(_id + 2 + i) % NUM_OF_PARTIES].getValue() != (*otherShares[i])[(i + 2) % NUM_OF_PARTIES].getValue() )
-	//		throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
+	//bool isValid;
+	//switch (_id) {
+	//case 0:
+	//	isValid = (*otherShares[1])[1].getValue() != (*otherShares[2])[1].getValue() || myShare[0].getValue() != (*otherShares[1])[0].getValue() || myShare[2].getValue() != (*otherShares[2])[2].getValue();
+	//	break;
+	//case 1:
+	//	isValid = (*otherShares[2])[2].getValue() != (*otherShares[0])[2].getValue() || myShare[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[2])[1].getValue();
+	//	break;
+	//case 2:
+	//	isValid = (*otherShares[1])[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[1])[1].getValue() || myShare[2].getValue() != (*otherShares[0])[2].getValue();
+	//	break;
 	//}
-	long ans = myShare[(_id + 2) % NUM_OF_PARTIES].getValue() + myShare[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
+	//if(!isValid)
+	//	throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
+	//perform validity check that the answers we got 
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if(i == (_id + 1) % NUM_OF_PARTIES)
+			if((*otherShares[(_id+2)%NUM_OF_PARTIES])[i].getValue() != (*otherShares[(_id + 1) % NUM_OF_PARTIES])[i].getValue())
+				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
+		//id+2+1
+		if ((*shares[_id])[(_id+2+i)%NUM_OF_PARTIES].getValue() != (*otherShares[(_id + 2) % NUM_OF_PARTIES])[(_id + 2 + i) % NUM_OF_PARTIES].getValue() )
+			throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
+	}
+	long ans = (*shares[_id])[(_id + 2) % NUM_OF_PARTIES].getValue() + (*shares[_id])[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (otherShares[i]) {
 			delete otherShares[i];

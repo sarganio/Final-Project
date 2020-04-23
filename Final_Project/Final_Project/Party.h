@@ -37,7 +37,7 @@ public:
 	void calcSeq();
 	Share* fRand();
 	void fInput();
-	long reconstruct(Share& myShare);
+	long reconstruct(vector<Share*>& myShare);
 	~Party();
 
 };

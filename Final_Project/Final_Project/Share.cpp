@@ -11,11 +11,8 @@ void Part::setValue(long value) {this->_value = value;}
 Share::Share(Part* v1, Part* v2) {
 	if(v1->getName() != v2->getName())
 		throw std::exception(__FUNCTION__ "name of shares is not the same!");
-	if(v1->getIndex() <= v2->getIndex())
-		this->_value = std::make_pair(v1, v2);
-	else
-		this->_value = std::make_pair(v2, v1);
 
+	this->_value = std::make_pair(v1, v2);
 }
 string Part::toString()const {
 	//return string(" Index:"+std::to_string(_index)  + "Value:" + std::to_string(_value) + " Part Name:" + std::to_string(_name)+"\n");
@@ -70,10 +67,7 @@ Share::~Share() {
 	this->_value.second = nullptr;
 }
 Share::Share(unsigned short index,char name) {
-	if(index == 0)
-		this->_value = std::make_pair(new Part(index,name), new Part((index+2)% NUM_OF_PARTIES,name));
-	else
-		this->_value = std::make_pair(new Part((index + 2) % NUM_OF_PARTIES, name), new Part(index, name));
+	this->_value = std::make_pair(new Part(index, name), new Part((index+1)%NUM_OF_PARTIES, name));
 }
 Part& Part::operator=(long newVal) {
 	this->setValue(newVal);
