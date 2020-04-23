@@ -187,6 +187,10 @@ void Party::fInput() {
 	vector<Share*> randomShares;
 	randomShares.resize(NUM_OF_PARTIES);
 	calcSeq();
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		randomShares[i] = fRand();//randomShares[i] - the random number for input #i
+		cout << "Share #" << i << " " << randomShares[i]->toString() << endl;
+	}
+
+
 }

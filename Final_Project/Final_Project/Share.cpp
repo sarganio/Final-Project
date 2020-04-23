@@ -70,7 +70,10 @@ Share::~Share() {
 	this->_value.second = nullptr;
 }
 Share::Share(unsigned short index,char name) {
-	this->_value = std::make_pair(new Part(index,name), new Part((index+2)% NUM_OF_PARTIES,name));
+	if(index == 0)
+		this->_value = std::make_pair(new Part(index,name), new Part((index+2)% NUM_OF_PARTIES,name));
+	else
+		this->_value = std::make_pair(new Part((index + 2) % NUM_OF_PARTIES, name), new Part(index, name));
 }
 Part& Part::operator=(long newVal) {
 	this->setValue(newVal);
