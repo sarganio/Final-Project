@@ -203,11 +203,12 @@ long Party::reconstruct(Share& myShare) {
 
 	otherShares.resize(NUM_OF_PARTIES);
 	unsigned short smallerId = (_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES-1?_id: (_id + 2) % NUM_OF_PARTIES;
-	unsigned short biggerId = !(_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES - 1 ? _id : (_id + 2) % NUM_OF_PARTIES;
+	unsigned short biggerId = !((_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES - 1) ? _id : (_id + 2) % NUM_OF_PARTIES;
 
 	*(unsigned short*)sendShare= myShare[smallerId].getIndex();
 	*(long*)(sendShare+2) = myShare[smallerId].getValue();
 	sendShare[10] = myShare[smallerId].getName();
+
 	*(unsigned short*)(sendShare+ 11) = myShare[biggerId].getIndex();
 	*(long*)(sendShare+13) = myShare[biggerId].getValue();
 	sendShare[21] = myShare[biggerId].getName();
