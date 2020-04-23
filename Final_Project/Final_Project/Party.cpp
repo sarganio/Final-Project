@@ -199,35 +199,41 @@ long Party::reconstruct(Share& myShare) {
 	byte name = myShare[_id].getName();
 	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_LEN];//the answers from the other parties
 	byte sendShare[RECONSTRUCT_LEN];
-	vector<Share> myShares;
+	vector<Share*> otherShares;
 
-	myShares.resize(NUM_OF_PARTIES);
+	otherShares.resize(NUM_OF_PARTIES);
 
 	*(unsigned short*)sendShare= myShare[(_id + 2) % NUM_OF_PARTIES].getIndex();
-	*(long*)sendShare[2] = myShare[(_id + 2) % NUM_OF_PARTIES].getValue();
+	*(long*)(sendShare+2) = myShare[(_id + 2) % NUM_OF_PARTIES].getValue();
 	sendShare[10] = myShare[(_id + 2) % NUM_OF_PARTIES].getName();
-	*(unsigned short*)sendShare[11] = myShare[_id].getIndex();
-	*(long*)sendShare[13] = myShare[_id].getValue();
+	*(unsigned short*)(sendShare+ 11) = myShare[_id].getIndex();
+	*(long*)(sendShare+13) = myShare[_id].getValue();
 	sendShare[21] = myShare[_id].getName();
 
 	broadcast(sendShare, RECONSTRUCT);
 	//read answers from other parties
 	for (int i = NUM_OF_PARTIES - 1; i >=0; i--) {
 		if (i == _id)
-			continue;										  //(2B,8B,1B)X2
+			otherShares[i] = nullptr;										  //(2B,8B,1B)X2
 		readFrom((_id + 2 + i) % NUM_OF_PARTIES, rawData[i]);//(index,value,name),(index,value,name)
-		myShares[i] = Share(*(unsigned short*)rawData[i], rawData[i][10]);
-		myShares[i][0] = *(long*)(rawData[i] + 2);//put the value recievied in the share
-		myShares[i][0] = *(long*)(rawData[i] + 13);//put the value recievied in the share
+		otherShares[i] = new Share(*(unsigned short*)rawData[i], rawData[i][10]);
+		(*otherShares[i])[(i + 2) % NUM_OF_PARTIES] = *(long*)(rawData[i] + 2);//put the value recievied in the share
+		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
 	}
 
 	//perform validity check that the answers we got 
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if(i == (_id + 1) % NUM_OF_PARTIES)
-			if(myShares[(i+2)%NUM_OF_PARTIES][(_id + 1) % NUM_OF_PARTIES].getValue() != myShares[(i + 1) % NUM_OF_PARTIES][(_id + 1) % NUM_OF_PARTIES].getValue())
+			if((*otherShares[(i+2)%NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue() != (*otherShares[(i + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue())
 				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
-		if (myShare[(i + 2) % NUM_OF_PARTIES].getValue() != myShares[(i + 2) % NUM_OF_PARTIES][(i + 2) % NUM_OF_PARTIES].getValue() )
+		if (myShare[(i + 2) % NUM_OF_PARTIES].getValue() != (*otherShares[(i + 2) % NUM_OF_PARTIES])[(i + 2) % NUM_OF_PARTIES].getValue() )
 			throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
 	}
-	return myShare[(_id + 2) % NUM_OF_PARTIES].getValue() + myShare[(_id + 1) % NUM_OF_PARTIES].getValue() + myShare[_id].getValue();
+	long ans = myShare[(_id + 2) % NUM_OF_PARTIES].getValue() + myShare[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (otherShares[i]) {
+			delete otherShares[i];
+			otherShares[i] = nullptr;
+		}
+	return ans;
 }
