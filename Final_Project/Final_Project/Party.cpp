@@ -26,9 +26,9 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 			continue;
 		_msgs[i] = new Message;
 	}
-	AutoSeededRandomPool rnd;
-	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
-	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
+	//AutoSeededRandomPool rnd;
+	//_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
+	//rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
 	//cout<<std::dec << endl;
 
 }
@@ -146,7 +146,9 @@ Share* Party::fRand() {
 	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
 	byte fromKey[KEY_LEN];
 	byte IV[KEY_LEN];
-
+	AutoSeededRandomPool rnd;
+	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
+	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
 	for (int i = 0; i < KEY_LEN / SEQ_LEN; i++)
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 
@@ -169,6 +171,13 @@ Share* Party::fRand() {
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV); 
 		(*ans)[i] = *(long*)alpha[i];
 		TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
+	}
+	//free vector of keys
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (!_keys[i])
+			continue;
+		delete _keys[i];
+		_keys[i] = nullptr;
 	}
 	return ans;
 }

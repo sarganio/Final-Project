@@ -90,7 +90,7 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		//cv.notify_one();
 		//mark message as read buffer
 		mess->setIsRead(false);
-		TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
+		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
 
 		cout << "Got message from client!\n";
 	}
