@@ -202,15 +202,13 @@ long Party::reconstruct(Share& myShare) {
 	vector<Share*> otherShares;
 
 	otherShares.resize(NUM_OF_PARTIES);
-	unsigned short smallerId = (_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES-1?_id: (_id + 2) % NUM_OF_PARTIES;
-	unsigned short biggerId = !(_id + 2) % NUM_OF_PARTIES == NUM_OF_PARTIES - 1 ? _id : (_id + 2) % NUM_OF_PARTIES;
 
-	*(unsigned short*)sendShare= myShare[smallerId].getIndex();
-	*(long*)(sendShare+2) = myShare[smallerId].getValue();
-	sendShare[10] = myShare[smallerId].getName();
-	*(unsigned short*)(sendShare+ 11) = myShare[biggerId].getIndex();
-	*(long*)(sendShare+13) = myShare[biggerId].getValue();
-	sendShare[21] = myShare[biggerId].getName();
+	*(unsigned short*)sendShare= myShare[(_id + 2) % NUM_OF_PARTIES].getIndex();
+	*(long*)(sendShare+2) = myShare[(_id + 2) % NUM_OF_PARTIES].getValue();
+	sendShare[10] = myShare[(_id + 2) % NUM_OF_PARTIES].getName();
+	*(unsigned short*)(sendShare+ 11) = myShare[_id].getIndex();
+	*(long*)(sendShare+13) = myShare[_id].getValue();
+	sendShare[21] = myShare[_id].getName();
 
 	broadcast(sendShare, RECONSTRUCT);
 	//read answers from other parties
