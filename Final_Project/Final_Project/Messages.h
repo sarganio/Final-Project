@@ -7,8 +7,7 @@ using CryptoPP::byte;
 
 #define KEY_LEN 32
 #define SEQ_LEN 4
-#define RECONSTRUCT_ANS_LEN 64
-#define RECONSTRUCT_REQ_LEN 1
+#define RECONSTRUCT_LEN 22
 #define NUM_OF_PARTIES 3
 #define MAX_MESSAGE_SIZE 64
 #define ENC_INPUT_LEN 8
@@ -18,7 +17,7 @@ using CryptoPP::byte;
 
 #define HEADER_SIZE 3
 
-enum types{SEQ = 1,KEY,RECONSTRUCT_REQ,RECONSTRUCT_ANS, ENC_INPUT};
+enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT};
 
 #pragma pack(1)//allow no padding
 typedef class Message {
@@ -41,13 +40,12 @@ public:
 		case KEY:
 			_size = KEY_LEN;
 			break;
-		case RECONSTRUCT_REQ:
-			_size = RECONSTRUCT_REQ_LEN;
+		case RECONSTRUCT:
+			_size = RECONSTRUCT_LEN;
 			break;
-		case RECONSTRUCT_ANS:
-			_size = RECONSTRUCT_ANS_LEN;
 		case ENC_INPUT:
 			_size = ENC_INPUT_LEN;
+			break;
 		default:
 			break;
 		}

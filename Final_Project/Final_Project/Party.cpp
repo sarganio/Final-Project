@@ -197,12 +197,20 @@ void Party::fInput() {
 }
 long Party::reconstruct(Share& myShare) {
 	byte name = myShare[_id].getName();
-	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_ANS_LEN];//the answers from the other parties
+	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_LEN];//the answers from the other parties
+	byte sendShare[RECONSTRUCT_LEN];
 	vector<Share> myShares;
 
 	myShares.resize(NUM_OF_PARTIES);
 
-	broadcast(&name, RECONSTRUCT_REQ);
+	*(unsigned short*)sendShare= myShare[(_id + 2) % NUM_OF_PARTIES].getIndex();
+	*(long*)sendShare[2] = myShare[(_id + 2) % NUM_OF_PARTIES].getValue();
+	sendShare[10] = myShare[(_id + 2) % NUM_OF_PARTIES].getName();
+	*(unsigned short*)sendShare[11] = myShare[_id].getIndex();
+	*(long*)sendShare[13] = myShare[_id].getValue();
+	sendShare[21] = myShare[_id].getName();
+
+	broadcast(sendShare, RECONSTRUCT);
 	//read answers from other parties
 	for (int i = NUM_OF_PARTIES - 1; i >=0; i--) {
 		if (i == _id)

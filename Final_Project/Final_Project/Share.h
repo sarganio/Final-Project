@@ -7,10 +7,10 @@
 using std::pair;
 using std::vector;
 class Part {
-protected:
-	unsigned short _index;//the index of the part e.g a_# , x_#
-	char _name;				
+protected:				
 	long _value = 0;
+	unsigned short _index;//the index of the part e.g a_# , x_#
+	char _name;
 public:
 	Part(unsigned short index = 0, char name = 0,long value = 0);
 	~Part() {};
