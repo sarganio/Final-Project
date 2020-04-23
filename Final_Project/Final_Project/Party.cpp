@@ -224,7 +224,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 		}
 		readFrom(i, rawData[i]);//(index,value,name)
 		otherShares[i] = new Share(*(unsigned short*)rawData[i], rawData[i][10]);
-		(*otherShares[i])[i] = *(long*)(rawData[i] + 2);//put the value recievied in the share
+		(*otherShares[i])[(i+2)%NUM_OF_PARTIES] = *(long*)(rawData[i] + 2);//put the value recievied in the share
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
 	}
 	//bool isValid;
@@ -246,8 +246,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 		if(i == (_id + 1) % NUM_OF_PARTIES)
 			if((*otherShares[(_id+2)%NUM_OF_PARTIES])[i].getValue() != (*otherShares[(_id + 1) % NUM_OF_PARTIES])[i].getValue())
 				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
-		//id+2+1
-		if ((*shares[_id])[(_id+2+i)%NUM_OF_PARTIES].getValue() != (*otherShares[(_id + 2) % NUM_OF_PARTIES])[(_id + 2 + i) % NUM_OF_PARTIES].getValue() )
+		if ((*shares[_id])[(_id+2+i)%NUM_OF_PARTIES].getValue() != (*otherShares[(_id + 2 + 2*i) % NUM_OF_PARTIES])[(_id + 2 + i) % NUM_OF_PARTIES].getValue() )
 			throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
 	}
 	long ans = (*shares[_id])[(_id + 2) % NUM_OF_PARTIES].getValue() + (*shares[_id])[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
