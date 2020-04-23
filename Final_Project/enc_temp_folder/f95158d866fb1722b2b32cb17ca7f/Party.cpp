@@ -226,28 +226,15 @@ long Party::reconstruct(Share& myShare) {
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 2);//put the value recievied in the share
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
 	}
-	bool isValid;
-	switch (_id) {
-	case 0:
-		isValid = (*otherShares[1])[1].getValue() != (*otherShares[2])[1].getValue() || myShare[0].getValue() != (*otherShares[1])[0].getValue() || myShare[2].getValue() != (*otherShares[2])[2].getValue();
-		break;
-	case 1:
-		isValid = (*otherShares[2])[2].getValue() != (*otherShares[0])[2].getValue() || myShare[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[2])[1].getValue();
-		break;
-	case 2:
-		isValid = (*otherShares[1])[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[1])[1].getValue() || myShare[2].getValue() != (*otherShares[0])[2].getValue();
-		break;
+
+	//perform validity check that the answers we got 
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if(i == (_id + 1) % NUM_OF_PARTIES)
+			if((*otherShares[(i+2)%NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue() != (*otherShares[(i + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue())
+				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
+		if (myShare[(_id + 2 + i) % NUM_OF_PARTIES].getValue() != (*otherShares[(i + 2) % NUM_OF_PARTIES])[(i + 2) % NUM_OF_PARTIES].getValue() )
+			throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
 	}
-	if(!isValid)
-		throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
-	////perform validity check that the answers we got 
-	//for (int i = 0; i < NUM_OF_PARTIES; i++) {
-	//	if(i == (_id + 1) % NUM_OF_PARTIES)
-	//		if((*otherShares[(i+2)%NUM_OF_PARTIES])[i].getValue() != (*otherShares[(i + 1) % NUM_OF_PARTIES])[i].getValue())
-	//			throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
-	//	if (myShare[(_id + 2 + i) % NUM_OF_PARTIES].getValue() != (*otherShares[i])[(i + 2) % NUM_OF_PARTIES].getValue() )
-	//		throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
-	//}
 	long ans = myShare[(_id + 2) % NUM_OF_PARTIES].getValue() + myShare[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (otherShares[i]) {
