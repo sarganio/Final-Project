@@ -139,7 +139,7 @@ void Party::calcSeq() {
 
 	*(unsigned int*)_finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
 
-	TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
+	//TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
 }
 Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;
@@ -185,7 +185,7 @@ void Party::fInput() {
 	calcSeq();
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		randomShares[i] = fRand();//randomShares[i] - the random number for input #i
-		cout << "Share #" << i << " " << randomShares[i]->toString() << endl;
+		//cout << "Share #" << i << " " << randomShares[i]->toString() << endl;
 	}
 	randomNum = reconstruct(randomShares);
 	randomNum = _input - randomNum;
@@ -193,7 +193,6 @@ void Party::fInput() {
 
 	readFrom((_id + 2) % NUM_OF_PARTIES, partiesInputs[(_id + 2) % NUM_OF_PARTIES]);
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
-
 }
 long Party::reconstruct(vector<Share*>& shares) {
 	byte name = (*shares[_id])[_id].getName();
@@ -227,28 +226,31 @@ long Party::reconstruct(vector<Share*>& shares) {
 		(*otherShares[i])[(i+2)%NUM_OF_PARTIES] = *(long*)(rawData[i] + 2);//put the value recievied in the share
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
 	}
-	//bool isValid;
-	//switch (_id) {
-	//case 0:
-	//	isValid = (*otherShares[1])[1].getValue() != (*otherShares[2])[1].getValue() || myShare[0].getValue() != (*otherShares[1])[0].getValue() || myShare[2].getValue() != (*otherShares[2])[2].getValue();
-	//	break;
-	//case 1:
-	//	isValid = (*otherShares[2])[2].getValue() != (*otherShares[0])[2].getValue() || myShare[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[2])[1].getValue();
-	//	break;
-	//case 2:
-	//	isValid = (*otherShares[1])[0].getValue() != (*otherShares[0])[0].getValue() || myShare[1].getValue() != (*otherShares[1])[1].getValue() || myShare[2].getValue() != (*otherShares[0])[2].getValue();
-	//	break;
-	//}
-	//if(!isValid)
-	//	throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
-	//perform validity check that the answers we got 
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if(i == (_id + 1) % NUM_OF_PARTIES)
-			if((*otherShares[(_id+2)%NUM_OF_PARTIES])[i].getValue() != (*otherShares[(_id + 1) % NUM_OF_PARTIES])[i].getValue())
-				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
-		if ((*shares[_id])[(_id+2+i)%NUM_OF_PARTIES].getValue() != (*otherShares[(_id + 2 + 2*i) % NUM_OF_PARTIES])[(_id + 2 + i) % NUM_OF_PARTIES].getValue() )
-			throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
+	bool isValid;
+	switch (_id) {
+	case 0:
+		isValid = (*otherShares[1])[1].getValue() == (*otherShares[2])[1].getValue() && (*shares[_id])[0].getValue() == (*otherShares[1])[0].getValue() && (*shares[_id])[2].getValue() == (*otherShares[2])[2].getValue();
+		break;
+	case 1:
+		isValid = (*otherShares[2])[2].getValue() == (*otherShares[0])[2].getValue() && (*shares[_id])[0].getValue() == (*otherShares[0])[0].getValue() && (*shares[_id])[1].getValue() == (*otherShares[2])[1].getValue();
+		break;
+	case 2:
+		isValid = (*otherShares[1])[0].getValue() == (*otherShares[0])[0].getValue() && (*shares[_id])[1].getValue() == (*otherShares[1])[1].getValue() && (*shares[_id])[2].getValue() == (*otherShares[0])[2].getValue();
+		break;
 	}
+	if (!isValid)
+		throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
+
+	//perform validity check that the answers we got 
+	/*for (int i = (_id+2)%NUM_OF_PARTIES, j = 0;j <=NUM_OF_PARTIES; j++,i++) {
+		if (i  == (_id + 1) % NUM_OF_PARTIES) {
+			if ((*otherShares[(_id + 2) % NUM_OF_PARTIES])[i].getValue() != (*otherShares[(_id + 1) % NUM_OF_PARTIES])[i].getValue())
+				throw std::exception(__FUNCTION__ "I'm surrounded by liers!");
+			continue;
+		}
+		if((*otherShares[_id])[i].getValue() != (*otherShares[(i+j)%NUM_OF_PARTIES])[i].getValue())
+			throw std::exception(__FUNCTION__ "I'm surrounded by liers!");	
+	}*/
 	long ans = (*shares[_id])[(_id + 2) % NUM_OF_PARTIES].getValue() + (*shares[_id])[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (otherShares[i]) {
