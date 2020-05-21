@@ -39,6 +39,12 @@
     <ClCompile Include="Share.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Circuit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Gate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Party.h">
@@ -63,6 +69,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Share.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Circuit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
