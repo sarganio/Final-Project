@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddGate.cpp" />
     <ClCompile Include="Circuit.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Gate.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddGate.h" />
     <ClInclude Include="Circuit.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Messages.h" />
