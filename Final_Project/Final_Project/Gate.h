@@ -11,12 +11,13 @@ protected:
 	Share _output;
 	
 public:
-	Gate(Share left, operand right) :_left(left), _right(right), _output(0){};
+	Gate() {};
+	Gate(Share& left, operand& right) :_left(left), _right(right), _output(0){};
 
 	//Getters & setters
-	Share getLeft() { return _left; };
-	operand getRight() { return _right; };
-	Share getOutput() { return _output; };
+	Share& getLeft() { return _left; };
+	operand& getRight() { return _right; };
+	Share& getOutput() { return _output; };
 
 	void setLeft(Share input) { _left = input; }
 	void setRight(operand input) { _right = input; }
