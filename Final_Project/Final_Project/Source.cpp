@@ -5,6 +5,7 @@
 #include<set>
 #include "Helper.h"
 #include "Share.h"
+#include "AddGate.h"
 
 using std::cout;
 using std::endl;
@@ -22,6 +23,16 @@ argv[2],argv[3] - IPs of other parties
 
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
+
+	Share x(0,'a');
+	unsigned y = 7;
+	AddGate <unsigned> a(x,y);
+	cout << a.getLeft().toString() << endl;
+	a.calculateOutput();
+	cout << a.getRight() << endl;
+	cout << a.getOutput().toString();
+
+	/*
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	for (i = 2; i < argc; i++) {
@@ -40,6 +51,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	TRACE("Bye Bye!");
+	*/
 	getchar();
 	return 0;
 }

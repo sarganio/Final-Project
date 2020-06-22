@@ -84,7 +84,7 @@
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>C:\Program Files\Crypto++\x64\Output\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Crypto++\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -96,14 +96,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Crypto++</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Crypto++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>C:\Program Files\Crypto++\x64\Output\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Crypto++\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -140,7 +140,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddGate.cpp" />
+    <ClCompile Include="Circuit.cpp" />
     <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Gate.cpp" />
     <ClCompile Include="Party.cpp" />
     <ClCompile Include="Share.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -150,8 +153,11 @@
     <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddGate.h" />
+    <ClInclude Include="Circuit.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Messages.h" />
+    <ClInclude Include="Gate.h" />
     <ClInclude Include="Party.h" />
     <ClInclude Include="Share.h" />
     <ClInclude Include="TcpClient.h" />

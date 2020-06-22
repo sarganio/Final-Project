@@ -12,7 +12,8 @@ protected:
 	unsigned short _index;//the index of the part e.g a_# , x_#
 	char _name;
 public:
-	Part(unsigned short index = 0, char name = 0,long value = 0);
+	Part(char name = 0, unsigned short index = 0, long value = 0);
+	Part(const Part& other);
 	~Part() {};
 	inline long getValue()const;
 	inline void setValue(long value);
@@ -27,11 +28,13 @@ private:
 public:
 	~Share();
 	Share(unsigned short index = 0,char name = 0);
-	Share( Part* v1,Part* v2);
+	Share(const Share& other);
+	Share(Part* v1,Part* v2);
 
 	bool isAddable(const Share& other)const;
 
-	Share operator+(const Share& b) const;
+	Share& operator=(Share const & other);
+	Share operator+(const Share& other) const;
 	Share operator+(long scalar)const;
 
 	Part& operator[](unsigned short index)const;
