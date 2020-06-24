@@ -25,11 +25,15 @@ argv[2],argv[3] - IPs of other parties
 int main(int argc, char* argv[]) {
 
 	Share x(0,'a');
-	unsigned y = 7;
-	AddGate <unsigned> a(x,y);
+	x[0].setValue(5);
+	x[1].setValue(6);
+	Share y(0, 'a');
+	y[0].setValue(7);
+	y[1].setValue(8);
+	AddGate <Share> a(x,y);
 	cout << a.getLeft().toString() << endl;
 	a.calculateOutput();
-	cout << a.getRight() << endl;
+	cout << a.getRight().toString() << endl;
 	cout << a.getOutput().toString();
 
 	/*
