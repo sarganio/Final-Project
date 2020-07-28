@@ -12,7 +12,7 @@ private:
 
 public:
 	MultiplicationGate() {};
-	MultiplicationGate(Share& left, operand& right): Gate::Gate(left, true), _right(right) {};
+	MultiplicationGate(Share* left, operand* right): Gate::Gate(left), _right(right) {};
 
 	void calculateOutput() override {}
 };

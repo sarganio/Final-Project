@@ -260,9 +260,9 @@ long Party::reconstruct(vector<Share*>& shares) {
 	return ans;
 }
 
-Share Party::getShare(int index) {
+Share* Party::getShare(int index) {
 	if (index < NUM_OF_PARTIES) {
-		return *_shares[index];
+		return _shares[index];
 	}
 	throw std::exception(__FUNCTION__ "Index is invalid!");
 }

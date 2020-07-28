@@ -7,13 +7,13 @@ template <class operand>
 class AddGate : public Gate
 {
 private:
-	operand _right;
+	operand* _right;
 public:
 	AddGate() : Gate::Gate() {};
-	AddGate(Share& left, operand& right) : Gate::Gate(left), _right(right) {};
+	AddGate(Share* left, operand* right) : Gate::Gate(left), _right(right) {};
 
 	void calculateOutput() override{
-		this->_output = this->_left + this->_right;
+		*this->_output = *this->_left + *this->_right;
 	}
 
 };
