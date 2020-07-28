@@ -1,8 +1,6 @@
 #pragma once
 #include "Party.h"
 #include "Gate.h"
-#pragma once
-
 #include "AddGate.h"
 #include "MultiplicationGate.h"
 

@@ -8,7 +8,7 @@ class MultiplicationGate :public Gate
 {
 
 private:
-	operand _right;
+	operand* _right;
 
 public:
 	MultiplicationGate() {};

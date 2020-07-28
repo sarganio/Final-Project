@@ -20,6 +20,8 @@ Party::Party(short myID,long input):_id(myID),_input(input){
 	this->_sockets.resize(NUM_OF_PARTIES);
 	this->_msgs.resize(NUM_OF_PARTIES);
 	this->_keys.resize(NUM_OF_PARTIES);
+	this->_shares.resize(NUM_OF_PARTIES);
+
 	//this->_mtx.resize(NUM_OF_PARTIES);
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
@@ -183,16 +185,27 @@ void Party::fInput() {
 	byte partiesInputs[NUM_OF_PARTIES][ENC_INPUT_LEN];
 	randomShares.resize(NUM_OF_PARTIES);
 	calcSeq();
+
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		randomShares[i] = fRand();//randomShares[i] - the random number for input #i
 		//cout << "Share #" << i << " " << randomShares[i]->toString() << endl;
 	}
+	//reconstruct the random value of this party
 	randomNum = reconstruct(randomShares);
 	randomNum = _input - randomNum;
+	//brodcast the salted input
 	broadcast((byte*)&randomNum,ENC_INPUT);
-
+	//reciecve other parties salted inputs
 	readFrom((_id + 2) % NUM_OF_PARTIES, partiesInputs[(_id + 2) % NUM_OF_PARTIES]);
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
+
+	//convert the share recieved from the other parties to Share and add it to the vector _shares
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		Share* receivedShare = new Share(i, 'a' + i);
+		(*receivedShare)[i].setValue(*(unsigned long*)partiesInputs[i]);
+		(*receivedShare)[(i+2)%NUM_OF_PARTIES].setValue(*(unsigned long*)partiesInputs[i]);
+		_shares[i] = receivedShare;
+	}
 }
 long Party::reconstruct(vector<Share*>& shares) {
 	byte name = (*shares[_id])[_id].getName();
@@ -265,4 +278,13 @@ Share* Party::getShare(int index) {
 		return _shares[index];
 	}
 	throw std::exception(__FUNCTION__ "Index is invalid!");
+}
+
+void Party::setShare(Share* share, int index) {
+	if (index < NUM_OF_PARTIES) {
+		_shares[index] = share;
+		return;
+	}
+	throw std::exception(__FUNCTION__ "Index is invalid!");
+
 }

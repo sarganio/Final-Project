@@ -26,7 +26,7 @@ private:
 	pair<Part*, Part*> _value;
 public:
 	~Share();
-	Share(unsigned short index = 0,char name = 0);
+	Share(unsigned short index = 0, char name = 0);
 	Share(const Share& other);
 	Share(Part* v1,Part* v2);
 

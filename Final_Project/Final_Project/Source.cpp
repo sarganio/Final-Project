@@ -2,10 +2,11 @@
 #include <iostream>
 #include <thread>
 #include <iostream>
-#include<set>
+#include <set>
 #include "Helper.h"
 #include "Share.h"
 #include "AddGate.h"
+#include "Circuit.h"
 
 using std::cout;
 using std::endl;
@@ -25,6 +26,26 @@ argv[2],argv[3] - IPs of other parties
 int main(int argc, char* argv[]) {
 
 
+	Party p = Party(1, 100);
+	Share s1(0, 'a');
+	Share s2(0, 'b');
+	Share s3(0, 'c');
+
+	s1[0].setValue(1);
+	s1[1].setValue(2);
+
+	s2[0].setValue(3);
+	s2[1].setValue(4);
+	
+	s3[0].setValue(5);
+	s3[1].setValue(6);
+
+	p.setShare(&s1, 0);
+	p.setShare(&s2, 1);
+	p.setShare(&s3, 2);
+	byte seq[4] = { 1,2,3,4 };
+	Circuit c(seq, &p);
+	
 
 	/*
 	short i,myID = 0;

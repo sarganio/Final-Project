@@ -11,7 +11,7 @@ protected:
 	
 public:
 	Gate() {};
-	Gate(Share* left) :_left(left), _output(nullptr){};
+	Gate(Share* left) :_left(left), _output(new Share()) {};
 
 	//Getters & setters
 	Share* getLeft() { return _left; };
