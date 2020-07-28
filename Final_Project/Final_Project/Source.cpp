@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 	AddGate <Share> a(x,y);
 	cout << a.getLeft().toString() << endl;
 	a.calculateOutput();
-	cout << a.getRight().toString() << endl;
+	//cout << a.getRight().toString() << endl;
 	cout << a.getOutput().toString();
 
 	/*

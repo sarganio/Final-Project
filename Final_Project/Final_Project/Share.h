@@ -1,5 +1,4 @@
 #pragma once
-#include "Share.h"
 #include <vector>
 #include "Helper.h"
 #include "Messages.h"

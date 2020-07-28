@@ -33,6 +33,7 @@ public:
 	//bool sendTo(unsigned short id, void* msg);//send a message to a party number id
 	void connectToAllParties(string IPs[NUM_OF_PARTIES]);//connect to all 3 parties
 	void broadcast(byte * msg, unsigned short messageType)const;//send message to all parties connected to this party
+	Share getShare(int index);
 	unsigned short getID()const;
 	void calcSeq();
 	Share* fRand();

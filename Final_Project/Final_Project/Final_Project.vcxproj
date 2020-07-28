@@ -144,6 +144,7 @@
     <ClCompile Include="Circuit.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Gate.cpp" />
+    <ClCompile Include="MultiplicationGate.cpp" />
     <ClCompile Include="Party.cpp" />
     <ClCompile Include="Share.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="Gate.h" />
+    <ClInclude Include="MultiplicationGate.h" />
     <ClInclude Include="Party.h" />
     <ClInclude Include="Share.h" />
     <ClInclude Include="TcpClient.h" />
