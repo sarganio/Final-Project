@@ -9,7 +9,7 @@ class AddGate : public Gate
 private:
 	operand* _right;
 public:
-	AddGate() : Gate::Gate() {};
+	AddGate() : Gate::Gate(),_right(nullptr) {};
 	AddGate(Share* left, operand* right) : Gate::Gate(left), _right(right) {};
 
 	void calculateOutput() override{

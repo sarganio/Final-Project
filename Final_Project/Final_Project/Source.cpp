@@ -8,6 +8,7 @@
 #include "AddGate.h"
 #include "Circuit.h"
 
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
 	p.setShare(&s3, 2);
 	byte seq[4] = { 1,2,3,4 };
 	Circuit c(seq, &p);
-	
+	c.calculateOutput();
 
 	/*
 	short i,myID = 0;
@@ -68,5 +69,6 @@ int main(int argc, char* argv[]) {
 	TRACE("Bye Bye!");
 	*/
 	getchar();
+	
 	return 0;
 }

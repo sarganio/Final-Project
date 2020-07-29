@@ -71,8 +71,8 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	TRACE("Succssesfully connected to all parties!\n");
 
 }
-void Party::broadcast(byte* msg,unsigned short messageType)const {
-	for (int i = 0; i < NUM_OF_PARTIES ; i++) {
+void Party::broadcast(byte* msg, byte messageType)const {
+	for (unsigned short i = 0; i < NUM_OF_PARTIES ; i++) {
 		if (i == _id)
 			continue;
 		sendTo(i, messageType, msg);
@@ -110,7 +110,7 @@ Party::~Party() {
 		_keys.pop_back();
 	}
 }
-bool Party::sendTo(unsigned short id, unsigned short messageType, byte* msg)const {
+bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
 	toSend.setData(msg);
 	_sockets[id]->writeBuffer(&toSend, HEADER_SIZE);
@@ -153,8 +153,9 @@ Share* Party::fRand() {
 	calledThisFunc++;
 	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
 	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
-	for (int i = 0; i < KEY_LEN / SEQ_LEN; i++)
+	for (unsigned int i = 0; i < KEY_LEN / SEQ_LEN; i++)
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
+		//*(unsigned int*)(IV + i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]->data());
@@ -162,7 +163,7 @@ Share* Party::fRand() {
 
 	_keys[(_id + 2) % NUM_OF_PARTIES] = new SecByteBlock(fromKey,KEY_LEN);
 
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
@@ -200,7 +201,7 @@ void Party::fInput() {
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
 
 	//convert the share recieved from the other parties to Share and add it to the vector _shares
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		Share* receivedShare = new Share(i, 'a' + i);
 		(*receivedShare)[i].setValue(*(unsigned long*)partiesInputs[i]);
 		(*receivedShare)[(i+2)%NUM_OF_PARTIES].setValue(*(unsigned long*)partiesInputs[i]);
@@ -215,7 +216,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 
 	otherShares.resize(NUM_OF_PARTIES);
 
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
 		*(unsigned short*)sendShare = (*shares[i])[(_id+2)%NUM_OF_PARTIES].getIndex();
@@ -229,7 +230,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 	}
 
 	//read answers from other parties
-	for (int i = 0; i <NUM_OF_PARTIES; i++) {
+	for (unsigned short i = 0; i <NUM_OF_PARTIES; i++) {
 		if (i == _id) {
 			otherShares[i] = nullptr;			
 			continue;

@@ -10,7 +10,7 @@ protected:
 	Share* _output;
 	
 public:
-	Gate() {};
+	Gate():_left(nullptr),_output(nullptr) {};
 	Gate(Share* left) :_left(left), _output(new Share()) {};
 
 	//Getters & setters

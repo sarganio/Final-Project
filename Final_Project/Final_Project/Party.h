@@ -2,8 +2,6 @@
 #include <vector>
 #include <string>
 #include <mutex>
-
-
 #include "Messages.h"
 #include "TcpSocket.h"
 #include "Helper.h"
@@ -28,11 +26,11 @@ private:
 	void printKey(unsigned short index)const;
 public:
 	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters
-	bool sendTo(unsigned short id, unsigned short messageType, byte* msg)const;//send message to party[id]
+	bool sendTo(unsigned short id, byte messageType, byte* msg)const;//send message to party[id]
 	void readFrom(unsigned short id,unsigned char* msg);//read message from party number id. this is a blocking function.
 	//bool sendTo(unsigned short id, void* msg);//send a message to a party number id
 	void connectToAllParties(string IPs[NUM_OF_PARTIES]);//connect to all 3 parties
-	void broadcast(byte * msg, unsigned short messageType)const;//send message to all parties connected to this party
+	void broadcast(byte * msg, byte messageType)const;//send message to all parties connected to this party
 	Share* getShare(int index);
 	void setShare(Share* share, int index);
 	unsigned short getID()const;

@@ -1,9 +1,9 @@
 #include "Circuit.h"
 
-#define MIN_NUM_OF_LAYERS 2
+#define MIN_NUM_OF_LAYERS 4
 #define MIN_NUM_OF_GATES 2
 #define RANGE_OF_LAYERS 1
-#define RANGE_OF_GATES 1
+#define RANGE_OF_GATES 2
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
@@ -30,7 +30,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 			int inputLayerLeft = rand() % i;
 			int gateIndexLeft = rand() % _gatesPerLayer[inputLayerLeft];
 
-			if (rand() % 10 > 2) { //Share
+			if (rand() % 2 == 0) { //Share
 				
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
@@ -39,12 +39,12 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
-					_circuit[i][j] = new MultiplicationGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
+					//_circuit[i][j] = new MultiplicationGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 			}
 			else { //const
 				
-				if (true) {//------------------TEMP------------------------------------
+				if (false) {//------------------TEMP------------------------------------
 			
 					_circuit[i][j] = new AddGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % 10 + 1));
 
@@ -58,5 +58,14 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 		
 	}
 
+
+}
+
+void Circuit::calculateOutput() {
+	for (int i = 1; i < _numOfLayers; i++) {
+		for (int j = 0; j < _gatesPerLayer[i]; j++) {
+			_circuit[i][j]->calculateOutput();
+		}
+	}
 
 }

@@ -3,8 +3,7 @@
 
 
 template <class operand>
-
-class MultiplicationGate :public Gate
+class MultiplicationGate : public Gate
 {
 
 private:
@@ -14,6 +13,8 @@ public:
 	MultiplicationGate() {};
 	MultiplicationGate(Share* left, operand* right): Gate::Gate(left), _right(right) {};
 
-	void calculateOutput() override {}
+	void calculateOutput() override {
+		*this->_output = *this->_left * *this->_right;
+	}
 };
 

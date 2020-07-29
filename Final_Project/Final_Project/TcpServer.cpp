@@ -41,7 +41,6 @@ using std::thread;
 		SOCKET s = _socket;
 		//this accepts the client and create a specific socket from server to this client
 		_socket = ::accept(_socket, NULL, NULL);
-
 		if (_socket == INVALID_SOCKET)
 			throw std::exception(__FUNCTION__);
 
