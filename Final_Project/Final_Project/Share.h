@@ -1,5 +1,4 @@
 #pragma once
-#include "Party.h"
 #include <vector>
 #include "Helper.h"
 #include "Messages.h"
@@ -23,7 +22,6 @@ public:
 	inline char getName()const;
 	Part& operator=(long newVal);
 };
-class Party;
 
 class Share {
 private:
@@ -43,7 +41,6 @@ public:
 	Part& operator[](unsigned short index)const;
 
 	Share operator*(int b)const;
-	friend Share* Party::fRand();
 
 	string toString()const;
 };
