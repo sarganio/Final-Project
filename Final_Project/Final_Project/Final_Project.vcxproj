@@ -146,6 +146,7 @@
     <ClCompile Include="Gate.cpp" />
     <ClCompile Include="MultiplicationGate.cpp" />
     <ClCompile Include="Party.cpp" />
+    <ClCompile Include="PartyShare.cpp" />
     <ClCompile Include="Share.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="TcpClient.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Gate.h" />
     <ClInclude Include="MultiplicationGate.h" />
     <ClInclude Include="Party.h" />
+    <ClInclude Include="PartyShare.h" />
     <ClInclude Include="Share.h" />
     <ClInclude Include="TcpClient.h" />
     <ClInclude Include="TcpServer.h" />

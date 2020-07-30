@@ -5,8 +5,6 @@
 #include <string>
 #include <iostream>
 
-
-
 #define SUCCESS 1
 
 using std::string;

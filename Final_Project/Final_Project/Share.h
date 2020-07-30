@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
+#include "PartyShare.h"
 #include "Helper.h"
 #include "Messages.h"
+
 
 using std::pair;
 using std::vector;
@@ -22,7 +24,7 @@ public:
 	inline char getName()const;
 	Part& operator=(long newVal);
 };
-
+class PartyShare;
 class Share {
 private:
 	pair<Part*, Part*> _value;
@@ -41,6 +43,7 @@ public:
 	Part& operator[](unsigned short index)const;
 
 	Share operator*(int b)const;
+	Share operator*(PartyShare& other)const;
 
 	string toString()const;
 };
