@@ -126,3 +126,9 @@ Share::~Share() {
 	this->_value.second = nullptr;
 }
 
+Share Share::operator*(PartyShare& other)const {
+	Party* p = other.getParty();
+	Share* randomNumbers = p->fRand();
+	unsigned int alpha = randomNumbers[p->getID] - randomNumbers[(p->getID + 2) % NUM_OF_PARTIES];
+
+}
