@@ -1,18 +1,22 @@
 #pragma once
+
+#include "Messages.h"
+#include "TcpSocket.h"
+#include "Helper.h"
+#include "Share.h"
+#include "Circuit.h"
+
 #include <vector>
 #include <string>
 #include <mutex>
-#include "Messages.h"
-#include "TcpSocket.h"
-#include "Share.h"
-#include "Helper.h"
-
 
 using std::vector;
 using std::pair;
 using std::string;
 using std::mutex;
 class Share;
+class Circuit;
+
 class Party
 {
 private:
@@ -24,6 +28,7 @@ private:
 	vector<Message*>_msgs;
 	vector<SecByteBlock*>_keys;
 	vector<Share*> _shares;//index of vector is the id of input's party
+	Circuit* _arithmeticCircuit;
 	void printKey(unsigned short index)const;
 public:
 	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters
@@ -36,6 +41,7 @@ public:
 	void setShare(Share* share, int index);
 	unsigned short getID()const;
 	void calcSeq();
+	void calcCircuit();
 	Share* fRand();
 	void fInput();
 	long reconstruct(vector<Share*>& myShare);

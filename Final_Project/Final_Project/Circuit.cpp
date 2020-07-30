@@ -1,4 +1,6 @@
 #include "Circuit.h"
+#include "AddGate.h"
+#include "MultiplicationGate.h"
 
 #define MIN_NUM_OF_LAYERS 4
 #define MIN_NUM_OF_GATES 2

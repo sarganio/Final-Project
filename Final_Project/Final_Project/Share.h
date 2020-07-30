@@ -1,13 +1,12 @@
 #pragma once
-#include <vector>
 #include "PartyShare.h"
 #include "Helper.h"
 #include "Messages.h"
-
+#include <vector>
 
 using std::pair;
 using std::vector;
-
+class Party;
 class Part {
 protected:				
 	long _value = 0;

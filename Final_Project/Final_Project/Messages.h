@@ -1,7 +1,7 @@
 #pragma once
 #define WINDOWS_IGNORE_PACKING_MISMATCH
-#include<cstdint>
 #include "secblock.h"
+#include<cstdint>
 #include <cstddef>
 using CryptoPP::byte;
 

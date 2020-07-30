@@ -286,3 +286,6 @@ void Party::setShare(Share* share, int index) {
 	throw std::exception(__FUNCTION__ "Index is invalid!");
 
 }
+void Party::calcCircuit() {
+	
+}

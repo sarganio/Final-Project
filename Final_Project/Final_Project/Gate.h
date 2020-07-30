@@ -1,7 +1,7 @@
 #pragma once
 #include "Share.h"
 
-
+class Share;
 class Gate
 {
 protected:
@@ -14,8 +14,8 @@ public:
 	Gate(Share* left) :_left(left), _output(new Share()) {};
 
 	//Getters & setters
-	Share* getLeft() { return _left; };
-	Share* getOutput() { return _output; };
+	Share* getLeft() { return _left; }
+	Share* getOutput() { return _output; }
 	
 	void setLeft(Share* input) { _left = input; }
 	void setOutput(Share* output) { _output = output; }

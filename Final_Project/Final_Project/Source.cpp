@@ -1,12 +1,8 @@
-#include "Party.h"
-#include <iostream>
-#include <thread>
 #include <iostream>
 #include <set>
+#include "Party.h"
 #include "Helper.h"
-#include "Share.h"
-#include "AddGate.h"
-#include "Circuit.h"
+
 
 
 using std::cout;

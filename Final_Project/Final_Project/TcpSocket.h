@@ -1,12 +1,12 @@
 #pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include "WSAInitializer.h"
+#include "Messages.h"
+
 #include <winsock2.h>
 #include <iostream>
 #include <thread>
 #include <mutex>
-
-#include "WSAInitializer.h"
-#include "Messages.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 #define IP_LEN 15

@@ -1,9 +1,8 @@
 #pragma once
 #include "Party.h"
 #include "Gate.h"
-#include "AddGate.h"
-#include "MultiplicationGate.h"
 
+class Party;
 class Circuit
 {
 private:
@@ -12,14 +11,8 @@ private:
 	int _numOfLayers;
 	vector<int> _gatesPerLayer;
 
-
-
 public:
 	Circuit():_party(nullptr),_numOfLayers(0) {};
 	Circuit(byte seed[SEQ_LEN], Party* party);
 	void calculateOutput();
-
-
-
 };
-
