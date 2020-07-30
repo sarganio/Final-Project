@@ -98,6 +98,7 @@ Share Share::operator+(long scalar)const{
 //operator * with constant overload
 Share Share::operator*(int constant)const {
 	Part* a = nullptr,* b = nullptr;
+
 	if (this->_value.first) 
 		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() * constant);
 

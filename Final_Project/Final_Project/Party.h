@@ -4,14 +4,14 @@
 #include <mutex>
 #include "Messages.h"
 #include "TcpSocket.h"
-#include "Helper.h"
 #include "Share.h"
+#include "Helper.h"
 
 using std::vector;
 using std::pair;
 using std::string;
 using std::mutex;
-
+class Share;
 class Party
 {
 private:

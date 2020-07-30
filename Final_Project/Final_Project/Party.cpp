@@ -1,12 +1,11 @@
 //#include <openssl/rand.h>
+#include "Party.h"
+#include "TcpClient.h"
+#include "TcpServer.h"
 #include <string>
 #include <iostream>
 
 
-#include "Party.h"
-#include "TcpClient.h"
-#include "TcpServer.h"
-#include "Helper.h"
 
 #define SUCCESS 1
 

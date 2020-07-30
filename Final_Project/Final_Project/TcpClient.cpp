@@ -1,6 +1,6 @@
+#include "TcpClient.h"
 #include <cstring>
 #include <sstream>
-#include "TcpClient.h"
 #include <iostream>
 #include "Messages.h"
 #include "Helper.h"
