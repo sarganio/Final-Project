@@ -1,8 +1,10 @@
 #pragma once
 #include "Party.h"
 #include "Share.h"
-class Share;
+
 class Party;
+class Share;
+
 class PartyShare
 {
 		Share* _s;

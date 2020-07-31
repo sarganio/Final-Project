@@ -3,6 +3,7 @@
 #include "Gate.h"
 
 class Party;
+
 class Circuit
 {
 private:

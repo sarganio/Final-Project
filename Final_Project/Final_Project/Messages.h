@@ -1,5 +1,5 @@
 #pragma once
-#define WINDOWS_IGNORE_PACKING_MISMATCH
+//#define WINDOWS_IGNORE_PACKING_MISMATCH
 #include "secblock.h"
 #include<cstdint>
 #include <cstddef>
@@ -16,10 +16,12 @@ using CryptoPP::byte;
 #define BASE_IP "192.168.0."
 
 #define HEADER_SIZE 3
+#define ALIGNIG sizeof(void*)
 
 enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT};
 
-#pragma pack(1)//allow no padding
+//#pragma pack(1)//allow no padding
+#pragma pack(push, 1)
 typedef class Message {
 private:
 	byte _type;
@@ -64,3 +66,4 @@ public:
 		_data = nullptr;
 	}
 } Message;
+#pragma pack(pop)

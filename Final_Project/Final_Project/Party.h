@@ -1,10 +1,10 @@
 #pragma once
-
-#include "Messages.h"
 #include "TcpSocket.h"
 #include "Helper.h"
+#include "Messages.h"
+
 #include "Share.h"
-#include "Circuit.h"
+
 
 #include <vector>
 #include <string>
@@ -14,6 +14,7 @@ using std::vector;
 using std::pair;
 using std::string;
 using std::mutex;
+
 class Share;
 class Circuit;
 

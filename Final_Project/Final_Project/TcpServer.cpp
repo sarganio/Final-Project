@@ -7,7 +7,7 @@
 #define BLOCKING -1
 
 using std::thread;
-	TcpServer::TcpServer(int port):TcpSocket(-1,port),_welcomSocketFD(_socket)
+	TcpServer::TcpServer(unsigned short port):TcpSocket(-1,port),_welcomSocketFD(_socket)
 	{
 		_hostAddress = "";
 		_port = port;

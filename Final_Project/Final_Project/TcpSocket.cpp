@@ -1,8 +1,7 @@
-#include <iostream>
-#include <string>
 #include "TcpSocket.h"
 #include "Helper.h"
-
+#include <iostream>
+#include <string>
 
 using std::cerr;
 

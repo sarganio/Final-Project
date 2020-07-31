@@ -1,5 +1,6 @@
 #pragma once
 #include "Gate.h"
+#include "Share.h"
 
 
 template <class operand>

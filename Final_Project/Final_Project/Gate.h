@@ -1,7 +1,6 @@
 #pragma once
 #include "Share.h"
 
-class Share;
 class Gate
 {
 protected:

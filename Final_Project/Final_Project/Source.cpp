@@ -1,8 +1,8 @@
-#include <iostream>
-#include <set>
+
 #include "Party.h"
 #include "Helper.h"
-
+#include <iostream>
+#include <set>
 
 
 using std::cout;

@@ -143,9 +143,9 @@ void Party::calcSeq() {
 Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;
 	Share* ans = new Share((_id+2)%NUM_OF_PARTIES,'a'+calledThisFunc);
-	byte alpha[NUM_OF_PARTIES][KEY_LEN];//TODO: conver to Share!
-	byte fromKey[KEY_LEN];
-	byte IV[KEY_LEN];
+	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};//TODO: conver to Share!
+	byte fromKey[KEY_LEN]{};
+	byte IV[KEY_LEN]{};
 	AutoSeededRandomPool rnd;
 	calledThisFunc++;
 	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
@@ -237,7 +237,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 		(*otherShares[i])[(i+2)%NUM_OF_PARTIES] = *(long*)(rawData[i] + 2);//put the value recievied in the share
 		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
 	}
-	bool isValid;
+	bool isValid = false;
 	switch (_id) {
 	case 0:
 		isValid = (*otherShares[1])[1].getValue() == (*otherShares[2])[1].getValue() && (*shares[_id])[0].getValue() == (*otherShares[1])[0].getValue() && (*shares[_id])[2].getValue() == (*otherShares[2])[2].getValue();
@@ -249,7 +249,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 		isValid = (*otherShares[1])[0].getValue() == (*otherShares[0])[0].getValue() && (*shares[_id])[1].getValue() == (*otherShares[1])[1].getValue() && (*shares[_id])[2].getValue() == (*otherShares[0])[2].getValue();
 		break;
 	}
-	if (!isValid)
+	if (! isValid)
 		throw std::exception(__FUNCTION__  "I'm surrounded by liers!");
 
 	//perform validity check that the answers we got 

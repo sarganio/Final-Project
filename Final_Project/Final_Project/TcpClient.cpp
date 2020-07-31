@@ -1,9 +1,10 @@
 #include "TcpClient.h"
+#include "Messages.h"
+#include "Helper.h"
+#include <WS2tcpip.h>
 #include <cstring>
 #include <sstream>
 #include <iostream>
-#include "Messages.h"
-#include "Helper.h"
 #include <thread>
 #define IP_INDEX 1
 using std::thread;
@@ -32,7 +33,8 @@ int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* m
 
 	sa.sin_port = htons(hostPort); // port that server will listen to
 	sa.sin_family = AF_INET;   // must be AF_INET
-	sa.sin_addr.s_addr = inet_addr(hostname.c_str());    // the IP of the server
+	sa.sin_addr.s_addr = InetPton(AF_INET, hostname.c_str(), &sa.sin_addr.s_addr);    // the IP of the server
+	//sa.sin_addr.s_addr = inet_addr(hostname.c_str());    // the IP of the server
 
 	int status,i = 0;
 	while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {

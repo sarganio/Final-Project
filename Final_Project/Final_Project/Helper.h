@@ -14,19 +14,18 @@
 #define TRACE(msg, ...) // do nothing
 #endif
 #include "pch.h"
-#include <iostream>
 #include "aes.h"
-#include <Windows.h>
 #include "osrng.h"
+#include <WinSock2.h>
+#include <Windows.h>
+#include <iostream>
+
 using CryptoPP::AutoSeededRandomPool;
 
 #include <iostream>
 using std::cout;
 using std::cerr;
 using std::endl;
-
-#include <cstdlib>
-using std::exit;
 
 #include "cryptlib.h"
 using CryptoPP::Exception;
@@ -46,12 +45,17 @@ using CryptoPP::AES;
 #include "ccm.h"
 using CryptoPP::CBC_Mode;
 
+#include "secblock.h"
+using CryptoPP::SecByteBlock;
+
+#include <cstdlib>
+using std::exit;
+
 //byte variable type
 #include <cstddef>
 using CryptoPP::byte;
 
-#include "secblock.h"
-using CryptoPP::SecByteBlock;
+
 #include <string>
 
 using std::string;
