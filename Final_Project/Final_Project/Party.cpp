@@ -196,14 +196,18 @@ void Party::fInput() {
 	//reciecve other parties salted inputs
 	readFrom((_id + 2) % NUM_OF_PARTIES, partiesInputs[(_id + 2) % NUM_OF_PARTIES]);
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
-
-	//convert the share recieved from the other parties to Share and add it to the vector _shares
-	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
-		Share* receivedShare = new Share(i, 'a' + i);
-		(*receivedShare)[i].setValue(*(unsigned long*)partiesInputs[i]);
-		(*receivedShare)[(i+2)%NUM_OF_PARTIES].setValue(*(unsigned long*)partiesInputs[i]);
-		_shares[i] = receivedShare;
+	
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		_shares[i] = new Share(*randomShares[i] + (*(long*)partiesInputs[i]));
 	}
+
+	////convert the share recieved from the other parties to Share and add it to the vector _shares
+	//for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
+	//	Share* receivedShare = new Share((i+2)%NUM_OF_PARTIES, 'a' + i);
+	//	(*receivedShare)[i].setValue(*(unsigned long*)partiesInputs[i]);
+	//	(*receivedShare)[(i+2)%NUM_OF_PARTIES].setValue(*(unsigned long*)partiesInputs[i]);////fucked
+	//	_shares[i] = receivedShare;
+	//}
 }
 long Party::reconstruct(vector<Share*>& shares) {
 	byte name = (*shares[_id])[_id].getName();
