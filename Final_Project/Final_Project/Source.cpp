@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
 		Party p = Party(myID,1000);
 		p.connectToAllParties(IPs);
 		p.fInput();
+		p.calcCircuit();
 	}
 	catch (std::exception & exc) {
 		cout << exc.what() << endl;

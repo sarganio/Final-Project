@@ -71,3 +71,9 @@ void Circuit::calculateOutput() {
 	}
 
 }
+Share* Circuit::getOutput() {
+	calculateOutput();
+	unsigned short lastLayerIndex = _numOfLayers - 1;
+	unsigned short lastGate = this->_gatesPerLayer[_numOfLayers - 1];
+	return this->_circuit[lastLayerIndex][lastGate]->getOutput();
+}

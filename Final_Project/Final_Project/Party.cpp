@@ -287,5 +287,5 @@ void Party::setShare(Share* share, int index) {
 
 }
 void Party::calcCircuit() {
-	
+	//_arithmeticCircuit->getOutput();
 }

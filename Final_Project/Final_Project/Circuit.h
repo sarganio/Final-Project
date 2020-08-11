@@ -16,4 +16,5 @@ public:
 	Circuit():_party(nullptr),_numOfLayers(0) {};
 	Circuit(byte seed[SEQ_LEN], Party* party);
 	void calculateOutput();
+	Share* getOutput();
 };
