@@ -20,32 +20,28 @@ class Circuit;
 class Party
 {
 private:
-	unsigned short _id;//unique identifier, lowest ip receive id = 1 and so on. 
-	long _input;//secret input 
-	unsigned char _seq[SEQ_LEN];
-	byte _finalSeq[SEQ_LEN]{};
-	vector<TcpSocket*> _sockets;//socket for all TCP connection. sockets[0] is a UDP soket
-	vector<Message*>_msgs;
-	vector<SecByteBlock*>_keys;
-	vector<Share*> _shares;//index of vector is the id of input's party
-	Circuit* _arithmeticCircuit;
-	void printKey(unsigned short index)const;
+	unsigned short _id;												//unique identifier, lowest ip receive id = 1 and so on.
+	long _input;													//secret input.
+	byte _finalSeq[SEQ_LEN]{};										//mutual counter for all participents.
+	vector<TcpSocket*> _sockets;									//socket for all TCP connection with other parties.
+	vector<Message*>_msgs;											//vector which contains all recieved messages
+	vector<SecByteBlock*>_keys;										//vector which contains all the keys required for generating random numbers
+	vector<Share*> _shares;											//vector which contains each party's share.index of vector is the id of input's party
+	Circuit* _arithmeticCircuit;									//the function which needs to be computed.
+	void printKey(unsigned short index)const;						//recieves the index of the key's owner and print it.
 public:
-	Party(short myID, long input);//C'tor takes an ID and a secret input as parameters
-	bool sendTo(unsigned short id, byte messageType, byte* msg)const;//send message to party[id]
-	void readFrom(unsigned short id,unsigned char* msg);//read message from party number id. this is a blocking function.
-	//bool sendTo(unsigned short id, void* msg);//send a message to a party number id
-	void connectToAllParties(string IPs[NUM_OF_PARTIES]);//connect to all 3 parties
-	void broadcast(byte * msg, byte messageType)const;//send message to all parties connected to this party
-	Share* getShare(int index);
-	void setShare(Share* share, int index);
-	unsigned short getID()const;
-	void calcSeq();
-	void calcCircuit();
-	Share* fRand();
-	void fInput();
-	long reconstruct(vector<Share*>& myShare);
-	~Party();
-
+	Party(short myID, long input);									//C'tor-takes an ID and a secret input as parameters
+	bool sendTo(unsigned short id, byte messageType,byte* msg)const;//send message to party[id]
+	void readFrom(unsigned short id,unsigned char* msg);			//read message from party number id. this is a blocking function.
+	void connectToAllParties(string IPs[NUM_OF_PARTIES]);			//connect to all 3 parties
+	void broadcast(byte * msg, byte messageType)const;				//send message to all parties
+	Share* getShare(int index);										//getter by index for the shares held by this party.
+	void setShare(Share* share, int index);							//setter by index for the shares held by this party.
+	unsigned short getID()const;									//getter for this party ID
+	void calcSeq();													//calculate the joint seq. Initiates at the begining of the protocol.
+	void calcCircuit();												//calculate the output of all the gates in the circuit
+	Share* fRand();													//fRand functuality as described in the paper.
+	void fInput();													//fInput functuality as described in the paper.
+	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
+	~Party();														//D'tor- release dynamicly allocated memory in heap.
 };
-
