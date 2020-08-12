@@ -140,7 +140,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AddGate.cpp" />
     <ClCompile Include="Circuit.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Gate.cpp" />

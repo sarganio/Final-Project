@@ -45,9 +45,6 @@
     <ClCompile Include="Gate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AddGate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MultiplicationGate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
