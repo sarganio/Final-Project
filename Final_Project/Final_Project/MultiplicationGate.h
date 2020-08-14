@@ -2,13 +2,13 @@
 #include "Gate.h"
 #include "Share.h"
 
-
+//This class represents a multipication gate which has 2 inputs: A share and a constant or 2 Shares
 template <class operand>
 class MultiplicationGate : public Gate
 {
 
 private:
-	operand* _right;
+	operand* _right;																	//either a Share or a constant
 
 public:
 	MultiplicationGate() {};

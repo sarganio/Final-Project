@@ -143,7 +143,7 @@
     <ClCompile Include="Circuit.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Gate.cpp" />
-    <ClCompile Include="MultiplicationGate.cpp" />
+    <ClCompile Include="Messages.cpp" />
     <ClCompile Include="Party.cpp" />
     <ClCompile Include="PartyShare.cpp" />
     <ClCompile Include="Share.cpp" />

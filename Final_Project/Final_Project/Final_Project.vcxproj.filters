@@ -45,10 +45,10 @@
     <ClCompile Include="Gate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiplicationGate.cpp">
+    <ClCompile Include="PartyShare.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PartyShare.cpp">
+    <ClCompile Include="Messages.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

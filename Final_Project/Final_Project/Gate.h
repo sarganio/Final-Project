@@ -13,13 +13,13 @@ public:
 	Gate(Share* left) :_left(left), _output(new Share()) {};
 
 	//Getters & setters
-	Share* getLeft() { return _left; }
-	Share* getOutput() { return _output; }
+	Share* getLeft();
+	Share* getOutput();
 	
-	void setLeft(Share* input) { _left = input; }
-	void setOutput(Share* output) { _output = output; }
+	void setLeft(Share* input);
+	void setOutput(Share* output);
 
-	virtual void calculateOutput() = 0;
+	virtual void calculateOutput() = 0;//calculate the output of this Gate(Addition/Multipication)
 
 };
 

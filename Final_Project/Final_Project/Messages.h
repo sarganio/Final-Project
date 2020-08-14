@@ -24,46 +24,18 @@ enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT};
 #pragma pack(push, 1)
 typedef class Message {
 private:
-	byte _type;
-	unsigned short _size;
-	byte* _data; 
-	bool _isRead = true;
+	byte _type;				//an identifier to ID each type of message.
+	unsigned short _size;	//the size of the accual message without header(_type+_size)
+	byte* _data;			//an array of length _size + 1 for null character. 
+	bool _isRead = true;	//flag to inidicate wether the message was read.
 public:
-	Message(byte type = 0):_type(type),_size(0){
-		setSize(type);
-		_data = new byte[1 + (type ? _size : MAX_MESSAGE_SIZE)]();//Increment by 1 for null character. Allocate MAX_MESSAGE_SIZE in case type = 0.
-	}
-	void setSize(int type) {
-		switch (type)
-		{
-		case SEQ:
-			_size = SEQ_LEN;
-			break;
-		case KEY:
-			_size = KEY_LEN;
-			break;
-		case RECONSTRUCT:
-			_size = RECONSTRUCT_LEN;
-			break;
-		case ENC_INPUT:
-			_size = ENC_INPUT_LEN;
-			break;
-		default:
-			break;
-		}
-	}
-	short getSize()const { return _size; }
-	bool getIsRead()const { return _isRead; }
-	void setData(const byte* dataPtr) {
-		memcpy(_data , dataPtr, _size);
-	}
-	void setIsRead(bool val) { this->_isRead = val; }
-	byte* getData()const { return _data; }
-
-	~Message(){
-		if(_data)
-			delete[] _data;
-		_data = nullptr;
-	}
+	Message(byte type = 0);				
+	void setSize(int type);
+	short getSize()const;
+	bool getIsRead()const;
+	void setData(const byte* dataPtr);
+	void setIsRead(bool val);
+	byte* getData()const;
+	~Message();
 } Message;
 #pragma pack(pop)

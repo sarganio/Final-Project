@@ -65,7 +65,7 @@ class Helper
 	//static void decryptAES(byte* chiperText, size_t messageLen, CryptoPP::SecByteBlock key, CryptoPP::SecByteBlock iv);
 public:
 	//returns true if last octet is bigger that second's
-	static bool IPCompare(string first, string second);
-	static void encryptAES(byte* plainText, size_t messageLen, SecByteBlock key,byte* IV);
+	static bool IPCompare(string first, string second);										//return true if first is greater than second.
+	static void encryptAES(byte* plainText, size_t messageLen, SecByteBlock key,byte* IV);	//perform an AES encryption.
 };
 
