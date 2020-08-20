@@ -2,6 +2,7 @@
 #include "Party.h"
 #include "TcpClient.h"
 #include "TcpServer.h"
+#include "Circuit.h"
 #include <string>
 #include <iostream>
 
@@ -200,7 +201,8 @@ void Party::fInput() {
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		_shares[i] = new Share(*randomShares[i] + (*(long*)partiesInputs[i]));
 	}
-
+	//build circuit
+	_arithmeticCircuit = new Circuit(_finalSeq, this);
 	////convert the share recieved from the other parties to Share and add it to the vector _shares
 	//for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 	//	Share* receivedShare = new Share((i+2)%NUM_OF_PARTIES, 'a' + i);
@@ -290,6 +292,6 @@ void Party::setShare(Share* share, int index) {
 	throw std::exception(__FUNCTION__ "Index is invalid!");
 
 }
-void Party::calcCircuit() {
-	//_arithmeticCircuit->getOutput();
+Share* Party::calcCircuit(){
+	return _arithmeticCircuit->getOutput();
 }

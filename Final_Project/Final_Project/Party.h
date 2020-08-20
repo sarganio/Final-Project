@@ -39,7 +39,7 @@ public:
 	void setShare(Share* share, int index);							//setter by index for the shares held by this party.
 	unsigned short getID()const;									//getter for this party ID
 	void calcSeq();													//calculate the joint seq. Initiates at the begining of the protocol.
-	void calcCircuit();												//calculate the output of all the gates in the circuit
+	Share* calcCircuit();												//calculate the output of all the gates in the circuit
 	Share* fRand();													//fRand functuality as described in the paper.
 	void fInput();													//fInput functuality as described in the paper.
 	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
