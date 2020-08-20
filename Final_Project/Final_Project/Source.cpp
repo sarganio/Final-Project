@@ -57,7 +57,8 @@ int main(int argc, char* argv[]) {
 		Party p = Party(myID,1000);
 		p.connectToAllParties(IPs);
 		p.fInput();
-		cout<<"The result is:"<<p.calcCircuit() << endl;
+
+		cout<<"The result is:"<< p.calcCircuit()->toString() << endl;
 	}
 	catch (std::exception & exc) {
 		cout << exc.what() << endl;

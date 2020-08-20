@@ -37,11 +37,11 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
 
-				if(false){//------------------TEMP------------need to set probability---------------------
+				if(rand() % 2 == 0){//------------------TEMP------------need to set probability---------------------
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
-					//_circuit[i][j] = new MultiplicationGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
+					_circuit[i][j] = new MultiplicationGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 			}
 			else { //const
@@ -66,7 +66,14 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
-			_circuit[i][j]->calculateOutput();
+			if (typeid(*_circuit[i][j])==typeid(MultiplicationGate<Share>)) {
+				Party* p = _party;
+				Share* randomNumbers = p->fRand();
+				unsigned int alpha = (*randomNumbers)[p->getID()].getValue() - (*randomNumbers)[(p->getID() + 2) % NUM_OF_PARTIES].getValue();
+				std::cout << "Alpha is: " <<alpha<< std::endl;
+			}
+			else
+				_circuit[i][j]->calculateOutput();
 		}
 	}
 
@@ -75,5 +82,5 @@ Share* Circuit::getOutput() {
 	calculateOutput();
 	unsigned short lastLayerIndex = _numOfLayers - 1;
 	unsigned short lastGate = this->_gatesPerLayer[_numOfLayers - 1];
-	return this->_circuit[lastLayerIndex][lastGate]->getOutput();
+	return this->_circuit[lastLayerIndex][lastGate]->getOutput();///possible crush
 }

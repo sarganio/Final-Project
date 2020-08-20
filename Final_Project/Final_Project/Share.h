@@ -46,7 +46,7 @@ public:
 	Part& operator[](unsigned short index)const;
 
 	Share operator*(int b)const;
-	Share operator*(PartyShare& other)const;
+	Share operator*(Share& other)const;
 
 	string toString()const;
 };

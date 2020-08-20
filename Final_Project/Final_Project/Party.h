@@ -1,9 +1,11 @@
 #pragma once
+#include "Share.h"
+
 #include "TcpSocket.h"
 #include "Helper.h"
 #include "Messages.h"
 
-#include "Share.h"
+
 
 #include <vector>
 #include <string>
