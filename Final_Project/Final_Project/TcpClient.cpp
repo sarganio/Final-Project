@@ -40,7 +40,7 @@ int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* m
 	int status,i = 0;
 	while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {
 		TRACE("ID to connect %d: Attempt #%d", hostPort - BASE_PORT, ++i);
-		Sleep(500);
+		//Sleep(500);
 	}
 
 	if (status == INVALID_SOCKET)
