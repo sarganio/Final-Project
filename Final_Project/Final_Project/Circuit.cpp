@@ -68,7 +68,7 @@ void Circuit::calculateOutput() {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
 			if (typeid(*_circuit[i][j])==typeid(MultiplicationGate<Share>)) {
 				Party* p = _party;
-				Share* randomNumbers = p->fRand();
+				Share* randomNumbers = p->fRand();//memory needs to be released!!
 				unsigned int alpha = (*randomNumbers)[p->getID()].getValue() - (*randomNumbers)[(p->getID() + 2) % NUM_OF_PARTIES].getValue();
 				std::cout << "Alpha is: " <<alpha<< std::endl;
 			}

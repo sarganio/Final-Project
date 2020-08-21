@@ -15,7 +15,7 @@ using std::endl;
 
 Party::Party(short myID,long input):_id(myID),_input(input){
 	//for Dbug
-	srand(5);
+	srand(10);
 
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
@@ -200,12 +200,17 @@ void Party::fInput() {
 	//reciecve other parties salted inputs
 	readFrom((_id + 2) % NUM_OF_PARTIES, partiesInputs[(_id + 2) % NUM_OF_PARTIES]);
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
+	memcpy_s(partiesInputs + _id, sizeof(long), &randomNum, sizeof(long));
 	
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		_shares[i] = new Share(*randomShares[i] + (*(long*)partiesInputs[i]));
 	}
 	//build circuit
 	_arithmeticCircuit = new Circuit(_finalSeq, this);
+	//release the memory which was allocated in fRand
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		delete randomShares[i];
+	}
 	////convert the share recieved from the other parties to Share and add it to the vector _shares
 	//for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 	//	Share* receivedShare = new Share((i+2)%NUM_OF_PARTIES, 'a' + i);
