@@ -14,6 +14,9 @@ using std::endl;
 
 
 Party::Party(short myID,long input):_id(myID),_input(input){
+	//for Dbug
+	srand(5);
+
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
 	this->_msgs.resize(NUM_OF_PARTIES);

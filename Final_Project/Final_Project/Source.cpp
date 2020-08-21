@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
 	}
 	cout << myID << endl;
 	try {
-		Party p = Party(myID,1000);
+		Party p = Party(myID,1);
 		p.connectToAllParties(IPs);
 		p.fInput();
 
