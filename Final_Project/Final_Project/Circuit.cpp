@@ -1,6 +1,7 @@
 #include "Circuit.h"
 #include "AddGate.h"
 #include "MultiplicationGate.h"
+#include "PartyShare.h"
 
 #define MIN_NUM_OF_LAYERS 4
 #define MIN_NUM_OF_GATES 2
@@ -41,7 +42,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
-					_circuit[i][j] = new MultiplicationGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
+					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),new PartyShare(_circuit[inputLayerRight][gateIndexRight]->getOutput(),_party));
 				}
 			}
 			else { //const
@@ -62,27 +63,27 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 
 
 }
-int Circuit::correlatedRandomness(Party& p) const{
-	Share* randomNumbers = p.fRand();//memory needs to be released!!
-	return (*randomNumbers)[p.getID()].getValue() - (*randomNumbers)[(p.getID() + 2) % NUM_OF_PARTIES].getValue();
-}
-Share Circuit::calculateOutputMull(MultiplicationGate<Share*>& g) {
-	Share& multipicationOutput = *g.getOutput();
-	Share& leftInput = *g.getLeft();
-	Share& rightOutput = *g.getRight();
-
-	long firstPartOputput;//needs to compute Zi and send it to +1
-	return multipicationOutput;
-}
+//int Circuit::correlatedRandomness(Party& p) const{
+//	Share* randomNumbers = p.fRand();//memory needs to be released!!
+//	return (*randomNumbers)[p.getID()].getValue() - (*randomNumbers)[(p.getID() + 2) % NUM_OF_PARTIES].getValue();
+//}
+//Share Circuit::calculateOutputMull(MultiplicationGate<Share*>& g) {
+//	Share& multipicationOutput = *g.getOutput();
+//	Share& leftInput = *g.getLeft();
+//	Share& rightOutput = *(Share*)g.getRight();
+//
+//	long firstPartOputput;//needs to compute Zi and send it to +1
+//	return multipicationOutput;
+//}
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
-			if (typeid(*_circuit[i][j])==typeid(MultiplicationGate<Share>)) {
-				unsigned int alpha = correlatedRandomness(*_party);
-				std::cout << "Alpha is: " <<alpha<< std::endl;
+			//if (typeid(*_circuit[i][j])==typeid(MultiplicationGate<Share>)) {
+			//	unsigned int alpha = 0;//correlatedRandomness(*_party);
+			//	std::cout << "Alpha is: " <<alpha<< std::endl;
 
-			}
-			else
+			//}
+			//else
 				_circuit[i][j]->calculateOutput();
 		}
 	}

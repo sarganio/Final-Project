@@ -141,10 +141,10 @@ Share::~Share() {
 	this->_value.second = nullptr;
 }
 
-Share Share::operator*(Share& other)const {
-	Share* randomNumbers = new Share();
-	//Party* p = other.getParty();
-	//Share* randomNumbers = p->fRand();
-	//unsigned int alpha = (*randomNumbers)[p->getID()].getValue() - (*randomNumbers)[(p->getID() + 2) % NUM_OF_PARTIES].getValue();
-	return *randomNumbers;
-}
+//Share Share::operator*(Share& other)const {
+//	Share* randomNumbers = new Share();
+//	//Party* p = other.getParty();
+//	//Share* randomNumbers = p->fRand();
+//	//unsigned int alpha = (*randomNumbers)[p->getID()].getValue() - (*randomNumbers)[(p->getID() + 2) % NUM_OF_PARTIES].getValue();
+//	return *randomNumbers;
+//}

@@ -2,14 +2,13 @@
 
 #include "Helper.h"
 #include "Messages.h"
-#include "PartyShare.h"
+//#include "PartyShare.h"
 #include <vector>
 
 using std::pair;
 using std::vector;
 
-class Party;
-class PartyShare;
+
 
 class Part {
 protected:				
@@ -46,7 +45,6 @@ public:
 	Part& operator[](unsigned short index)const;
 
 	Share operator*(int b)const;
-	Share operator*(Share& other)const;
 
 	string toString()const;
 };

@@ -4,11 +4,16 @@
 
 class Party;
 
-class PartyShare
+class PartyShare:public Share
 {
 		Party* _owner;
 public:
-	//Share* getShare()const { return new Share(); }
+	PartyShare(Share* prevOutput, Party* p) :Share(*prevOutput) {
+		_owner = p;
+	}
 	Party* getParty()const { return _owner; }
+	friend Share operator*(Share& left, PartyShare& right) {//TODO----------------------------
+		return Share();
+	}
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Party.h"
 #include "Gate.h"
-#include "MultiplicationGate.h"
+
 
 class Party;
 
@@ -18,6 +18,6 @@ public:
 	Circuit(byte seed[SEQ_LEN], Party* party);
 	void calculateOutput();						//computes the outout of each gate
 	Share* getOutput();							//get the result of the circuit
-	int correlatedRandomness(Party& p) const;	//calculate correlated randomness as described in pepare.
-	Share calculateOutputMull(MultiplicationGate<Share*>& g);
+	//int correlatedRandomness(Party& p) const;	//calculate correlated randomness as described in pepare.
+	//Share calculateOutputMull(MultiplicationGate<Share*>& g);
 };
