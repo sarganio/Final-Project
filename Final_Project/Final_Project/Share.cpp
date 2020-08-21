@@ -85,7 +85,7 @@ Share Share::operator+(long scalar)const{
 	Part* a = nullptr; 
 	
 	//Share ans = Share(a, b);
-	if (this->_value.first->getIndex() != 0)
+	if (this->_value.first->getIndex() != 0 && this->_value.second->getIndex() != 0)
 		return *this;
 	Part* b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue());
 	if (this->_value.first) {
