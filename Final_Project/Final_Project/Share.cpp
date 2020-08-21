@@ -83,16 +83,26 @@ Share Share::operator+(const Share& other) const {
 //operator + with constant overload
 Share Share::operator+(long scalar)const {
 	Part* a = nullptr;
+	Part* b = nullptr;
+	if (this->_value.first->getIndex() == 0) {
+		a = new Part(_value.first->getName(), 0, this->_value.first->getValue() + scalar);
+		b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue());
 
+	}
+	else if(this->_value.second->getIndex() == 0) {
+		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue());
+		b = new Part(_value.second->getName(), 0, this->_value.second->getValue() + scalar);
+	}
+	return Share(a, b);
 	//Share ans = Share(a, b);
-	if (this->_value.first->getIndex() != 0 && this->_value.second->getIndex() != 0)
+	/*if (this->_value.first->getIndex() != 0 && this->_value.second->getIndex() != 0)
 		return *this;
 	Part* b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue());
 	if (this->_value.first) {
 		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() + scalar);
-	}
+	}*/
 	//insure that the original order of indexes doesnt change
-	return a->getIndex() ? Share(a, b) : Share(b, a);
+	//return a->getIndex() ? Share(a, b) : Share(b, a);
 }
 
 //operator * with constant overload
