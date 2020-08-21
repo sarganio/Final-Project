@@ -81,9 +81,9 @@ Share Share::operator+(const Share& other) const {
 }
 
 //operator + with constant overload
-Share Share::operator+(long scalar)const{
-	Part* a = nullptr; 
-	
+Share Share::operator+(long scalar)const {
+	Part* a = nullptr;
+
 	//Share ans = Share(a, b);
 	if (this->_value.first->getIndex() != 0 && this->_value.second->getIndex() != 0)
 		return *this;
@@ -91,8 +91,8 @@ Share Share::operator+(long scalar)const{
 	if (this->_value.first) {
 		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() + scalar);
 	}
-	return Share(a, b);
-	//return Share(a, this->_value.second);
+	//insure that the original order of indexes doesnt change
+	return a->getIndex() ? Share(a, b) : Share(b, a);
 }
 
 //operator * with constant overload

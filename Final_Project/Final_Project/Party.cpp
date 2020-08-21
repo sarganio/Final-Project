@@ -200,8 +200,8 @@ void Party::fInput() {
 	//reciecve other parties salted inputs
 	readFrom((_id + 2) % NUM_OF_PARTIES, partiesInputs[(_id + 2) % NUM_OF_PARTIES]);
 	readFrom((_id + 1) % NUM_OF_PARTIES, partiesInputs[(_id + 1) % NUM_OF_PARTIES]);
-	memcpy_s(partiesInputs + _id, sizeof(long), &randomNum, sizeof(long));
-	
+	memcpy_s(partiesInputs+_id, sizeof(long), &randomNum, sizeof(long));
+
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		_shares[i] = new Share(*randomShares[i] + (*(long*)partiesInputs[i]));
 	}
