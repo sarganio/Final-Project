@@ -146,14 +146,17 @@ void Party::calcSeq() {
 }
 Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;
-	Share* ans = new Share((_id+2)%NUM_OF_PARTIES,'a'+calledThisFunc);
+	calledThisFunc++;
+	
 	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};//TODO: conver to Share!
 	byte fromKey[KEY_LEN]{};
 	byte IV[KEY_LEN]{};
 	AutoSeededRandomPool rnd;
-	calledThisFunc++;
+	Share* ans = new Share((_id + 2) % NUM_OF_PARTIES, 'a' + calledThisFunc);
+	
 	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
 	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
+	
 	for (unsigned int i = 0; i < KEY_LEN / SEQ_LEN; i++)
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 		//*(unsigned int*)(IV + i * SEQ_LEN) = *(unsigned int*)_finalSeq;

@@ -1,4 +1,5 @@
 #include "Share.h"
+#include <cassert>
 
 //-------------------------------------------------Part----------------------------------------------------------
 
@@ -46,7 +47,8 @@ Share::Share(unsigned short index, char name) {
 //copy constructor
 Share::Share(const Share& other) {
 	//this->_value = other._value;
-	*this = other;
+	if(this != &other)
+		*this = other;
 }//?????
 
 Share& Share::operator=(Share const& other) {
@@ -84,15 +86,18 @@ Share Share::operator+(const Share& other) const {
 Share Share::operator+(long scalar)const {
 	Part* a = nullptr;
 	Part* b = nullptr;
+	assert(this->_value.first->getIndex() != this->_value.second->getIndex());
 	if (this->_value.first->getIndex() == 0) {
 		a = new Part(_value.first->getName(), 0, this->_value.first->getValue() + scalar);
 		b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue());
 
 	}
-	else if(this->_value.second->getIndex() == 0) {
+	else if (this->_value.second->getIndex() == 0) {
 		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue());
 		b = new Part(_value.second->getName(), 0, this->_value.second->getValue() + scalar);
 	}
+	else
+		return *this;
 	return Share(a, b);
 	//Share ans = Share(a, b);
 	/*if (this->_value.first->getIndex() != 0 && this->_value.second->getIndex() != 0)

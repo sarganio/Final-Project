@@ -62,15 +62,25 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 
 
 }
+int Circuit::correlatedRandomness(Party& p) const{
+	Share* randomNumbers = p.fRand();//memory needs to be released!!
+	return (*randomNumbers)[p.getID()].getValue() - (*randomNumbers)[(p.getID() + 2) % NUM_OF_PARTIES].getValue();
+}
+Share Circuit::calculateOutputMull(MultiplicationGate<Share*>& g) {
+	Share& multipicationOutput = *g.getOutput();
+	Share& leftInput = *g.getLeft();
+	Share& rightOutput = *g.getRight();
 
+	long firstPartOputput;//needs to compute Zi and send it to +1
+	return multipicationOutput;
+}
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
 			if (typeid(*_circuit[i][j])==typeid(MultiplicationGate<Share>)) {
-				Party* p = _party;
-				Share* randomNumbers = p->fRand();//memory needs to be released!!
-				unsigned int alpha = (*randomNumbers)[p->getID()].getValue() - (*randomNumbers)[(p->getID() + 2) % NUM_OF_PARTIES].getValue();
+				unsigned int alpha = correlatedRandomness(*_party);
 				std::cout << "Alpha is: " <<alpha<< std::endl;
+
 			}
 			else
 				_circuit[i][j]->calculateOutput();
