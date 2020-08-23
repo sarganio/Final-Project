@@ -37,6 +37,7 @@ public:
 	Share(Part* v1,Part* v2);
 	Part& getFirst()const { return *_value.first; }
 	Part& getSecond()const { return *_value.second; }
+	unsigned short getOwnerId()const;
 
 	bool isAddable(const Share& other)const;
 

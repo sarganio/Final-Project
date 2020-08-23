@@ -2,6 +2,13 @@
 #include <cassert>
 
 //-------------------------------------------------Part----------------------------------------------------------
+/*
+unique identifier for each party based on the indexes of the parts in a given share.
+e.g. the first party holds the share: (?_0,?_1) -> 1
+	the second party holds the share: (?_1,?_2) -> 3
+	the third party holds the share: (?_0,?_2) -> 2
+*/
+enum{FIRST_PARTY_ID = 0, SECOND_PARTY_ID = 3, THIRD_PARTY_ID = 2};
 
 //constructor
 Part::Part(char name, unsigned short index, long value) :_value(value),_index(index), _name(name) {}
@@ -41,7 +48,10 @@ Share::Share(Part* v1, Part* v2) {
 
 //constructor
 Share::Share(unsigned short index, char name) {
-	this->_value = std::make_pair(new Part(name, index), new Part(name, (index + 1) % NUM_OF_PARTIES));
+	Part* firstPart = new Part(name, index);
+	Part* secondPart = new Part(name, (index + 1) % NUM_OF_PARTIES);
+	//the lower index should be first part.
+	this->_value = index != NUM_OF_PARTIES - 1 ? std::make_pair(firstPart, secondPart) : std::make_pair(secondPart, firstPart);
 }
 
 //copy constructor
@@ -52,11 +62,26 @@ Share::Share(const Share& other) {
 }//?????
 
 Share& Share::operator=(Share const& other) {
+	assert(other.getFirst().getIndex() < other.getSecond().getIndex());
 	this->_value = std::make_pair(new Part(other._value.first->getName(), other._value.first->getIndex()), new Part(other._value.second->getName(), other._value.second->getIndex()));
 	this->_value.first->setValue(other._value.first->getValue());
 	this->_value.second->setValue(other._value.second->getValue());
 
 	return *this;
+}
+//see above the documentation of the sharesIndexSum value.
+unsigned short Share::getOwnerId()const {
+	unsigned short sharesIndexSum = _value.first->getIndex() + _value.second->getIndex();
+	switch (sharesIndexSum){
+	case FIRST_PARTY_ID:
+		return 0;
+	case SECOND_PARTY_ID:
+		return 1;
+	case THIRD_PARTY_ID:
+		return 2;
+	default:
+		throw std::exception(__FUNCTION__ "Invalid share indexes!");
+	};
 }
 //operator [] overload
 Part& Share::operator[](unsigned short index) const {
@@ -78,7 +103,6 @@ Share Share::operator+(const Share& other) const {
 
 	a = new Part(this->_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() + other._value.first->getValue());
 	b = new Part(other._value.first->getName(), this->_value.second->getIndex(), this->_value.second->getValue() + other._value.second->getValue());
-
 	return Share(a, b);
 }
 
@@ -86,7 +110,7 @@ Share Share::operator+(const Share& other) const {
 Share Share::operator+(long scalar)const {
 	Part* a = nullptr;
 	Part* b = nullptr;
-	assert(this->_value.first->getIndex() != this->_value.second->getIndex());
+	assert(this->_value.first->getIndex() < this->_value.second->getIndex());
 	if (this->_value.first->getIndex() == 0) {
 		a = new Part(_value.first->getName(), 0, this->_value.first->getValue() + scalar);
 		b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue());
@@ -113,7 +137,7 @@ Share Share::operator+(long scalar)const {
 //operator * with constant overload
 Share Share::operator*(int constant)const {
 	Part* a = nullptr,* b = nullptr;
-
+	assert(this->_value.first->getIndex() < this->_value.second->getIndex());
 	if (this->_value.first) 
 		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() * constant);
 
