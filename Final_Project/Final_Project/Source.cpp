@@ -23,10 +23,6 @@ argv[2],argv[3] - IPs of other parties
 
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
-	MultiplicationGate<PartyShare>* m = new MultiplicationGate<PartyShare>(new Share(0, 'a'), new PartyShare(new Share(1, 'a'), nullptr));
-	m->calculateOutput();
-	m->getOutput();
-
 	//Party p = Party(1, 100);
 	//Share s1(0, 'a');
 	//Share s2(0, 'b');
@@ -61,6 +57,9 @@ int main(int argc, char* argv[]) {
 		Party p = Party(myID,1);
 		p.connectToAllParties(IPs);
 		p.fInput();
+		Share* circuitOutput= p.calcCircuit();
+		long result = p.reconstruct(p.getAllShares());
+		cout << "The result of the function is:" << result << endl;
 
 		cout<<"The result is:"<< p.calcCircuit()->toString() << endl;
 	}

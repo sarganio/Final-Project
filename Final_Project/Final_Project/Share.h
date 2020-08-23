@@ -35,6 +35,8 @@ public:
 	Share(unsigned short index = 0, char name = 0);
 	Share(const Share& other);
 	Share(Part* v1,Part* v2);
+	Part& getFirst()const { return *_value.first; }
+	Part& getSecond()const { return *_value.second; }
 
 	bool isAddable(const Share& other)const;
 

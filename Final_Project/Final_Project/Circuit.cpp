@@ -87,7 +87,6 @@ void Circuit::calculateOutput() {
 				_circuit[i][j]->calculateOutput();
 		}
 	}
-
 }
 Share* Circuit::getOutput() {
 	calculateOutput();

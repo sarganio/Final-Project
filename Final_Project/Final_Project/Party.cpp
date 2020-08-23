@@ -118,7 +118,7 @@ bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
 	return true;
 }
-void Party::readFrom(unsigned short id,unsigned char* msg) {
+void Party::readFrom(unsigned short id,byte* msg) {
 	while (this->_msgs[id]->getIsRead());
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	//update thread that the message was read
@@ -306,3 +306,4 @@ void Party::setShare(Share* share, int index) {
 Share* Party::calcCircuit(){
 	return _arithmeticCircuit->getOutput();
 }
+vector<Share*>& Party::getAllShares() { return _shares; }
