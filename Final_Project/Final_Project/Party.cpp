@@ -222,6 +222,11 @@ void Party::fInput() {
 	//	_shares[i] = receivedShare;
 	//}
 }
+long Party::finalReconstruct(Share* myShare) {
+	byte shareToSend[RECONSTRUCT_LEN]{};//index(4) value(4) name(1)
+	return 0;
+
+}
 long Party::reconstruct(vector<Share*>& shares) {
 	byte name = (*shares[_id])[_id].getName();
 	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_LEN];//the answers from the other parties
@@ -229,17 +234,17 @@ long Party::reconstruct(vector<Share*>& shares) {
 	vector<Share*> otherShares;
 
 	otherShares.resize(NUM_OF_PARTIES);
-
+	//
 	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
 		*(unsigned short*)sendShare = (*shares[i])[(_id+2)%NUM_OF_PARTIES].getIndex();
 		*(long*)(sendShare + 2) = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getValue();
-		sendShare[10] = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getName();
+		sendShare[6] = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getName();
 		
-		*(unsigned short*)(sendShare+11) = (*shares[i])[_id].getIndex();
-		*(long*)(sendShare + 13) = (*shares[i])[_id].getValue();
-		sendShare[21] = (*shares[i])[_id].getName();
+		*(unsigned short*)(sendShare+7) = (*shares[i])[_id].getIndex();
+		*(long*)(sendShare + 9) = (*shares[i])[_id].getValue();
+		sendShare[13] = (*shares[i])[_id].getName();
 		sendTo(i,RECONSTRUCT,sendShare);
 	}
 

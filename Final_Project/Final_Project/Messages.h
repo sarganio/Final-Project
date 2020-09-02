@@ -7,7 +7,7 @@ using CryptoPP::byte;
 
 #define KEY_LEN 32
 #define SEQ_LEN 4
-#define RECONSTRUCT_LEN 22 //size of Share (two parts)
+#define RECONSTRUCT_LEN 18 //size of Share (two parts)
 #define NUM_OF_PARTIES 3
 #define MAX_MESSAGE_SIZE 64
 #define ENC_INPUT_LEN sizeof(long)

@@ -44,5 +44,6 @@ public:
 	void fInput();													//fInput functuality as described in the paper.
 	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
 	vector<Share*>& getAllShares();
+	long finalReconstruct(Share*);
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
 };
