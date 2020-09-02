@@ -14,20 +14,38 @@
 \contentsline {subsection}{\numberline {2.3}Prior knowledge}{13}%
 \contentsline {subsection}{\numberline {2.4}Tools and Programs we used}{13}%
 \contentsline {subsection}{\numberline {2.5}Flow diagram}{15}%
-\contentsline {section}{\numberline {3}Progress}{17}%
+\contentsline {section}{\numberline {3}Progress \& Functionality}{17}%
 \contentsline {subsection}{\numberline {3.1}Connectivity}{17}%
-\contentsline {subsection}{\numberline {3.2}Secret shaering}{17}%
-\contentsline {subsection}{\numberline {3.3}Deliberations}{17}%
-\contentsline {subsection}{\numberline {3.4}Problems}{18}%
-\contentsline {subsubsection}{\numberline {3.4.1}Heads-up}{18}%
-\contentsline {subsubsection}{\numberline {3.4.2}Problems we faced with}{18}%
-\contentsline {section}{\numberline {4}Code Design}{20}%
-\contentsline {subsection}{\numberline {4.1}Party}{20}%
-\contentsline {subsection}{\numberline {4.2}TcpSocket:}{20}%
-\contentsline {subsection}{\numberline {4.3}TcpClient:}{21}%
-\contentsline {subsection}{\numberline {4.4}TcpServer:}{21}%
-\contentsline {subsection}{\numberline {4.5}Library used}{21}%
-\contentsline {section}{\numberline {5}Timeline}{22}%
-\contentsline {subsection}{\numberline {5.1}Milestones}{22}%
-\contentsline {subsection}{\numberline {5.2}Gant}{24}%
-\contentsline {section}{\numberline {6}Bibliography}{25}%
+\contentsline {subsection}{\numberline {3.2}F$_{rand}$}{17}%
+\contentsline {subsection}{\numberline {3.3}Reconstruct}{17}%
+\contentsline {subsection}{\numberline {3.4}Secret shaering}{18}%
+\contentsline {subsection}{\numberline {3.5}The Circuit}{18}%
+\contentsline {section}{\numberline {4}Deliberations \& Problems}{19}%
+\contentsline {subsection}{\numberline {4.1}Deliberations}{19}%
+\contentsline {subsection}{\numberline {4.2}Problems we faced}{19}%
+\contentsline {subsubsection}{\numberline {4.2.1}Heads-up}{20}%
+\contentsline {subsubsection}{\numberline {4.2.2}Problems we faced with}{21}%
+\contentsline {section}{\numberline {5}Code Design \& Classes}{23}%
+\contentsline {subsection}{\numberline {5.1}Party:}{24}%
+\contentsline {subsection}{\numberline {5.2}TcpSocket:}{25}%
+\contentsline {subsection}{\numberline {5.3}TcpClient:}{26}%
+\contentsline {subsection}{\numberline {5.4}TcpServer:}{27}%
+\contentsline {subsection}{\numberline {5.5}Part:}{27}%
+\contentsline {subsection}{\numberline {5.6}Share:}{28}%
+\contentsline {subsection}{\numberline {5.7}PartyShare:}{28}%
+\contentsline {subsection}{\numberline {5.8}WSAInitializer:}{29}%
+\contentsline {subsection}{\numberline {5.9}Massages:}{29}%
+\contentsline {subsection}{\numberline {5.10}Helper:}{30}%
+\contentsline {subsection}{\numberline {5.11}Gate:}{30}%
+\contentsline {subsection}{\numberline {5.12}AdditionGate:}{30}%
+\contentsline {subsection}{\numberline {5.13}MultiplicationGate:}{31}%
+\contentsline {subsection}{\numberline {5.14}Circuit:}{31}%
+\contentsline {subsection}{\numberline {5.15}Library used}{32}%
+\contentsline {section}{\numberline {6}Run the code:}{33}%
+\contentsline {subsection}{\numberline {6.1}Install Crypto++:}{33}%
+\contentsline {subsection}{\numberline {6.2}Enter Parameters:}{33}%
+\contentsline {section}{\numberline {7}Future work}{35}%
+\contentsline {section}{\numberline {8}Timeline}{36}%
+\contentsline {subsection}{\numberline {8.1}Milestones}{36}%
+\contentsline {subsection}{\numberline {8.2}Gant}{38}%
+\contentsline {section}{\numberline {9}Bibliography}{39}%
