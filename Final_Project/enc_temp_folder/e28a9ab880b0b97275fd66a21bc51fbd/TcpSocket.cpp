@@ -68,8 +68,14 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		//lk.lock();
 		//wait until the previous message is read 
 		while (!mess->getIsRead());
+		//delete old message
+		delete mess;
+		mess = nullptr;
 
 		this->readBuffer(&type, 1);
+
+		//create new message
+		mess = new Message(type);
 
 		//read the header: size of message - 2B
 		mess->setSize(type);

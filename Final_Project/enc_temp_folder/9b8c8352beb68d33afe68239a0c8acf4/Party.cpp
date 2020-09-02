@@ -119,7 +119,7 @@ bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	return true;
 }
 void Party::readFrom(unsigned short id,byte* msg) {
-	while ( this->_msgs[id]->getIsRead());
+	while (this->_msgs[id]->getIsRead());
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	//update thread that the message was read
 	this->_msgs[id]->setIsRead(true);
