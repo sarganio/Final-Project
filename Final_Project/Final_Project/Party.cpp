@@ -95,7 +95,7 @@ Party::~Party() {
 		Message* toFree = _msgs.back();
 		//safety check before using delete
 		if (toFree) {
-			delete toFree;
+			//delete toFree; HEAP CORRUPTION
 			toFree = nullptr;
 		}
 		_msgs.pop_back();

@@ -38,7 +38,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
 
-				if(rand() % 2 == 0){//------------------TEMP------------need to set probability---------------------
+				if(rand() % 4 >2){//------------------TEMP------------need to set probability---------------------
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate

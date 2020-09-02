@@ -1,8 +1,8 @@
 #include "Messages.h"
 
 Message::Message(byte type) :_type(type), _size(0) {
+	_data = new byte[MAX_MESSAGE_SIZE];//[1 + (type ? _size : MAX_MESSAGE_SIZE)]();//Increment by 1 for null character. Allocate MAX_MESSAGE_SIZE in case type = 0.
 	setSize(type);
-	_data = new byte[MAX_MESSAGE_SIZE]//[1 + (type ? _size : MAX_MESSAGE_SIZE)]();//Increment by 1 for null character. Allocate MAX_MESSAGE_SIZE in case type = 0.
 }
 void Message::setSize(int type) {
 	switch (type)
