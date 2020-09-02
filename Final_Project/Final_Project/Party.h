@@ -32,7 +32,7 @@ private:
 public:
 	Party(short myID, long input);									//C'tor-takes an ID and a secret input as parameters
 	bool sendTo(unsigned short id, byte messageType,byte* msg)const;//send message to party[id]
-	void readFrom(unsigned short id,unsigned char* msg);			//read message from party number id. this is a blocking function.
+	void readFrom(unsigned short id,byte* msg);						//read message from party number id. this is a blocking function.
 	void connectToAllParties(string IPs[NUM_OF_PARTIES]);			//connect to all 3 parties
 	void broadcast(byte * msg, byte messageType)const;				//send message to all parties
 	Share* getShare(int index);										//getter by index for the shares held by this party.

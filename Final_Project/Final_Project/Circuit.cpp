@@ -10,7 +10,7 @@
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
-	srand(*(unsigned int*)seed);
+	//srand(*(unsigned int*)seed);
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);

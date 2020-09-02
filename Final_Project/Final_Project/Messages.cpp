@@ -22,6 +22,7 @@ void Message::setSize(int type) {
 	default:
 		break;
 	}
+	if(_data)
 }
 short Message::getSize()const { return _size; }
 bool Message::getIsRead()const { return _isRead; }

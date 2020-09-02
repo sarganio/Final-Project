@@ -21,7 +21,8 @@ public:
 	Party* getParty()const { return _owner; }
 	friend Share operator*(Share& left, PartyShare& right) {//TODO----------------------------
 		//must hold in order for the function to work properly.
-		assert(left.getFirst().getIndex() < right.getFirst().getIndex());
+		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
+		assert(left.getFirst().getIndex() < left.getSecond().getIndex());
 
 		//calculate z_i
 		unsigned int alpha = right.correlatedRandomness();
@@ -37,12 +38,12 @@ public:
 
 		//recieve z_{i-1}
 		long secondPartOutput = 0;
-		right.getParty()->readFrom((id-1)&NUM_OF_PARTIES, (byte*)&secondPartOutput);
+		right.getParty()->readFrom((id + 2) % NUM_OF_PARTIES, (byte*)&secondPartOutput);
 
 		//set output values to be: (z_{i-1},z_i)
 		Share output(id - 1, 'z');
 		output[right.getParty()->getID()].setValue(firstPartOputput);
-		output[right.getParty()->getID() - 1].setValue(secondPartOutput);
+		output[(right.getParty()->getID() + 2)%NUM_OF_PARTIES].setValue(secondPartOutput);
 
 		return output;
 	}
