@@ -225,8 +225,7 @@ void Party::fInput() {
 }
 long Party::finalReconstruct(Share& myShare) {
 	vector<Share*> outputShares;
-	Share result((_id+2)%NUM_OF_PARTIES,'F');
-	long ans;
+	long ans = 0;
 	outputShares.resize(NUM_OF_PARTIES);
 
 	//send the final output share to the other parties
@@ -240,12 +239,9 @@ long Party::finalReconstruct(Share& myShare) {
 		else
 			outputShares[i] = &myShare;
 
-	assert(result.getFirst().getValue() == result.getSecond().getValue());
 	//sum all shares to get result
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		result += *outputShares[i];
-
-	ans = result.getFirst().getValue();
+		ans += outputShares[i][i].getFirst().getValue();
 	return ans;
 }
 void Party::sendShareTo(unsigned short id, Share& toSend)const {
@@ -261,8 +257,8 @@ void Party::sendShareTo(unsigned short id, Share& toSend)const {
 }
 Share& Party::RecieveShareFrom(unsigned short id) {
 	byte rawData[RECONSTRUCT_LEN]{};//the answers from the other parties
-	Share& ans = *new Share(*(unsigned short*)rawData, rawData[6]);
 	readFrom(id, rawData);//(index,value,name)
+	Share& ans = *new Share(*(unsigned short*)rawData, rawData[6]);
 	ans[(id + 2) % NUM_OF_PARTIES] = *(long*)(rawData + 2);//put the value recievied in the share
 	ans[id] = *(long*)(rawData+ 9);//put the value recievied in the share
 	return ans;
