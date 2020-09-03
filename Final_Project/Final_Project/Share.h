@@ -43,6 +43,7 @@ public:
 
 	Share& operator=(Share const & other);
 	Share operator+(const Share& other) const;
+	Share operator+=(const Share& other) const;
 	Share operator+(long scalar)const;
 
 	Part& operator[](unsigned short index)const;

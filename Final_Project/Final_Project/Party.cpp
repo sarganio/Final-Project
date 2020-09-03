@@ -5,6 +5,7 @@
 #include "Circuit.h"
 #include <string>
 #include <iostream>
+#include <assert.h>
 
 #define SUCCESS 1
 
@@ -222,15 +223,52 @@ void Party::fInput() {
 	//	_shares[i] = receivedShare;
 	//}
 }
-long Party::finalReconstruct(Share* myShare) {
-	byte shareToSend[RECONSTRUCT_LEN]{};//index(4) value(4) name(1)
-	return 0;
+long Party::finalReconstruct(Share& myShare) {
+	vector<Share*> outputShares;
+	Share result((_id+2)%NUM_OF_PARTIES,'F');
+	long ans;
+	outputShares.resize(NUM_OF_PARTIES);
 
+	//send the final output share to the other parties
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i != _id)
+			sendShareTo(i, myShare);
+	//reciecve the shares of the final output
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i != _id)
+			outputShares[i] = &RecieveShareFrom(i);
+		else
+			outputShares[i] = &myShare;
+
+	assert(result.getFirst().getValue() == result.getSecond().getValue());
+	//sum all shares to get result
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		result += *outputShares[i];
+
+	ans = result.getFirst().getValue();
+	return ans;
+}
+void Party::sendShareTo(unsigned short id, Share& toSend)const {
+	byte sendShare[RECONSTRUCT_LEN];
+	*(unsigned short*)sendShare = toSend[(_id + 2) % NUM_OF_PARTIES].getIndex();
+	*(long*)(sendShare + 2) = toSend[(_id + 2) % NUM_OF_PARTIES].getValue();
+	sendShare[6] = toSend[(_id + 2) % NUM_OF_PARTIES].getName();
+
+	*(unsigned short*)(sendShare + 7) = toSend[_id].getIndex();
+	*(long*)(sendShare + 9) = toSend[_id].getValue();
+	sendShare[13] = toSend[_id].getName();
+	sendTo(id, RECONSTRUCT, sendShare);
+}
+Share& Party::RecieveShareFrom(unsigned short id) {
+	byte rawData[RECONSTRUCT_LEN]{};//the answers from the other parties
+	Share& ans = *new Share(*(unsigned short*)rawData, rawData[6]);
+	readFrom(id, rawData);//(index,value,name)
+	ans[(id + 2) % NUM_OF_PARTIES] = *(long*)(rawData + 2);//put the value recievied in the share
+	ans[id] = *(long*)(rawData+ 9);//put the value recievied in the share
+	return ans;
 }
 long Party::reconstruct(vector<Share*>& shares) {
 	byte name = (*shares[_id])[_id].getName();
-	byte rawData[NUM_OF_PARTIES][RECONSTRUCT_LEN];//the answers from the other parties
-	byte sendShare[RECONSTRUCT_LEN];
 	vector<Share*> otherShares;
 
 	otherShares.resize(NUM_OF_PARTIES);
@@ -238,14 +276,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
-		*(unsigned short*)sendShare = (*shares[i])[(_id+2)%NUM_OF_PARTIES].getIndex();
-		*(long*)(sendShare + 2) = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getValue();
-		sendShare[6] = (*shares[i])[(_id + 2) % NUM_OF_PARTIES].getName();
-		
-		*(unsigned short*)(sendShare+7) = (*shares[i])[_id].getIndex();
-		*(long*)(sendShare + 9) = (*shares[i])[_id].getValue();
-		sendShare[13] = (*shares[i])[_id].getName();
-		sendTo(i,RECONSTRUCT,sendShare);
+		sendShareTo(i, *shares[i]);
 	}
 
 	//read answers from other parties
@@ -254,10 +285,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 			otherShares[i] = nullptr;			
 			continue;
 		}
-		readFrom(i, rawData[i]);//(index,value,name)
-		otherShares[i] = new Share(*(unsigned short*)rawData[i], rawData[i][6]);
-		(*otherShares[i])[(i+2)%NUM_OF_PARTIES] = *(long*)(rawData[i] + 2);//put the value recievied in the share
-		(*otherShares[i])[i] = *(long*)(rawData[i] + 9);//put the value recievied in the share
+		otherShares[i] = &RecieveShareFrom(i);
 	}
 	bool isValid = false;
 	switch (_id) {
@@ -311,4 +339,4 @@ void Party::setShare(Share* share, int index) {
 Share* Party::calcCircuit(){
 	return _arithmeticCircuit->getOutput();
 }
-vector<Share*>& Party::getAllShares() { return _shares; }
+//vector<Share*>& Party::getAllShares() { return _shares; }

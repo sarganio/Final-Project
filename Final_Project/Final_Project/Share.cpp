@@ -59,7 +59,7 @@ Share::Share(const Share& other) {
 	//this->_value = other._value;
 	if(this != &other)
 		*this = other;
-}//?????
+}
 
 Share& Share::operator=(Share const& other) {
 	assert(other.getFirst().getIndex() < other.getSecond().getIndex());
@@ -68,6 +68,9 @@ Share& Share::operator=(Share const& other) {
 	this->_value.second->setValue(other._value.second->getValue());
 
 	return *this;
+}
+Share Share::operator+=(const Share& other) const {
+	return other + *this;
 }
 //see above the documentation of the sharesIndexSum value.
 unsigned short Share::getOwnerId()const {

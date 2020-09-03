@@ -43,7 +43,9 @@ public:
 	Share* fRand();													//fRand functuality as described in the paper.
 	void fInput();													//fInput functuality as described in the paper.
 	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
-	vector<Share*>& getAllShares();
-	long finalReconstruct(Share*);
+	//vector<Share*>& getAllShares();								
+	long finalReconstruct(Share&);									//function used at the end of the protocol, recieve shares from other parties and return the result.
+	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form
+	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party 
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
 };

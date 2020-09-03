@@ -31,8 +31,8 @@ int main(int argc, char* argv[]) {
 		Party p = Party(myID,1);
 		p.connectToAllParties(IPs);
 		p.fInput();
-		Share* circuitOutput= p.calcCircuit();
-		long result = p.reconstruct(p.getAllShares());
+		Share& circuitOutput= *p.calcCircuit();
+		long result = p.finalReconstruct(circuitOutput);
 		cout << "The result of the function is:" << result << endl;
 
 		cout<<"The result is:"<< p.calcCircuit()->toString() << endl;
