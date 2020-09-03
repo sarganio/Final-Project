@@ -20,15 +20,15 @@ using std::thread;
 		sa.sin_family = AF_INET;
 		sa.sin_addr.s_addr = INADDR_ANY;
 
-		std::cout << "Binding..." << std::endl;
+		//std::cout << "Binding..." << std::endl;
 		if (::bind(_socket, (struct sockaddr*) & sa, sizeof(sa)) == SOCKET_ERROR)
 			throw std::exception(__FUNCTION__ " - bind");
 
-		std::cout << "Listening..." << std::endl;
+		//std::cout << "Listening..." << std::endl;
 		if (listen(_socket, SOMAXCONN) == SOCKET_ERROR)
 			throw std::exception(__FUNCTION__ " - listen");
 
-		std::cout << "Accepiting clients..." << std::endl;
+		std::cout << "Waiting for party with id+1.." << std::endl;
 
 		_t = new thread(&TcpServer::accept, this,mess);
 		//thread a(&TcpServer::messagesHandler, this);
