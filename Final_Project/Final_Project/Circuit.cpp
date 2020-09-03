@@ -85,6 +85,8 @@ void Circuit::calculateOutput() {
 			//}
 			//else
 				_circuit[i][j]->calculateOutput();
+				std::cout<<"Gate:"<<i<<" "<<j<<": "<<_party->finalReconstruct(*_circuit[i][j]->getOutput());
+
 		}
 	}
 }
