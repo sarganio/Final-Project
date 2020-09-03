@@ -241,7 +241,7 @@ long Party::finalReconstruct(Share& myShare) {
 
 	//sum all shares to get result
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		ans += outputShares[i][i].getFirst().getValue();
+		ans += (*outputShares[i])[i].getValue();
 	return ans;
 }
 void Party::sendShareTo(unsigned short id, Share& toSend)const {
