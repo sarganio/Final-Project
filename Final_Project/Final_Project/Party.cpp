@@ -13,7 +13,7 @@ using std::cout;
 using std::endl;
 
 
-Party::Party(short myID,long input):_id(myID),_input(input){
+Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
 	//for Dbug
 	 srand(10);
 
@@ -255,9 +255,9 @@ long Party::reconstruct(vector<Share*>& shares) {
 			continue;
 		}
 		readFrom(i, rawData[i]);//(index,value,name)
-		otherShares[i] = new Share(*(unsigned short*)rawData[i], rawData[i][10]);
+		otherShares[i] = new Share(*(unsigned short*)rawData[i], rawData[i][6]);
 		(*otherShares[i])[(i+2)%NUM_OF_PARTIES] = *(long*)(rawData[i] + 2);//put the value recievied in the share
-		(*otherShares[i])[i] = *(long*)(rawData[i] + 13);//put the value recievied in the share
+		(*otherShares[i])[i] = *(long*)(rawData[i] + 9);//put the value recievied in the share
 	}
 	bool isValid = false;
 	switch (_id) {
