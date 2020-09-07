@@ -174,7 +174,8 @@ Share* Party::fRand() {
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV); 
-		(*ans)[i] = (*(long*)alpha[i]) % P;
+		(*(long*)alpha[i]) %= P;
+		(*ans)[i] = (*(long*)alpha[i])>0?*(long*)alpha[i]: (*(long*)alpha[i])+P;
 		//TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
 	//free vector of keys
@@ -231,9 +232,11 @@ long Party::finalReconstruct(Share& myShare) {
 	outputShares.resize(NUM_OF_PARTIES);
 
 	//send the final output share to the other parties
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		if (i != _id)
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i != _id) {
 			sendShareTo(i, myShare);
+		}
+	}
 	//reciecve the shares of the final output
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i != _id)
