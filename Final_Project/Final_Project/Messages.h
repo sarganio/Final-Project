@@ -11,6 +11,8 @@ using CryptoPP::byte;
 #define NUM_OF_PARTIES 3
 #define MAX_MESSAGE_SIZE 64
 #define ENC_INPUT_LEN sizeof(long)
+#define MUL_GATE_LEN sizeof(long)
+
 
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."

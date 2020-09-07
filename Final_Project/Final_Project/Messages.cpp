@@ -19,6 +19,8 @@ void Message::setSize(int type) {
 	case ENC_INPUT:
 		_size = ENC_INPUT_LEN;
 		break;
+	case MUL_GATE:
+		_size = MUL_GATE_LEN;
 	default:
 		break;
 	}
