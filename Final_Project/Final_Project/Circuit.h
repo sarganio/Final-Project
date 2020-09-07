@@ -1,7 +1,7 @@
 #pragma once
 #include "Party.h"
 #include "Gate.h"
-
+#define L  1
 
 class Party;
 

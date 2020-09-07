@@ -11,7 +11,7 @@ private:
 public:
 	AddGate() : Gate::Gate(), _right(nullptr) {};
 	AddGate(Share* left, operand* right) : Gate::Gate(left), _right(right) {};
-	void calculateOutput() override{*this->_output = *this->_left + *this->_right;}
+	void calculateOutput() override { *this->_output = *this->_left + *this->_right;}
 	operand* getRight() { return _right; }
 };
 

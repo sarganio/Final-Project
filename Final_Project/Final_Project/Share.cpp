@@ -104,8 +104,8 @@ Share Share::operator+(const Share& other) const {
 		name = this->_value.first->getName() + other._value.first->getName();
 		//throw std::exception(__FUNCTION__ "Shares name is not same!");
 
-	a = new Part(this->_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() + other._value.first->getValue());
-	b = new Part(other._value.first->getName(), this->_value.second->getIndex(), this->_value.second->getValue() + other._value.second->getValue());
+	a = new Part(this->_value.first->getName(), this->_value.first->getIndex(), (this->_value.first->getValue() + other._value.first->getValue())%P);
+	b = new Part(other._value.first->getName(), this->_value.second->getIndex(),(this->_value.second->getValue() + other._value.second->getValue())%P);
 	return Share(a, b);
 }
 
@@ -117,7 +117,7 @@ Share Share::operator+(long scalar)const {
 	assert(this->_value.first->getIndex() < this->_value.second->getIndex());
 
 	if (this->_value.first->getIndex() == 0) {
-		a = new Part(_value.first->getName(), 0, this->_value.first->getValue() + scalar);
+		a = new Part(_value.first->getName(), 0, (this->_value.first->getValue() + scalar)%P);
 		b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue());
 
 	}
@@ -131,10 +131,10 @@ Share Share::operator*(int constant)const {
 	Part* a = nullptr,* b = nullptr;
 	assert(this->_value.first->getIndex() < this->_value.second->getIndex());
 	if (this->_value.first) 
-		a = new Part(_value.first->getName(), this->_value.first->getIndex(), this->_value.first->getValue() * constant);
+		a = new Part(_value.first->getName(), this->_value.first->getIndex(), (this->_value.first->getValue() * constant)%P);
 
 	if (this->_value.second) 
-		b = new Part(_value.second->getName(), this->_value.second->getIndex(), this->_value.second->getValue() * constant);
+		b = new Part(_value.second->getName(), this->_value.second->getIndex(), (this->_value.second->getValue() * constant)%P);
 
 	return Share(a, b);
 }

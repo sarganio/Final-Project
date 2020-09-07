@@ -17,7 +17,8 @@ using std::endl;
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
 	//for Dbug
 	 srand(10);
-
+	 //make sure the input belong to the Ring Z_p 
+	 _input %= P;
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
 	this->_msgs.resize(NUM_OF_PARTIES);
@@ -173,7 +174,7 @@ Share* Party::fRand() {
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV); 
-		(*ans)[i] = *(long*)alpha[i];
+		(*ans)[i] = *(long*)alpha[i] % P;
 		//TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
 	//free vector of keys
@@ -198,7 +199,8 @@ void Party::fInput() {
 	}
 	//reconstruct the random value of this party
 	randomNum = reconstruct(randomShares);
-	randomNum = _input - randomNum;
+	randomNum = _input + (P - randomNum);
+	randomNum %= P;
 	//brodcast the salted input
 	broadcast((byte*)&randomNum,ENC_INPUT);
 	//reciecve other parties salted inputs
@@ -242,6 +244,7 @@ long Party::finalReconstruct(Share& myShare) {
 	//sum all shares to get result
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		ans += (*outputShares[i])[i].getValue();
+	ans %= P;
 	return ans;
 }
 void Party::sendShareTo(unsigned short id, Share& toSend)const {
@@ -309,6 +312,7 @@ long Party::reconstruct(vector<Share*>& shares) {
 			throw std::exception(__FUNCTION__ "I'm surrounded by liers!");	
 	}*/
 	long ans = (*shares[_id])[(_id + 2) % NUM_OF_PARTIES].getValue() + (*shares[_id])[_id].getValue() + (*otherShares[(_id + 1) % NUM_OF_PARTIES])[(_id + 1) % NUM_OF_PARTIES].getValue();
+	ans %= P;
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (otherShares[i]) {
 			delete otherShares[i];
