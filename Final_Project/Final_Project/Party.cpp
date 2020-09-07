@@ -174,7 +174,7 @@ Share* Party::fRand() {
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
 		Helper::encryptAES(alpha[i], KEY_LEN,*_keys[i],IV); 
-		(*ans)[i] = *(long*)alpha[i] % P;
+		(*ans)[i] = (*(long*)alpha[i]) % P;
 		//TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
 	//free vector of keys

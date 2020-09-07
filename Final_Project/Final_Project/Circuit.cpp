@@ -11,7 +11,9 @@
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
 	//srand(*(unsigned int*)seed);
-
+	srand(10);
+	for (int i = 0; i < 10; i++)
+		cout << i << rand() % P << " ";
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);
 	_circuit[0].resize(NUM_OF_PARTIES);
@@ -60,7 +62,8 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 		}
 		
 	}
-
+	for (int i = 0; i < 10; i++)
+		cout << i << rand() % P << " ";
 
 }
 //int Circuit::correlatedRandomness(Party& p) const{
@@ -78,12 +81,6 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
-			//if (typeid(*_circuit[i][j])==typeid(MultiplicationGate<Share>)) {
-			//	unsigned int alpha = 0;//correlatedRandomness(*_party);
-			//	std::cout << "Alpha is: " <<alpha<< std::endl;
-
-			//}
-			//else
 				_circuit[i][j]->calculateOutput();
 				std::cout<<"Gate:"<<i<<" "<<j<<": "<<_party->finalReconstruct(*_circuit[i][j]->getOutput())<<std::endl;
 
