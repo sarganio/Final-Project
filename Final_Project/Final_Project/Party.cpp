@@ -144,7 +144,7 @@ void Party::calcSeq() {
 
 	*(unsigned int*)_finalSeq = *(unsigned int*)seqFrom + *(unsigned int*)seqMy + *(unsigned int*)seqTo;
 
-	//TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
+	TRACE("SEQ = %u", *(unsigned int*)_finalSeq);
 }
 Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;

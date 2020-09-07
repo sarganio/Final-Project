@@ -12,9 +12,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
 	//srand(*(unsigned int*)seed);
 	srand(10);
-	for (int i = 0; i < 10; i++)
-		cout << i<<"." << rand() % P << " ";
-	cout << endl;
+
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);
 	_circuit[0].resize(NUM_OF_PARTIES);
@@ -63,8 +61,6 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 		}
 		
 	}
-	for (int i = 0; i < 10; i++)
-		cout << i << rand() % P << " ";
 
 }
 //int Circuit::correlatedRandomness(Party& p) const{
