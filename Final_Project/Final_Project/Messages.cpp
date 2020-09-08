@@ -36,5 +36,5 @@ byte* Message::getData()const { return _data; }
 Message::~Message() {
 	if (_data)
 		delete[] _data;
-	_data = nullptr;
+		_data = nullptr;
 }
