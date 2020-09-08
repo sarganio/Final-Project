@@ -27,9 +27,11 @@ public:
 		//calculate z_i
 		unsigned int alpha = right.correlatedRandomness();
 		long rightFirstVal = right.getFirst().getValue(), rightSecondVal = right.getSecond().getValue();
-		long leftFistVal = right.getFirst().getValue(), leftSecondVal = right.getSecond().getValue();
+		long leftFistVal = left.getFirst().getValue(), leftSecondVal = left.getSecond().getValue();
 		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i
 		long firstPartOputput = leftSecondVal* rightSecondVal + leftSecondVal*rightFirstVal + leftFistVal*rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
+		if (firstPartOputput < 0)
+			firstPartOputput += P;
 		firstPartOputput %= P;
 
 		//send zi to the nest party
@@ -42,7 +44,7 @@ public:
 		right.getParty()->readFrom((id + 2) % NUM_OF_PARTIES, (byte*)&secondPartOutput);
 
 		//set output values to be: (z_{i-1},z_i)
-		Share output(id - 1, 'z');
+		Share output((id + 2)%NUM_OF_PARTIES, 'z');
 		output[right.getParty()->getID()].setValue(firstPartOputput);
 		output[(right.getParty()->getID() + 2)%NUM_OF_PARTIES].setValue(secondPartOutput);
 

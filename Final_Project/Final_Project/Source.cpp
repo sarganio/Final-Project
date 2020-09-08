@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 		long result = p.finalReconstruct(circuitOutput);
 		cout << "The result of the function is:" << result << endl;
 
-		cout<<"The result is:"<< p.calcCircuit()->toString() << endl;
+		cout<<"The result is:"<< circuitOutput.toString() << endl;
 	}
 	catch (std::exception & exc) {
 		//TO DO: send an abort message.

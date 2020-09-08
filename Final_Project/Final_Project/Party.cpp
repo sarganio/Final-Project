@@ -238,11 +238,12 @@ long Party::finalReconstruct(Share& myShare) {
 		}
 	}
 	//reciecve the shares of the final output
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i != _id)
 			outputShares[i] = &RecieveShareFrom(i);
 		else
 			outputShares[i] = &myShare;
+	}
 
 	//sum all shares to get result
 	for (int i = 0; i < NUM_OF_PARTIES; i++)

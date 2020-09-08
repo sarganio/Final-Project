@@ -3,15 +3,15 @@
 #include "MultiplicationGate.h"
 #include "PartyShare.h"
 
-#define MIN_NUM_OF_LAYERS 4
-#define MIN_NUM_OF_GATES 2
+#define MIN_NUM_OF_LAYERS 100
+#define MIN_NUM_OF_GATES 15
 #define RANGE_OF_LAYERS 1
 #define RANGE_OF_GATES 2
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
-	//srand(*(unsigned int*)seed);
-	srand(17);
+	srand(*(unsigned int*)seed);
+	
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);
