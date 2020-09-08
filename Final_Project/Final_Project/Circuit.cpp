@@ -3,14 +3,15 @@
 #include "MultiplicationGate.h"
 #include "PartyShare.h"
 
-#define MIN_NUM_OF_LAYERS 100
+#define MIN_NUM_OF_LAYERS 15
 #define MIN_NUM_OF_GATES 15
 #define RANGE_OF_LAYERS 1
 #define RANGE_OF_GATES 2
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
-	srand(*(unsigned int*)seed);
+	srand(20);
+	//srand(*(unsigned int*)seed);
 	
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
@@ -39,11 +40,14 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
 
-				if(rand() % 4 ==1){//------------------TEMP------------need to set probability---------------------
+				if(rand() % 4 ==1){//------------------TEMP------------
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
-					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),new PartyShare(_circuit[inputLayerRight][gateIndexRight]->getOutput(),_party));
+					Share* toDelete = _circuit[inputLayerRight][gateIndexRight]->getOutput();
+					_circuit[inputLayerRight][gateIndexRight]->setOutput(new PartyShare(toDelete, _party));
+					delete toDelete;
+					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),(PartyShare*) _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 			}
 			else { //const
