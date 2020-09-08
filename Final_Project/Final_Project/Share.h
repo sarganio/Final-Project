@@ -25,6 +25,7 @@ public:
 	inline unsigned short getIndex()const;
 	inline char getName()const;
 	Part& operator=(long newVal);
+	void setIndex(unsigned short index);
 };
 class PartyShare;
 class Share {

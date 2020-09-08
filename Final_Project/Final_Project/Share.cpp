@@ -34,6 +34,7 @@ string Part::toString()const {
 	//return string(" Index:"+std::to_string(_index)  + "Value:" + std::to_string(_value) + " Part Name:" + std::to_string(_name)+"\n");
 	return string("(" + std::to_string(_value) + "," + std::to_string(_index) + "," + _name + ")");
 }
+void Part::setIndex(unsigned short index) { _index = index; }
 
 //-------------------------------------------------Share----------------------------------------------------------
 
@@ -60,10 +61,12 @@ Share::Share(const Share& other) {
 	if(this != &other)
 		*this = other;
 }
-
 Share& Share::operator=(Share const& other) {
 	assert(other.getFirst().getIndex() < other.getSecond().getIndex());
 	this->_value = std::make_pair(new Part(other._value.first->getName(), other._value.first->getIndex()), new Part(other._value.second->getName(), other._value.second->getIndex()));
+	//copy indexes
+	this->_value.first->setIndex(other._value.first->getIndex());
+	this->_value.second->setIndex(other._value.second->getIndex());
 	this->_value.first->setValue(other._value.first->getValue());
 	this->_value.second->setValue(other._value.second->getValue());
 
