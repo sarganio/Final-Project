@@ -18,6 +18,7 @@ public:
 	Circuit(byte seed[SEQ_LEN], Party* party);
 	void calculateOutput();						//computes the outout of each gate
 	Share* getOutput();							//get the result of the circuit
+	~Circuit();									//D'tor - deallocate all gates memmory.
 	//int correlatedRandomness(Party& p) const;	//calculate correlated randomness as described in pepare.
 	//Share calculateOutputMull(MultiplicationGate<Share*>& g);
 };

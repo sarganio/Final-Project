@@ -10,8 +10,8 @@
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
-	srand(20);
-	//srand(*(unsigned int*)seed);
+	//srand(20);
+	srand(*(unsigned int*)seed);
 	
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
@@ -44,7 +44,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
-					//build the previous output to be of type party share
+					//take the output of some previuos layer and extend it.From share to be PartyShare
 					_circuit[inputLayerRight][gateIndexRight]->setOutput(new PartyShare(_circuit[inputLayerRight][gateIndexRight]->getOutput(), _party));
 					//create the multiplication with share gate
 					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),(PartyShare*) _circuit[inputLayerRight][gateIndexRight]->getOutput());
@@ -67,18 +67,6 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	}
 
 }
-//int Circuit::correlatedRandomness(Party& p) const{
-//	Share* randomNumbers = p.fRand();//memory needs to be released!!
-//	return (*randomNumbers)[p.getID()].getValue() - (*randomNumbers)[(p.getID() + 2) % NUM_OF_PARTIES].getValue();
-//}
-//Share Circuit::calculateOutputMull(MultiplicationGate<Share*>& g) {
-//	Share& multipicationOutput = *g.getOutput();
-//	Share& leftInput = *g.getLeft();
-//	Share& rightOutput = *(Share*)g.getRight();
-//
-//	long firstPartOputput;//needs to compute Zi and send it to +1
-//	return multipicationOutput;
-//}
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
@@ -93,4 +81,12 @@ Share* Circuit::getOutput() {
 	unsigned short lastLayerIndex = _numOfLayers - 1;
 	unsigned short lastGate = this->_gatesPerLayer[_numOfLayers - 1] - 1;
 	return this->_circuit[lastLayerIndex][lastGate]->getOutput();///possible crush
+}
+Circuit::~Circuit() {
+	for(int i = 0;i< this->_numOfLayers;i++)
+		for(int j = 0;j<this->_gatesPerLayer[i];j++)
+			if (_circuit[i][j]) {
+				delete _circuit[i][j];
+				_circuit[i][j] = nullptr;
+			}
 }
