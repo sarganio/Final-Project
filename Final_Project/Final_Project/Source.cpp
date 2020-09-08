@@ -19,6 +19,7 @@ argv[2],argv[3] - IPs of other parties
 
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
+	{	Party p = Party(0, 1);}
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	for (i = 2; i < argc; i++) {
