@@ -21,6 +21,7 @@ public:
 	void setOutput(Share* output);
 
 	virtual void calculateOutput() = 0;//calculate the output of this Gate(Addition/Multipication)
+	virtual ~Gate();
 
 };
 
