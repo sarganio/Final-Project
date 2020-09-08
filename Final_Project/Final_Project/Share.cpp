@@ -156,10 +156,14 @@ string Share::toString()const {
 
 //distructor
 Share::~Share() {
-	delete this->_value.first;
-	this->_value.first = nullptr;
-	delete this->_value.second;
-	this->_value.second = nullptr;
+	if (_value.first) {
+		delete this->_value.first;
+		this->_value.first = nullptr;
+	}
+	if (_value.second) {
+		delete this->_value.second;
+		this->_value.second = nullptr;
+	}
 }
 
 //Share Share::operator*(Share& other)const {
