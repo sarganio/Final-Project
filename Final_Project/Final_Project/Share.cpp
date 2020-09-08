@@ -63,10 +63,12 @@ Share::Share(const Share& other) {
 }
 Share& Share::operator=(Share const& other) {
 	assert(other.getFirst().getIndex() < other.getSecond().getIndex());
+	//create the parts of the share
 	this->_value = std::make_pair(new Part(other._value.first->getName(), other._value.first->getIndex()), new Part(other._value.second->getName(), other._value.second->getIndex()));
 	//copy indexes
-	this->_value.first->setIndex(other._value.first->getIndex());
-	this->_value.second->setIndex(other._value.second->getIndex());
+	//this->_value.first->setIndex(other._value.first->getIndex());
+	//this->_value.second->setIndex(other._value.second->getIndex());
+	//copy values
 	this->_value.first->setValue(other._value.first->getValue());
 	this->_value.second->setValue(other._value.second->getValue());
 

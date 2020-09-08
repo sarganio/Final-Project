@@ -44,9 +44,9 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
-					Share* toDelete = _circuit[inputLayerRight][gateIndexRight]->getOutput();
-					_circuit[inputLayerRight][gateIndexRight]->setOutput(new PartyShare(toDelete, _party));
-					delete toDelete;
+					//build the previous output to be of type party share
+					_circuit[inputLayerRight][gateIndexRight]->setOutput(new PartyShare(_circuit[inputLayerRight][gateIndexRight]->getOutput(), _party));
+					//create the multiplication with share gate
 					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),(PartyShare*) _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 			}

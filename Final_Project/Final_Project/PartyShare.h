@@ -19,6 +19,10 @@ public:
 }	
 
 	Party* getParty()const { return _owner; }
+	~PartyShare() {
+		if (this->_owner)
+			delete _owner;
+	}
 	friend Share operator*(Share& left, PartyShare& right) {//TODO----------------------------
 		//must hold in order for the function to work properly.
 		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
