@@ -9,7 +9,7 @@ protected:
 	Share* _output;
 	
 public:
-	~Gate() { if (_output)delete _output; }
+	//~Gate() { if (_output)delete _output; }
 	Gate():_left(nullptr),_output(nullptr) {};
 	Gate(Share* left) :_left(left), _output(new Share()) {};
 
