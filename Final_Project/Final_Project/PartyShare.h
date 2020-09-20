@@ -10,7 +10,9 @@ class PartyShare:public Share
 {
 		Party* _owner;
 public:
-	PartyShare(Share* prevOutput=nullptr, Party* p=nullptr) :Share(*prevOutput) {
+	PartyShare(Share* prevOutput=nullptr, Party* p=nullptr)/* :Share(*prevOutput)*/ {
+		if (prevOutput)
+			*this = *prevOutput;
 		_owner = p;
 	}
 	int correlatedRandomness() const{//calculate correlated randomness as described in pepare.
