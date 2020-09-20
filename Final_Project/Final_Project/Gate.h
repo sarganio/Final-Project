@@ -11,11 +11,11 @@ protected:
 public:
 	//~Gate() { if (_output)delete _output; }
 	Gate():_left(nullptr),_output(nullptr) {};
-	Gate(Share* left) :_left(left), _output(new PartyShare()) {};
+	Gate(Share* left,Party* p=nullptr) :_left(left), _output(new PartyShare(nullptr,p)) {};
 
 	//Getters & setters
 	Share* getLeft();
-	Share* getOutput();
+	PartyShare* getOutput();
 	
 	void setLeft(Share* input);
 	void setOutput(PartyShare* output);
