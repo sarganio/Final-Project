@@ -339,4 +339,7 @@ void Party::setShare(Share* share, int index) {
 Share* Party::calcCircuit(){
 	return _arithmeticCircuit->getOutput();
 }
-//vector<Share*>& Party::getAllShares() { return _shares; }
+void Party::setG_GateInput(unsigned short index, Part value) {
+	assert(index > 0 && index < 6L);
+	this->_gGatesInputs[index] = value;
+}

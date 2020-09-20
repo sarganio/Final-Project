@@ -72,7 +72,6 @@ void Circuit::calculateOutput() {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
 				_circuit[i][j]->calculateOutput();
 				std::cout<<"Gate:"<<i<<" "<<j<<": "<<_party->finalReconstruct(*_circuit[i][j]->getOutput())<<std::endl;
-
 		}
 	}
 }
@@ -80,7 +79,7 @@ Share* Circuit::getOutput() {
 	calculateOutput();
 	unsigned short lastLayerIndex = _numOfLayers - 1;
 	unsigned short lastGate = this->_gatesPerLayer[_numOfLayers - 1] - 1;
-	return this->_circuit[lastLayerIndex][lastGate]->getOutput();///possible crush
+	return this->_circuit[lastLayerIndex][lastGate]->getOutput();
 }
 Circuit::~Circuit() {
 	for(int i = 0;i< this->_numOfLayers;i++)
