@@ -46,7 +46,8 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 					//take the output of some previuos layer and extend it.From share to be PartyShare
 					//_circuit[inputLayerRight][gateIndexRight]->setOutput(new PartyShare(_circuit[inputLayerRight][gateIndexRight]->getOutput(), _party));
 					//create the multiplication with share gate
-					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),_circuit[inputLayerRight][gateIndexRight]->getOutput(),_party);
+					_circuit[inputLayerLeft][gateIndexLeft]->getOutput()->setParty(_party);
+					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),_circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 			}
 			else { //const

@@ -15,6 +15,7 @@ public:
 			*this = *prevOutput;
 		_owner = p;
 	}
+	void setParty(Party* p) { _owner = p; }
 	int correlatedRandomness() const{//calculate correlated randomness as described in pepare.
 	Share* randomNumbers =  _owner->fRand();//memory needs to be released!!
 	return (*randomNumbers)[_owner->getID()].getValue() - (*randomNumbers)[(_owner->getID() + 2) % NUM_OF_PARTIES].getValue();
