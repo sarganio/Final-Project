@@ -13,6 +13,49 @@
 #define TRACE(msg, ...) printf(msg "\n", __VA_ARGS__);
 #define TRACE(msg, ...) // do nothing
 #endif
+#include "pch.h"
+#include "aes.h"
+#include "osrng.h"
+#include <WinSock2.h>
+#include <Windows.h>
+#include <iostream>
+
+using CryptoPP::AutoSeededRandomPool;
+
+#include <iostream>
+using std::cout;
+using std::cerr;
+using std::endl;
+
+#include "cryptlib.h"
+using CryptoPP::Exception;
+
+#include "hex.h"
+using CryptoPP::HexEncoder;
+using CryptoPP::HexDecoder;
+
+#include "filters.h"
+using CryptoPP::StringSink;
+using CryptoPP::StringSource;
+using CryptoPP::StreamTransformationFilter;
+
+#include "aes.h"
+using CryptoPP::AES;
+
+#include "ccm.h"
+using CryptoPP::CBC_Mode;
+
+#include "secblock.h"
+using CryptoPP::SecByteBlock;
+
+#include <cstdlib>
+using std::exit;
+
+//byte variable type
+#include <cstddef>
+using CryptoPP::byte;
+
+#define P 127 //make sure all the elements are belong to Z_p (mod p)
 
 #include <string>
 
@@ -20,8 +63,10 @@ using std::string;
 
 class Helper
 {
+	//static void decryptAES(byte* chiperText, size_t messageLen, CryptoPP::SecByteBlock key, CryptoPP::SecByteBlock iv);
 public:
 	//returns true if last octet is bigger that second's
-	static bool IPCompare(string first, string second);
+	static bool IPCompare(string first, string second);										//return true if first is greater than second.
+	static void encryptAES(byte* plainText, size_t messageLen, SecByteBlock key,byte* IV);	//perform an AES encryption.
 };
 

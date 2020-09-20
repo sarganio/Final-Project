@@ -1,10 +1,10 @@
 #include "TcpSocket.h"
-#include <iostream>
-#include "Messages.h"
-#include <string>
 #include "Helper.h"
+#include <iostream>
+#include <string>
 
 using std::cerr;
+
 WSAInitializer TcpSocket::_WSAinit;
 TcpSocket::TcpSocket(int socket, unsigned short port):_port(port)
 {
@@ -48,13 +48,15 @@ bool TcpSocket::isValid()const {
 int TcpSocket::socketFd()const { 
 	return isValid() ? _socket : -1; 
 }
-void TcpSocket::messagesHandler() {
-
+void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
+{
+	char type;
 // Setup timeval variable
 struct fd_set FDs;
 
-unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
-
+unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
+//std::unique_lock<std::mutex> lk(m_type);
+//std::condition_variable cv;
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
@@ -63,28 +65,31 @@ unsigned short fromID = (this->_port + 2 - BASE_PORT)%NUM_OF_PARTIES;///////////
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
 
 		//read message type - 1B
-		char type;
+		//lk.lock();
+		//wait until the previous message is read 
+		while (!mess->getIsRead());
+
 		this->readBuffer(&type, 1);
 
 		//read the header: size of message - 2B
-		Message rcv(type);
-		unsigned short expectedSize = rcv.getSize();
-		this->readBuffer(&rcv + 1, HEADER_SIZE - 1);
+		mess->setSize(type);
+		unsigned short expectedSize = mess->getSize();
+		this->readBuffer(mess + 1, HEADER_SIZE - 1);
 
 		//check if the message hase a proper size field
-		if (expectedSize != rcv.getSize()) {
+		if (expectedSize != mess->getSize()) {
 			std::string errorMsg(__FUNCTION__ + ("Received from:" + std::to_string(fromID) + "-Message's size is invalid!"));
 			throw std::exception(errorMsg.c_str());
 		}
 
 		//read rest of message
-		this->readBuffer(rcv.getData(), rcv.getSize());
-
-		TRACE("Got a new message from %d.\nThe message is: %s", fromID, rcv.getData());
-
-		//reset buffer
-		memset(&rcv, 0, sizeof(rcv));
-
-		cout << "Got message from client!" << endl;
+		this->readBuffer(mess->getData(), mess->getSize());
+		//put the message in the mutual variable of main thread and this thread
+		memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
+		//lk.unlock();
+		//cv.notify_one();
+		//mark message as read buffer
+		mess->setIsRead(false);
+		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
 	}
 }

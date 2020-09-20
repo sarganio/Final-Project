@@ -1,15 +1,19 @@
 #pragma once
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#include <winsock2.h>
-#include <iostream>
+//#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "WSAInitializer.h"
+#include "Messages.h"
+
+//#include <winsock2.h>
+#include <iostream>
 #include <thread>
-#pragma comment(lib, "Ws2_32.lib")
+#include <mutex>
+
 #define IP_LEN 15
 using std::cerr;
 using std::cout;
 using std::endl;
 using std::thread;
+using std::mutex;
 class TcpSocket 
 {
 protected:
@@ -45,6 +49,6 @@ public:
 	void close();
 
 	//receive all messages comming via _socket
-	void messagesHandler();
+	void messagesHandler(Message* mess);// , mutex& m_type);
 
 };

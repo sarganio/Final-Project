@@ -1,54 +1,43 @@
 #pragma once
-#define WINDOWS_IGNORE_PACKING_MISMATCH
+//#define WINDOWS_IGNORE_PACKING_MISMATCH
+#include "secblock.h"
 #include<cstdint>
+#include <cstddef>
+using CryptoPP::byte;
 
 #define KEY_LEN 32
 #define SEQ_LEN 4
-#define RECONSTRUCT_LEN 64
+#define RECONSTRUCT_LEN 14 //size of Share (two parts):2*(4B(long)+2B(short)+1B(unsighed char))
 #define NUM_OF_PARTIES 3
+#define MAX_MESSAGE_SIZE 64
+#define ENC_INPUT_LEN sizeof(long)
+#define MUL_GATE_LEN sizeof(long)
+
 
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."
 
-#define MAX_MESSAGE_SIZE 50
 #define HEADER_SIZE 3
+#define ALIGNIG sizeof(void*)
 
-enum types{SEQ = 1,KEY,RECONSTRUCT};
+enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE};
 
-#pragma pack(1)//allow no padding
+//#pragma pack(1)//allow no padding
+#pragma pack(push, 1)
 typedef class Message {
 private:
-	uint8_t _type;
-	unsigned short _size;
-	char* _data; 
+	byte _type;				//an identifier to ID each type of message.
+	unsigned short _size;	//the size of the accual message without header(_type+_size)
+	byte* _data;			//an array of length _size + 1 for null character. 
+	bool _isRead = true;	//flag to inidicate wether the message was read.
 public:
-	Message(uint8_t type = 0):_type(type){
-		switch (type)
-		{
-		case SEQ:
-			_size = SEQ_LEN;
-			break;
-		case KEY:
-			_size = KEY_LEN;
-			break;
-		case RECONSTRUCT:
-			_size = RECONSTRUCT_LEN;
-			break;
-		default:
-			break;
-		}
-		_data = new char[_size + 1]();//Increment by 1 for null character
-
-	}
-	short getSize()const { return _size; }
-	void setData(const char* dataPtr) {
-		memcpy(_data , dataPtr, _size);
-	}
-	char* getData()const { return _data; }
-
-	~Message(){
-		if(_data)
-			delete[] _data;
-		_data = nullptr;
-	}
+	Message(byte type = 0);				
+	void setSize(int type);
+	short getSize()const;
+	bool getIsRead()const;
+	void setData(const byte* dataPtr);
+	void setIsRead(bool val);
+	byte* getData()const;
+	~Message();
 } Message;
+#pragma pack(pop)
