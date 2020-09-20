@@ -340,6 +340,9 @@ Share* Party::calcCircuit(){
 	return _arithmeticCircuit->getOutput();
 }
 void Party::setG_GateInput(unsigned short index, Part value) {
-	assert(index > 0 && index < 6L);
+	assert(index > 0 && index < 6*L);
 	this->_gGatesInputs[index] = value;
+}
+Circuit* Party::getArithmeticCircuit()const {
+	return _arithmeticCircuit;
 }

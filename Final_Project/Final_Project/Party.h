@@ -9,6 +9,8 @@
 #include <string>
 #include <mutex>
 
+#define L  1
+
 using std::vector;
 using std::pair;
 using std::string;
@@ -50,4 +52,5 @@ public:
 	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form
 	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party 
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
+	Circuit* getArithmeticCircuit()const;
 };

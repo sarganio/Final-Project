@@ -31,12 +31,14 @@ public:
 		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
 		assert(left.getFirst().getIndex() < left.getSecond().getIndex());
 
+		static unsigned int numOfMulGates = 0;
+
 		//calculate z_i
 		unsigned int alpha = right.correlatedRandomness();
 		long rightFirstVal = right.getFirst().getValue(), rightSecondVal = right.getSecond().getValue();
 		long leftFisrtVal = left.getFirst().getValue(), leftSecondVal = left.getSecond().getValue();
 		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i
-		long firstPartOputput = leftSecondVal* rightSecondVal + leftSecondVal*rightFirstVal + leftFisrtVal*rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
+		long firstPartOputput = leftSecondVal * rightSecondVal + leftSecondVal * rightFirstVal + leftFisrtVal * rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
 		firstPartOputput %= P;
 		if (firstPartOputput < 0)
 			firstPartOputput += P;
@@ -52,17 +54,20 @@ public:
 		right.getParty()->readFrom((id + 2) % NUM_OF_PARTIES, (byte*)&secondPartOutput);
 
 		//set output values to be: (z_{i-1},z_i)
-		Share output((id + 2)%NUM_OF_PARTIES, 'z');
+		Share output((id + 2) % NUM_OF_PARTIES, 'z');
 		output[right.getParty()->getID()].setValue(firstPartOputput);
-		output[(right.getParty()->getID() + 2)%NUM_OF_PARTIES].setValue(secondPartOutput);
+		output[(right.getParty()->getID() + 2) % NUM_OF_PARTIES].setValue(secondPartOutput);
 
 		//save inputs to the G gate
-		right.getParty()->setG_GateInput(0, left.getFirst());
-		right.getParty()->setG_GateInput(1, left.getSecond());
-		right.getParty()->setG_GateInput(2, right.getFirst());
-		right.getParty()->setG_GateInput(3, right.getSecond());
-		right.getParty()->setG_GateInput(4, Part('a',id,alpha));
-		right.getParty()->setG_GateInput(5, output[id]);
+		//6L(l-1) + j          -------------   need to fix!
+		right.getParty()->setG_GateInput(numOfMulGates * L*6, left.getFirst());
+		right.getParty()->setG_GateInput(1 + numOfMulGates * L*6, left.getSecond());
+		right.getParty()->setG_GateInput(2 + numOfMulGates * L*6, right.getFirst());
+		right.getParty()->setG_GateInput(3 + numOfMulGates * L*6, right.getSecond());
+		right.getParty()->setG_GateInput(4 + numOfMulGates * L*6, Part('a', id, alpha));
+		right.getParty()->setG_GateInput(5 + numOfMulGates * L*6, output[id]);
+
+		numOfMulGates++;
 
 		return output;
 	}
