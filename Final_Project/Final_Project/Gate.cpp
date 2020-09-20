@@ -4,7 +4,7 @@ Share* Gate::getLeft() { return _left; }
 Share* Gate::getOutput() { return _output; }
 
 void Gate::setLeft(Share* input) { _left = input; }
-void Gate::setOutput(Share* output) { _output = output; }
+void Gate::setOutput(PartyShare* output) { _output = output; }
 Gate::~Gate() {
 	if (_output)
 		delete _output;

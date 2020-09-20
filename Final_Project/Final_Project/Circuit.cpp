@@ -10,9 +10,8 @@
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
-	//srand(20);
-	srand(*(unsigned int*)seed);
-	
+	srand(20);
+	//srand(*(unsigned int*)seed);
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);
@@ -22,7 +21,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	//set the first layer with Parties Shares
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		_circuit[0][i] = new AddGate<Share>();
-		_circuit[0][i]->setOutput(party->getShare(i));
+		_circuit[0][i]->setOutput(new PartyShare(party->getShare(i)));
 	}
 	
 	
