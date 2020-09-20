@@ -31,10 +31,6 @@ Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(n
 			continue;
 		_msgs[i] = new Message;
 	}
-	//AutoSeededRandomPool rnd;
-	//_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
-	//rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
-	//cout<<std::dec << endl;
 
 }
 void Party::printKey(unsigned short index)const {
