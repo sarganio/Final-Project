@@ -31,7 +31,7 @@ public:
 		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
 		assert(left.getFirst().getIndex() < left.getSecond().getIndex());
 
-		static unsigned int numOfMulGates = 0;
+		static unsigned int currentNumOfMulGates = 0;
 
 		//calculate z_i
 		unsigned int alpha = right.correlatedRandomness();
@@ -60,14 +60,12 @@ public:
 
 		//save inputs to the G gate
 		//6L(l-1) + j          -------------   need to fix!
-		right.getParty()->setG_GateInput(numOfMulGates * L*6, left.getFirst());
-		right.getParty()->setG_GateInput(1 + numOfMulGates * L*6, left.getSecond());
-		right.getParty()->setG_GateInput(2 + numOfMulGates * L*6, right.getFirst());
-		right.getParty()->setG_GateInput(3 + numOfMulGates * L*6, right.getSecond());
-		right.getParty()->setG_GateInput(4 + numOfMulGates * L*6, Part('a', id, alpha));
-		right.getParty()->setG_GateInput(5 + numOfMulGates * L*6, output[id]);
-
-		numOfMulGates++;
+		right.getParty()->setG_GateInput(currentNumOfMulGates * 6, left.getFirst());
+		right.getParty()->setG_GateInput(1 + currentNumOfMulGates * 6, left.getSecond());
+		right.getParty()->setG_GateInput(2 + currentNumOfMulGates * 6, right.getFirst());
+		right.getParty()->setG_GateInput(3 + currentNumOfMulGates * 6, right.getSecond());
+		right.getParty()->setG_GateInput(4 + currentNumOfMulGates * 6, Part('a', id, alpha));
+		right.getParty()->setG_GateInput(5 + currentNumOfMulGates * 6, output[id]);
 
 		return output;
 	}

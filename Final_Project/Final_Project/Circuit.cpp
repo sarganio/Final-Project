@@ -90,3 +90,6 @@ Circuit::~Circuit() {
 				_circuit[i][j] = nullptr;
 			}
 }
+unsigned int Circuit::getNumOfMulGates()const {
+	return _numOfMulGates;
+}

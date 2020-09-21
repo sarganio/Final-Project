@@ -210,6 +210,9 @@ void Party::fInput() {
 	}
 	//build circuit
 	_arithmeticCircuit = new Circuit(_finalSeq, this);
+
+	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates());
+
 	//release the memory which was allocated in fRand
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		delete randomShares[i];
@@ -340,7 +343,7 @@ Share* Party::calcCircuit(){
 	return _arithmeticCircuit->getOutput();
 }
 void Party::setG_GateInput(unsigned short index, Part value) {
-	assert(index > 0 && index < 6*L);
+	assert(index > 0 && index < _arithmeticCircuit->getNumOfMulGates());
 	this->_gGatesInputs[index] = value;
 }
 Circuit* Party::getArithmeticCircuit()const {
