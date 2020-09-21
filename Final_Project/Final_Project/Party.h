@@ -53,5 +53,6 @@ public:
 	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form
 	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party 
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
+	void fVerify();
 	Circuit* getArithmeticCircuit()const;
 };
