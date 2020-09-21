@@ -96,7 +96,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Crypto++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;C:\Program Files\Crypto++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -132,7 +132,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Crypto++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;C:\Program Files\Crypto++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -144,6 +144,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\alglibinternal.cpp" />
+    <ClCompile Include="..\include\alglibmisc.cpp" />
+    <ClCompile Include="..\include\ap.cpp" />
+    <ClCompile Include="..\include\dataanalysis.cpp" />
+    <ClCompile Include="..\include\diffequations.cpp" />
+    <ClCompile Include="..\include\fasttransforms.cpp" />
+    <ClCompile Include="..\include\integration.cpp" />
+    <ClCompile Include="..\include\interpolation.cpp" />
+    <ClCompile Include="..\include\linalg.cpp" />
+    <ClCompile Include="..\include\optimization.cpp" />
+    <ClCompile Include="..\include\solvers.cpp" />
+    <ClCompile Include="..\include\specialfunctions.cpp" />
+    <ClCompile Include="..\include\statistics.cpp" />
     <ClCompile Include="Circuit.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Gate.cpp" />
@@ -158,6 +171,20 @@
     <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\alglibinternal.h" />
+    <ClInclude Include="..\include\alglibmisc.h" />
+    <ClInclude Include="..\include\ap.h" />
+    <ClInclude Include="..\include\dataanalysis.h" />
+    <ClInclude Include="..\include\diffequations.h" />
+    <ClInclude Include="..\include\fasttransforms.h" />
+    <ClInclude Include="..\include\integration.h" />
+    <ClInclude Include="..\include\interpolation.h" />
+    <ClInclude Include="..\include\linalg.h" />
+    <ClInclude Include="..\include\optimization.h" />
+    <ClInclude Include="..\include\solvers.h" />
+    <ClInclude Include="..\include\specialfunctions.h" />
+    <ClInclude Include="..\include\statistics.h" />
+    <ClInclude Include="..\include\stdafx.h" />
     <ClInclude Include="AddGate.h" />
     <ClInclude Include="Circuit.h" />
     <ClInclude Include="Helper.h" />
