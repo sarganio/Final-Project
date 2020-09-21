@@ -348,3 +348,22 @@ void Party::setG_GateInput(unsigned short index, Part value) {
 Circuit* Party::getArithmeticCircuit()const {
 	return _arithmeticCircuit;
 }
+void Party::fVerify() {
+	//-----Round 1-----:
+	//(a)
+	vector<int> thetas;
+	thetas.resize(L);
+	//generate L random numbers 
+	for (int i = 0; i < L; i++) {
+		Share* randomShare = fRand();
+		thetas.push_back(finalReconstruct(*randomShare));
+		delete randomShare;
+	}
+	//(b)
+	AutoSeededRandomPool rnd;
+	vector<SecByteBlock*> omegas;
+	omegas.resize(6 * L);
+	for(int i =0;i<6*L;i++)
+		omegas.push_back(new SecByteBlock(0x00, KEY_LEN));//////////TODO:free memory
+
+}
