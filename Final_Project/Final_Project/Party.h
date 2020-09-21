@@ -10,6 +10,7 @@
 #include <mutex>
 
 #define L  1
+#define INPUTS_PER_MUL_GATE  6
 
 using std::vector;
 using std::pair;

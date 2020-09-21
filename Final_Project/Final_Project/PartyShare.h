@@ -67,6 +67,8 @@ public:
 		right.getParty()->setG_GateInput(4 + currentNumOfMulGates * 6, Part('a', id, alpha));
 		right.getParty()->setG_GateInput(5 + currentNumOfMulGates * 6, output[id]);
 
+		currentNumOfMulGates++;
+
 		return output;
 	}
 	Share& operator=(Share const& other) {

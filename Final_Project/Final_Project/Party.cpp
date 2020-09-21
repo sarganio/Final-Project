@@ -211,7 +211,7 @@ void Party::fInput() {
 	//build circuit
 	_arithmeticCircuit = new Circuit(_finalSeq, this);
 
-	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates());
+	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates()* INPUTS_PER_MUL_GATE);
 
 	//release the memory which was allocated in fRand
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
@@ -337,13 +337,12 @@ void Party::setShare(Share* share, int index) {
 		return;
 	}
 	throw std::exception(__FUNCTION__ "Index is invalid!");
-
 }
 Share* Party::calcCircuit(){
 	return _arithmeticCircuit->getOutput();
 }
 void Party::setG_GateInput(unsigned short index, Part value) {
-	assert(index > 0 && index < _arithmeticCircuit->getNumOfMulGates());
+	assert(index >= 0 && index < _arithmeticCircuit->getNumOfMulGates()* INPUTS_PER_MUL_GATE);
 	this->_gGatesInputs[index] = value;
 }
 Circuit* Party::getArithmeticCircuit()const {
