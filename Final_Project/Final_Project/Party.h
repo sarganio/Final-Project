@@ -55,4 +55,5 @@ public:
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
 	void fVerify();
 	Circuit* getArithmeticCircuit()const;
+	void verifyRound1();
 };

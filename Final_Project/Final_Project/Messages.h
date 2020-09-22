@@ -20,7 +20,7 @@ using CryptoPP::byte;
 #define HEADER_SIZE 3
 #define ALIGNIG sizeof(void*)
 
-enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE};
+enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE, PROOF_MESSAGE};
 
 //#pragma pack(1)//allow no padding
 #pragma pack(push, 1)
