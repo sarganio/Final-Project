@@ -59,7 +59,6 @@ public:
 		output[(right.getParty()->getID() + 2) % NUM_OF_PARTIES].setValue(secondPartOutput);
 
 		//save inputs to the G gate
-		//6L(l-1) + j          -------------   need to fix!
 		right.getParty()->setG_GateInput(currentNumOfMulGates * 6, left.getFirst());
 		right.getParty()->setG_GateInput(1 + currentNumOfMulGates * 6, left.getSecond());
 		right.getParty()->setG_GateInput(2 + currentNumOfMulGates * 6, right.getFirst());

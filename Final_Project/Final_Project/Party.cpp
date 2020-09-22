@@ -3,6 +3,8 @@
 #include "TcpClient.h"
 #include "TcpServer.h"
 #include "Circuit.h"
+#include "stdafx.h"
+#include "interpolation.h"
 #include <string>
 #include <iostream>
 #include <assert.h>
@@ -12,6 +14,8 @@
 using std::string;
 using std::cout;
 using std::endl;
+
+using namespace alglib;
 
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
@@ -364,6 +368,40 @@ void Party::fVerify() {
 	vector<SecByteBlock*> omegas;
 	omegas.resize(6 * L);
 	for(int i =0;i<6*L;i++)
-		omegas.push_back(new SecByteBlock(0x00, KEY_LEN));//////////TODO:free memory
+		omegas.push_back(new SecByteBlock(0x00, sizeof(int)));//////////TODO:free memory
+	//(c)
+	int* inputPolynomials[6 * L]{};
+	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
+	for (int i = 0; i < 6 * L; i++) {
+		inputPolynomials[i] = new int[M+1];
+		inputPolynomials[i][0] = (int)omegas[i];
+		for (int j = 1; j <= M; j++)
+			inputPolynomials[i][j] = this->_gGatesInputs[j*6*L].getValue();//t'th input ,j'th coefficient of the polynomial
+	}
+	//----------------------------------------------------------------------------------
+	//real_1d_array x = "[0,1,2,3,4,5,6,7,8,9]";
+	//real_1d_array y = "[0,0,2,6,12,20,30,42,56,72]";
+	//barycentricinterpolant p;
+	//real_1d_array a;
+	//double v;
+
+	//// barycentric model is created
+	//polynomialbuild(x, y, p);
+	//v = barycentriccalc(p, 10);
+	////
+ // // a=[0,-1,+1] is decomposition of y=x^2-x in the power basis:
+ // //
+ // //     y = 0 - 1*x + 1*x^2
+ // //
+ // // We convert it to the barycentric form.
+ // //
+	//polynomialbar2pow(p, a);
+	//for (int i = 0; i < 10; i++)
+	//	if (i != 9)
+	//		std::cout <<"("<< a[i] << ")x^" << i << "+";
+	//	else
+	//		std::cout << "(" << a[i] << ")x^" << i;
+
+
 
 }
