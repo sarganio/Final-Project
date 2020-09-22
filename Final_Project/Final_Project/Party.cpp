@@ -407,8 +407,8 @@ void Party::verifyRound1() {
 	for (int i = 0; i < 6 * L; i++) {
 		inputPolynomials[i] = new int[M + 1];
 		inputPolynomials[i][0] = (int)omegas[i];
-		for (int j = 1; j <= M; j++)
-			inputPolynomials[i][j] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
+		for (int j = 0; j < M; j++)
+			inputPolynomials[i][j+1] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
 	}
 	//(d)interpulation reqauired
 	int* pCoefficients = new int[2 * M]{};
