@@ -25,19 +25,6 @@ argv[2],argv[3] - IPs of other parties
 
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
-
-	Party p = Party(0, 0);
-	p.fVerify();
-	getchar();
-
-
-
-
-
-
-
-
-
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	for (i = 2; i < argc; i++) {
@@ -53,8 +40,8 @@ int main(int argc, char* argv[]) {
 		Share& circuitOutput= *p.calcCircuit();
 		long result = p.finalReconstruct(circuitOutput);
 		cout << "The result of the function is:" << result << endl;
-
 		cout<<"The result is:"<< circuitOutput.toString() << endl;
+		p.fVerify();
 	}
 	catch (std::exception & exc) {
 		//TO DO: send an abort message.
