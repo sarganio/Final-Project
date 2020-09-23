@@ -3,21 +3,32 @@
 #include "TcpServer.h"
 #include "Circuit.h"
 
-//#include "NTL/ZZ_pX.h"
+#define NTL_NO_MIN_MAX
+#include "NTL/ZZ_pX.h"
+#include <ranges>
 #include <string>
 #include <iostream>
 #include <assert.h>
 
 #define SUCCESS 1
-//NTL_CLIENT
+//std
 using std::string;
 using std::cout;
 using std::endl;
+//NTL
+using NTL::ZZ;
+using NTL::GenPrime;
+using NTL::ZZ_pX;
+using NTL::vec_ZZ_p;
+using NTL::interpolate;
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
 	//for Dbug
 	 srand(10);
-	 //make sure the input belong to the Ring Z_p 
+	ZZ p;
+	GenPrime(p, 5);
+	NTL::ZZ_p::init(p);
+	//make sure the input belong to the Ring Z_p 
 	 _input %= ZP;
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
@@ -398,14 +409,32 @@ void Party::verifyRound1() {
 	for (int i = 0; i < 6 * L; i++)
 		omegas.push_back(new SecByteBlock(0x00, sizeof(int)));//////////TODO:free memory
 	//(c)
-	int* inputPolynomials[6 * L]{};
+	vector<vec_ZZ_p> pointsToInterpolate;
+	ZZ_pX inputPolynomials[6 * L];
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
-	for (int i = 0; i < 6 * L; i++) {
-		inputPolynomials[i] = new int[M + 1];
-		inputPolynomials[i][0] = (int)omegas[i];
-		for (int j = 0; j < M; j++)
-			 this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
+	vec_ZZ_p range;
+	range.SetLength(M);
+	int counter = 0;
+	for (auto num : range) {
+		counter++;
+		num = counter;
 	}
+	for (int i = 0; i < 6 * L; i++) {
+		//set number of coeffients of every polynomial to be M+!
+		pointsToInterpolate[i].SetLength(M+1);
+		//put the witness coeffient as the free coeffient
+		pointsToInterpolate[i][0] = (int)omegas[i];
+		for (int j = 1; j < M; j++)
+			pointsToInterpolate[i][j] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
+		interpolate(inputPolynomials[i],range , pointsToInterpolate[i]);
+	}
+	for (int i = 0; i < M; i)
+		std::cout << i << ")" << inputPolynomials[i] << std::endl;
+	ZZ_pX p(6*L);
+	for (int i = 0; i < 6 * L; i++)
+		p += inputPolynomials[i];
+	std::cout << "p(x) = " << p << std::endl;
+
 	//(d)interpulation reqauired
 	int* pCoefficients = new int[2 * M]{};
 	//(e)
@@ -431,10 +460,6 @@ void Party::verifyRound1() {
 	thetas.clear();
 	thetas.shrink_to_fit();
 	
-	for (int i = 0; i < 6 * L; i++) {
-		delete[] inputPolynomials[i];
-		inputPolynomials[i] = nullptr;
-	}
 	delete[] pCoefficients;
 	pCoefficients = nullptr;
 
