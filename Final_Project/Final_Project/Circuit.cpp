@@ -55,11 +55,11 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 				
 				if (rand()%2) {//------------------TEMP------------------------------------
 			
-					_circuit[i][j] = new AddGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % P));
+					_circuit[i][j] = new AddGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % ZP));
 
 				}
 				else {// multiplication gate
-					_circuit[i][j] = new MultiplicationGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % P));
+					_circuit[i][j] = new MultiplicationGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % ZP));
 				}
 			
 			}

@@ -28,9 +28,9 @@ public:
 		long leftFisrtVal = left.getFirst().getValue(), leftSecondVal = left.getSecond().getValue();
 		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i
 		long firstPartOputput = leftSecondVal * rightSecondVal + leftSecondVal * rightFirstVal + leftFisrtVal * rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
-		firstPartOputput %= P;
+		firstPartOputput %= ZP;
 		if (firstPartOputput < 0)
-			firstPartOputput += P;
+			firstPartOputput += ZP;
 
 
 		//send zi to the nest party

@@ -55,7 +55,7 @@ using std::exit;
 #include <cstddef>
 using CryptoPP::byte;
 
-#define P 127 //make sure all the elements are belong to Z_p (mod p)
+#define ZP 127 //make sure all the elements are belong to Z_p (mod p)
 
 #include <string>
 

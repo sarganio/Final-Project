@@ -6,7 +6,8 @@
 
 #include "MultiplicationGate.h"
 #include "PartyShare.h"
-
+#define NTL_NO_MIN_MAX 
+#include "NTL/ZZ.h"
 
 using std::cout;
 using std::endl;
@@ -17,7 +18,7 @@ using std::set;
 argv[1] - my IP
 argv[2],argv[3] - IPs of other parties
 */
-
+using namespace NTL;
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
 	short i,myID = 0;
@@ -28,6 +29,7 @@ int main(int argc, char* argv[]) {
 		if (Helper::IPCompare(IPs[0], IPs[i - 1]))//if my IP is bigger than the other IP increment my ID
 			myID++;
 	}
+	
 	cout << "My ID id: "<<myID << endl;
 	try {
 		Party p = Party(myID,1);
