@@ -4,7 +4,7 @@
 #include "TcpServer.h"
 #include "Circuit.h"
 #include "stdafx.h"
-#include "interpolation.h"
+//#include "interpolation.h"
 #include <string>
 #include <iostream>
 #include <assert.h>
@@ -15,7 +15,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-using namespace alglib;
+//using namespace alglib;
 
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){

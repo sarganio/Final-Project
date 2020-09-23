@@ -26,7 +26,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	
 	
 	for (int i = 1; i < _numOfLayers; i++) {
-		_gatesPerLayer.push_back(rand() % RANGE_OF_GATES + MIN_NUM_OF_GATES);
+///		_gatesPerLayer.push_back(rand() % RANGE_OF_GATES + MIN_NUM_OF_GATES);
 		_circuit[i].resize(_gatesPerLayer[i]);
 
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {

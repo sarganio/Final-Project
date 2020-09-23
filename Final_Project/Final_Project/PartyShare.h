@@ -10,23 +10,12 @@ class PartyShare:public Share
 {
 		Party* _owner;
 public:
-	PartyShare(Share* prevOutput=nullptr, Party* p=nullptr)/* :Share(*prevOutput)*/ {
-		if (prevOutput)
-			*this = *prevOutput;
-		_owner = p;
-	}
-	void setParty(Party* p) { _owner = p; }
-	int correlatedRandomness() const{//calculate correlated randomness as described in pepare.
-	Share* randomNumbers =  _owner->fRand();//memory needs to be released!!
-	return (*randomNumbers)[_owner->getID()].getValue() - (*randomNumbers)[(_owner->getID() + 2) % NUM_OF_PARTIES].getValue();
-}	
-
-	Party* getParty()const { return _owner; }
-	~PartyShare() {
-		if (this->_owner)
-			delete _owner;
-	}
-	friend Share operator*(Share& left, PartyShare& right) {//TODO----------------------------
+	PartyShare(Share* prevOutput = nullptr, Party* p = nullptr);
+	void setParty(Party* p);
+	int correlatedRandomness() const;										//calculate correlated randomness as described in pepare.
+	Party* getParty()const;
+	~PartyShare();
+	friend Share operator*(Share& left, PartyShare& right) {
 		//must hold in order for the function to work properly.
 		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
 		assert(left.getFirst().getIndex() < left.getSecond().getIndex());
@@ -70,9 +59,6 @@ public:
 
 		return output;
 	}
-	Share& operator=(Share const& other) {
-		*(Share*)this = other;
-		return *this;
-	}
+	Share& operator=(Share const& other);
 };
 

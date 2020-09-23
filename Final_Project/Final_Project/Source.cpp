@@ -7,11 +7,6 @@
 #include "MultiplicationGate.h"
 #include "PartyShare.h"
 
-#include "stdafx.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-
 
 using std::cout;
 using std::endl;
@@ -27,6 +22,7 @@ argv[2],argv[3] - IPs of other parties
 int main(int argc, char* argv[]) {
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
+	//determine the ID of this party based on the IPs provided to the program.
 	for (i = 2; i < argc; i++) {
 		IPs[i - 1] = string(argv[i]);
 		if (Helper::IPCompare(IPs[0], IPs[i - 1]))//if my IP is bigger than the other IP increment my ID
