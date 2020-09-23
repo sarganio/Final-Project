@@ -2,31 +2,40 @@
 #include "TcpClient.h"
 #include "TcpServer.h"
 #include "Circuit.h"
-
+//NTL
 #define NTL_NO_MIN_MAX
 #include "NTL/ZZ_pX.h"
-#include <ranges>
+#include "NTL/vec_ZZ.h"
+#include "NTL/lzz_p.h"
+
 #include <string>
 #include <iostream>
 #include <assert.h>
 
 #define SUCCESS 1
+#define POWER_TWO_MAX_RANGE 5
 //std
 using std::string;
 using std::cout;
 using std::endl;
 //NTL
-using NTL::ZZ;
+using NTL::ZZ_p;
 using NTL::GenPrime;
 using NTL::ZZ_pX;
 using NTL::vec_ZZ_p;
 using NTL::interpolate;
+using NTL::RandomBnd;
+using NTL::rep;
+using NTL::vec_ZZ;
+using NTL::VectorRandom;
+using NTL::random;
+using NTL::ZZ;
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
+	ZZ p;
 	//for Dbug
 	 srand(10);
-	ZZ p;
-	GenPrime(p, 5);
+	GenPrime(p, POWER_TWO_MAX_RANGE);
 	NTL::ZZ_p::init(p);
 	//make sure the input belong to the Ring Z_p 
 	 _input %= ZP;
@@ -403,11 +412,10 @@ void Party::verifyRound1() {
 		delete randomShare;
 	}
 	//(b)
-	AutoSeededRandomPool rnd;
-	vector<SecByteBlock*> omegas;
-	omegas.resize(6 * L);
-	for (int i = 0; i < 6 * L; i++)
-		omegas.push_back(new SecByteBlock(0x00, sizeof(int)));//////////TODO:free memory
+	vec_ZZ_p omegas;
+	omegas.SetLength(6 * L);
+	for(int i=0;i<6*L;i++)
+		random(omegas[i]);
 	//(c)
 	vector<vec_ZZ_p> pointsToInterpolate;
 	ZZ_pX inputPolynomials[6 * L];
@@ -421,54 +429,48 @@ void Party::verifyRound1() {
 		num = counter;
 	}
 	for (int i = 0; i < 6 * L; i++) {
-		//set number of coeffients of every polynomial to be M+!
+		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength(M+1);
 		//put the witness coeffient as the free coeffient
-		pointsToInterpolate[i][0] = (int)omegas[i];
+		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 1; j < M; j++)
 			pointsToInterpolate[i][j] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
 		interpolate(inputPolynomials[i],range , pointsToInterpolate[i]);
 	}
 	for (int i = 0; i < M; i)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
-	ZZ_pX p(6*L);
+	//(d)
+	ZZ_pX p(6 * L);
 	for (int i = 0; i < 6 * L; i++)
 		p += inputPolynomials[i];
 	std::cout << "p(x) = " << p << std::endl;
-
-	//(d)interpulation reqauired
-	int* pCoefficients = new int[2 * M]{};
 	//(e)
-	int* PI = new int[2 * M + 1 + 6 * L]{};
-	int* nextPI = (int*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(int));//may be problematic
-	int* beforePI = new int[2 * M + 1 + 6 * L]{};
+	vec_ZZ_p PI;
+	PI.SetLength(2 * M + 1 + 6 * L);
+	
+	AutoSeededRandomPool rnd;
+	int* nextPI = (int*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(int));
+	
+	vec_ZZ_p beforePI;
+	PI.SetLength(2 * M + 1 + 6 * L);
 
 	//add 6*L omegas to f
 	for (int i = 0; i < 6 * L; i++) {
-		PI[i] = (int)omegas[i];
+		PI[i] = omegas[i];
 	}
 	//add 2*M + 1 coeficients to f
 	for (int i = 0; i <= 2 * M; i++) {
-		PI[i] = pCoefficients[6 * L + i];
+		PI[i] = p[i];
 	}
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
 		beforePI[i] = PI[i] - nextPI[i];
 	}
 	sendTo((_id + 1) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)nextPI);
-	sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)beforePI);
+	//sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE, beforePI);
 
 	//-------------------release memory section-------------------
 	thetas.clear();
 	thetas.shrink_to_fit();
-	
-	delete[] pCoefficients;
-	pCoefficients = nullptr;
-
-	delete[] beforePI;
-	beforePI = nullptr;
-
-	delete[] PI;
-	PI = nullptr;
 
 	delete nextPI;
 	nextPI = nullptr;
