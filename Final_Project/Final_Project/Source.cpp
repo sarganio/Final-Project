@@ -1,14 +1,13 @@
-
 #include "Party.h"
 #include "Helper.h"
-#include <iostream>
-#include <set>
 
 #include "MultiplicationGate.h"
-#include "PartyShare.h"
-#define NTL_NO_MIN_MAX 
-#include "NTL/ZZ.h"
+#include "PartyShare.h" 
+#define NTL_NO_MIN_MAX
+#include "NTL/ZZ_pX.h"
 
+#include <iostream>
+#include <set>
 using std::cout;
 using std::endl;
 using std::string;
@@ -18,9 +17,18 @@ using std::set;
 argv[1] - my IP
 argv[2],argv[3] - IPs of other parties
 */
-using namespace NTL;
+
 //Just for vitaly & Osher!
 int main(int argc, char* argv[]) {
+
+
+
+
+
+
+
+
+
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	//determine the ID of this party based on the IPs provided to the program.

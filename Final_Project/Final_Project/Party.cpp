@@ -2,12 +2,14 @@
 #include "TcpClient.h"
 #include "TcpServer.h"
 #include "Circuit.h"
+
+//#include "NTL/ZZ_pX.h"
 #include <string>
 #include <iostream>
 #include <assert.h>
 
 #define SUCCESS 1
-
+//NTL_CLIENT
 using std::string;
 using std::cout;
 using std::endl;
@@ -402,7 +404,7 @@ void Party::verifyRound1() {
 		inputPolynomials[i] = new int[M + 1];
 		inputPolynomials[i][0] = (int)omegas[i];
 		for (int j = 0; j < M; j++)
-			inputPolynomials[i][j+1] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
+			 this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
 	}
 	//(d)interpulation reqauired
 	int* pCoefficients = new int[2 * M]{};
