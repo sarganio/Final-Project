@@ -412,6 +412,7 @@ void Party::verifyRound1() {
 	vector<vec_ZZ_p> pointsToInterpolate;
 	ZZ_pX inputPolynomials[6 * L];
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
+	//build a sequance of points from 0 to M
 	vec_ZZ_p range;
 	range.SetLength(M);
 	int counter = 0;
@@ -429,7 +430,7 @@ void Party::verifyRound1() {
 		interpolate(inputPolynomials[i],range , pointsToInterpolate[i]);
 	}
 	for (int i = 0; i < M; i)
-		std::cout << i << ")" << inputPolynomials[i] << std::endl;
+		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	ZZ_pX p(6*L);
 	for (int i = 0; i < 6 * L; i++)
 		p += inputPolynomials[i];
