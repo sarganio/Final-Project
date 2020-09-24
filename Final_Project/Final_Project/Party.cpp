@@ -133,7 +133,6 @@ Party::~Party() {
 }
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
-	std::mutex& m = toSend.getMutex();
 	if(messageType == PROOF_MESSAGE)
 		toSend.setSize(messageType, _arithmeticCircuit->getNumOfMulGates());
 	else
