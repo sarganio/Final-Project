@@ -55,9 +55,9 @@ void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
 struct fd_set FDs;
 
 unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
-	std::mutex& dataMutex =mess->getMutex();
+	std::mutex& dataMutex =mess->getDataMutex();
 	std::condition_variable isRead;
-	std::unique_lock<std::mutex> canRead(mess->getMutex());
+	std::unique_lock<std::mutex> canRead(mess->getIsReadMutex());
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);

@@ -41,7 +41,8 @@ public:
 	std::mutex& getIsRead();
 	void setData(const byte* dataPtr);
 	byte* getData()const;
-	std::mutex& getMutex();
+	std::mutex& getDataMutex();
+	std::mutex& getIsReadMutex();
 	~Message();
 } Message;
 #pragma pack(pop)
