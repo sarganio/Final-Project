@@ -84,7 +84,7 @@
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cryptlib.lib;\Debug\NTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\lib;C:\Program Files\Crypto++\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib;C:\Program Files\Crypto++\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -103,7 +103,7 @@
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cryptlib.lib;\Debug\NTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>C:\Users\Osher\Desktop\Final-Project\Final-Project\Final_Project\lib;C:\Program Files\Crypto++\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib;C:\Program Files\Crypto++\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
