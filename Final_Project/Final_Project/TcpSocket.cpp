@@ -56,15 +56,16 @@ struct fd_set FDs;
 
 unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
 	std::mutex& dataMutex = mess->getDataMutex();
-	std::mutex& isReadMutex = mess->getIsReadMutex();
-	std::condition_variable cv;
+	//std::mutex& isReadMutex = mess->getIsReadMutex();
+	//std::condition_variable cv;
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
 		FD_SET(_socket, &FDs);
-		isReadMutex.lock();
 		//wait for messages from socket
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
+		while (!mess->getIsRead());
+		//isReadMutex.lock();
 		//read message type - 1B
 		//wait until the previous message is read 
 		dataMutex.lock();
@@ -88,13 +89,14 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		dataMutex.lock();
 		this->readBuffer(mess->getData(), mess->getSize());
 		dataMutex.unlock();
+		mess->setIsRead(false);
 		//put the message in the mutual variable of main thread and this thread
 
-		dataMutex.lock();
-		memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
-		dataMutex.unlock();
+		//dataMutex.lock();
+		//memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
+		//dataMutex.unlock();
 
-		isReadMutex.unlock();
+		//isReadMutex.unlock();
 		//mark message as read buffer
 		//mess->setIsRead(false);
 		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
