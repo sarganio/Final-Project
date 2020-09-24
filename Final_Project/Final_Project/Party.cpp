@@ -423,11 +423,8 @@ void Party::verifyRound1() {
 	//build a sequance of points from 0 to M
 	vec_ZZ_p range;
 	range.SetLength(M);
-	int counter = 0;
-	for (auto num : range) {
-		counter++;
-		num = counter;
-	}
+	for (int i = 0; i < M; i++)
+		range[i] = i;
 	for (int i = 0; i < 6 * L; i++) {
 		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength(M+1);
