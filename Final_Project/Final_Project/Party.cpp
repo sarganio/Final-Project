@@ -15,7 +15,7 @@
 #include <condition_variable>
 
 #define SUCCESS 1
-#define POWER_TWO_MAX_RANGE 5
+#define POWER_TWO_MAX_RANGE 9
 //std
 using std::string;
 using std::cout;
@@ -427,12 +427,13 @@ void Party::verifyRound1() {
 		random(omegas[i]);
 	//(c)
 	vector<vec_ZZ_p> pointsToInterpolate;
+	pointsToInterpolate.resize(6 * L);
 	ZZ_pX inputPolynomials[6 * L];
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
 	//build a sequance of points from 0 to M
 	vec_ZZ_p range;
-	range.SetLength(M);
-	for (int i = 0; i < M; i++)
+	range.SetLength(M+1);
+	for (int i = 0; i < M+1; i++)
 		range[i] = i;
 	for (int i = 0; i < 6 * L; i++) {
 		//set number of coeffients of every polynomial to be M+1
@@ -441,9 +442,11 @@ void Party::verifyRound1() {
 		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 1; j < M; j++)
 			pointsToInterpolate[i][j] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
+		std::cout << "Range:" << range <<" Len:"<<range.length()<< endl;
+		std::cout << "pointsToInterpolate::" << pointsToInterpolate[i] << " Len:" <<pointsToInterpolate[i].length()<< endl;
 		interpolate(inputPolynomials[i],range , pointsToInterpolate[i]);
 	}
-	for (int i = 0; i < M; i)
+	for (int i = 0; i < M; i++)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
 	ZZ_pX p(2*M);
