@@ -1,4 +1,5 @@
 #include "Messages.h"
+#include <mutex>
 
 Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
@@ -6,7 +7,7 @@ Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 std::mutex& Message::getDataMutex() {
 	return _dataMutex;
 }
-std::unique_lock<std::mutex>& Message::getIsReadMutex() {
+std::mutex& Message::getIsReadMutex() {
 	return _isReadMutex;
 }
 void Message::setSize(int type,unsigned int size) {

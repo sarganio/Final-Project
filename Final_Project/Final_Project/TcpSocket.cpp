@@ -55,14 +55,14 @@ void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
 struct fd_set FDs;
 
 unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
-	std::mutex& dataMutex =mess->getDataMutex();
-	std::unique_lock<std::mutex>& isRead = mess->getIsReadMutex();
+	std::mutex& dataMutex = mess->getDataMutex();
+	std::mutex& isReadMutex = mess->getIsReadMutex();
 	std::condition_variable cv;
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
 		FD_SET(_socket, &FDs);
-		isRead.lock();
+		isReadMutex.lock();
 		//wait for messages from socket
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
 		//read message type - 1B
@@ -94,8 +94,7 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
 		dataMutex.unlock();
 
-		isRead.unlock();
-		cv.notify_one();
+		isReadMutex.unlock();
 		//mark message as read buffer
 		//mess->setIsRead(false);
 		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());

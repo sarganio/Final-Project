@@ -143,9 +143,7 @@ bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	return true;
 }
 void Party::readFrom(unsigned short id,byte* msg) {
-	std::condition_variable cv;
-	std::unique_lock<std::mutex>& m = _msgs[id]->getIsReadMutex();
-	cv.wait(m);
+	std::mutex& m = _msgs[id]->getIsReadMutex();
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	//update thread that the message was read
 	m.unlock();
