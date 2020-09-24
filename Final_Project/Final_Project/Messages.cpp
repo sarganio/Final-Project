@@ -6,7 +6,7 @@ Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 std::mutex& Message::getDataMutex() {
 	return _dataMutex;
 }
-std::mutex& Message::getIsReadMutex() {
+std::unique_lock<std::mutex>& Message::getIsReadMutex() {
 	return _isReadMutex;
 }
 void Message::setSize(int type,unsigned int size) {

@@ -31,7 +31,7 @@ private:
 	byte _type;				//an identifier to ID each type of message.
 	unsigned short _size;	//the size of the accual message without header(_type+_size)
 	byte* _data;			//an array of length _size + 1 for null character. 
-	std::mutex _isReadMutex;	
+	std::unique_lock<std::mutex> _isReadMutex;
 	std::mutex _dataMutex;
 
 public:
@@ -41,7 +41,7 @@ public:
 	void setData(const byte* dataPtr);
 	byte* getData()const;
 	std::mutex& getDataMutex();
-	std::mutex& getIsReadMutex();
+	std::unique_lock<std::mutex>& getIsReadMutex();
 	~Message();
 } Message;
 #pragma pack(pop)
