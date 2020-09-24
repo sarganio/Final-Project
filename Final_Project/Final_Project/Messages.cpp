@@ -3,8 +3,11 @@
 Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
 }
-std::mutex& Message::getMutex() {
+std::mutex& Message::getDataMutex() {
 	return _dataMutex;
+}
+std::mutex& Message::getIsReadMutex() {
+	return _isReadMutex;
 }
 void Message::setSize(int type,unsigned int size) {
 	unsigned short oldSize = _size;
@@ -40,7 +43,7 @@ void Message::setSize(int type,unsigned int size) {
 		memset(_data, 0, _size);
 }
 short Message::getSize()const { return _size; }
-std::mutex& Message::getIsRead() { return _isRead; }
+
 void Message::setData(const byte* dataPtr) {
 	_dataMutex.lock();
 	memcpy(_data, dataPtr, _size);
