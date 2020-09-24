@@ -145,8 +145,13 @@ bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 void Party::readFrom(unsigned short id,byte* msg) {
 	//std::mutex& m = _msgs[id]->getIsReadMutex();
 	//m.unlock();
-	while (this->_msgs[id]->getIsRead());
+	std::condition_variable& other = _msgs[id]->getListenerCV();
+	std::condition_variable& mine = _msgs[id]->getPartyCV();
+	std::unique_lock<std::mutex> partyUL(_msgs[id]->getIsReadMutex());
+	while (this->_msgs[id]->getIsRead())
+		mine.wait(partyUL);
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
+	other.notify_one();
 	this->_msgs[id]->setIsRead(true);
 	//update thread that the message was read
 	//m.lock();
@@ -449,7 +454,8 @@ void Party::verifyRound1() {
 	for (int i = 0; i < 6*L; i++)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
-	ZZ_pX p(2*M+1);
+	ZZ_pX p;
+	p.SetLength(2 * M + 1);
 	for (int i = 0; i < 6 * L; i++)
 		p += inputPolynomials[i];
 	std::cout << "p(x) = " << p << std::endl;
@@ -458,8 +464,7 @@ void Party::verifyRound1() {
 	PI.SetLength(2 * M + 1 + 6 * L);
 	
 	AutoSeededRandomPool rnd;
-	ZZ_p* nextPI = (ZZ_p*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(ZZ_p));
-	
+	unsigned long long* nextPI = (unsigned long long*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(ZZ_p));
 	vec_ZZ_p beforePI;
 	beforePI.SetLength(2 * M + 1 + 6 * L);
 
@@ -470,9 +475,10 @@ void Party::verifyRound1() {
 	//add 2*M + 1 coeficients to f
 	for (int i = 6*L; i < 2 * M+1+6*L; i++) {
 		PI[i] = p[i-6*L];
+		cout << i<<" ";
 	}
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
-		beforePI[i] = PI[i] - nextPI[i];
+		beforePI[i] = PI[i] - ZZ_p(*(long long*)(&nextPI[i]));
 	}
 	for (int i = 0; i < 2 * M; i++) {
 		byte toSend[sizeof(ZZ_p)]{};

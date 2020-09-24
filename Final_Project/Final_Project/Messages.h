@@ -31,9 +31,10 @@ private:
 	byte _type;				//an identifier to ID each type of message.
 	unsigned short _size;	//the size of the accual message without header(_type+_size)
 	byte* _data;			//an array of length _size + 1 for null character. 
-	//std::mutex _isReadMutex;
-	bool _isRead = true;
 	std::mutex _dataMutex;
+	std::mutex _isReadMutex;
+	std::condition_variable _listenerCV, _partyCV;
+	bool _isRead = true;
 
 public:
 	Message(byte type = 0);				
@@ -44,6 +45,9 @@ public:
 	std::mutex& getDataMutex();
 	bool getIsRead()const;
 	void setIsRead(bool val);
+	std::mutex& getIsReadMutex();
+	std::condition_variable& getListenerCV();
+	std::condition_variable& getPartyCV();
 	~Message();
 } Message;
 #pragma pack(pop)

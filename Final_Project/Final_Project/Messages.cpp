@@ -5,7 +5,7 @@ Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
 }
 std::mutex& Message::getDataMutex() {
-	return _dataMutex;
+	return _isReadMutex;
 }
 bool Message::getIsRead()const {
 	return _isRead;
@@ -58,4 +58,13 @@ Message::~Message() {
 	if (_data)
 		delete[] _data;
 		_data = nullptr;
+}
+std::condition_variable& Message::getListenerCV() {
+	return _listenerCV;
+}
+std::condition_variable& Message::getPartyCV() {
+	return _partyCV;
+}
+std::mutex& Message::getIsReadMutex() {
+	return _isReadMutex;
 }
