@@ -7,6 +7,7 @@
 #include "NTL/ZZ_pX.h"
 #include "NTL/vec_ZZ.h"
 #include "NTL/lzz_p.h"
+#include "NTL/tools.h"
 
 #include <string>
 #include <iostream>
@@ -437,7 +438,7 @@ void Party::verifyRound1() {
 	for (int i = 0; i < M; i)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
-	ZZ_pX p(6 * L);
+	ZZ_pX p(2*M);
 	for (int i = 0; i < 6 * L; i++)
 		p += inputPolynomials[i];
 	std::cout << "p(x) = " << p << std::endl;
@@ -446,10 +447,10 @@ void Party::verifyRound1() {
 	PI.SetLength(2 * M + 1 + 6 * L);
 	
 	AutoSeededRandomPool rnd;
-	int* nextPI = (int*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(int));
+	ZZ_p* nextPI = (ZZ_p*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(ZZ_p));
 	
 	vec_ZZ_p beforePI;
-	PI.SetLength(2 * M + 1 + 6 * L);
+	beforePI.SetLength(2 * M + 1 + 6 * L);
 
 	//add 6*L omegas to f
 	for (int i = 0; i < 6 * L; i++) {
@@ -462,8 +463,12 @@ void Party::verifyRound1() {
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
 		beforePI[i] = PI[i] - nextPI[i];
 	}
-	sendTo((_id + 1) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)nextPI);
-	//sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE, beforePI);
+	for (int i = 0; i < 2 * M; i++) {
+		byte toSend[sizeof(ZZ_p)]{};
+		sendTo((_id + 1) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)&nextPI[i]);
+		BytesFromZZ(toSend, rep(beforePI[i]), sizeof(ZZ_p));
+		sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE,toSend);
+	}
 
 	//-------------------release memory section-------------------
 	thetas.clear();

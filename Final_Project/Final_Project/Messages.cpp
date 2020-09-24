@@ -24,6 +24,7 @@ void Message::setSize(int type) {
 	default:
 		break;
 	}
+	
 	memset(_data, 0, MAX_MESSAGE_SIZE);
 }
 short Message::getSize()const { return _size; }
