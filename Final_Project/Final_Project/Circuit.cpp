@@ -8,7 +8,7 @@
 #define RANGE_OF_LAYERS 1
 #define RANGE_OF_GATES 2
 
-Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
+Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGates(0) {
 	
 	srand(21);
 	//srand(*(unsigned int*)seed);
@@ -16,7 +16,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party) {
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);
 	_circuit[0].resize(NUM_OF_PARTIES);
-	_gatesPerLayer.push_back(3);
+	_gatesPerLayer.push_back(NUM_OF_PARTIES);
 
 	//set the first layer with Parties Shares
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
