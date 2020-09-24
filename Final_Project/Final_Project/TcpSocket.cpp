@@ -55,8 +55,8 @@ void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
 struct fd_set FDs;
 
 unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
-//std::unique_lock<std::mutex> lk(m_type);
-//std::condition_variable cv;
+std::unique_lock<std::mutex> dataMutex(mess->getMutex());
+std::condition_variable cv;
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
@@ -68,13 +68,16 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		//lk.lock();
 		//wait until the previous message is read 
 		while (!mess->getIsRead());
-
+		dataMutex.lock();
 		this->readBuffer(&type, 1);
+		dataMutex.unlock();
 
 		//read the header: size of message - 2B
 		mess->setSize(type);
 		unsigned short expectedSize = mess->getSize();
+		dataMutex.lock();
 		this->readBuffer(mess + 1, HEADER_SIZE - 1);
+		dataMutex.unlock();
 
 		//check if the message hase a proper size field
 		if (expectedSize != mess->getSize()) {
@@ -83,11 +86,15 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		}
 
 		//read rest of message
+		dataMutex.lock();
 		this->readBuffer(mess->getData(), mess->getSize());
+		dataMutex.unlock();
 		//put the message in the mutual variable of main thread and this thread
+
+		dataMutex.lock();
 		memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
-		//lk.unlock();
-		//cv.notify_one();
+		dataMutex.unlock();
+		
 		//mark message as read buffer
 		mess->setIsRead(false);
 		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());

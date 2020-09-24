@@ -1,10 +1,13 @@
 #include "Messages.h"
 
 Message::Message(byte type) :_type(type), _size(0) {
-	_data = new byte[MAX_MESSAGE_SIZE];//[1 + (type ? _size : MAX_MESSAGE_SIZE)]();//Increment by 1 for null character. Allocate MAX_MESSAGE_SIZE in case type = 0.
 	setSize(type);
 }
+std::mutex& Message::getMutex() {
+	return _m;
+}
 void Message::setSize(int type) {
+	unsigned short oldSize = _size;
 	switch (type)
 	{
 	case SEQ:
@@ -21,16 +24,25 @@ void Message::setSize(int type) {
 		break;
 	case MUL_GATE:
 		_size = MUL_GATE_LEN;
-	default:
 		break;
 	}
-	
-	memset(_data, 0, MAX_MESSAGE_SIZE);
+	if (oldSize < _size) {
+		_m.lock();
+		if (_data) {
+			delete _data;
+		}
+		_data = new byte[_size]();
+		_m.unlock();
+	}
+	else
+		memset(_data, 0, _size);
 }
 short Message::getSize()const { return _size; }
 bool Message::getIsRead()const { return _isRead; }
 void Message::setData(const byte* dataPtr) {
+	_m.lock();
 	memcpy(_data, dataPtr, _size);
+	_m.unlock();
 }
 void Message::setIsRead(bool val) { this->_isRead = val; }
 byte* Message::getData()const { return _data; }
