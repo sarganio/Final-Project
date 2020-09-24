@@ -1,6 +1,6 @@
 #include "Messages.h"
 
-Message::Message(byte type) :_type(type), _size(0) {
+Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
 }
 std::mutex& Message::getMutex() {

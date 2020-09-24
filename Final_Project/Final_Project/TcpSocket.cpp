@@ -55,8 +55,7 @@ void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
 struct fd_set FDs;
 
 unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
-std::unique_lock<std::mutex> dataMutex(mess->getMutex());
-std::condition_variable cv;
+	std::mutex& dataMutex =mess->getMutex();
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
@@ -65,7 +64,6 @@ std::condition_variable cv;
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
 
 		//read message type - 1B
-		//lk.lock();
 		//wait until the previous message is read 
 		while (!mess->getIsRead());
 		dataMutex.lock();
