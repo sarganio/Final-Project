@@ -132,9 +132,13 @@ Party::~Party() {
 }
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
+	std::mutex& m = toSend.getMutex();
+	toSend.setSize(messageType, _arithmeticCircuit->getNumOfMulGates());
+	m.lock();
 	toSend.setData(msg);
 	_sockets[id]->writeBuffer(&toSend, HEADER_SIZE);
 	_sockets[id]->writeBuffer(toSend.getData(), toSend.getSize());
+	m.unlock();
 	return true;
 }
 void Party::readFrom(unsigned short id,byte* msg) {

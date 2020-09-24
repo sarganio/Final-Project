@@ -6,7 +6,7 @@ Message::Message(byte type) :_type(type), _size(0) {
 std::mutex& Message::getMutex() {
 	return _m;
 }
-void Message::setSize(int type) {
+void Message::setSize(int type,unsigned int size) {
 	unsigned short oldSize = _size;
 	switch (type)
 	{
@@ -25,6 +25,8 @@ void Message::setSize(int type) {
 	case MUL_GATE:
 		_size = MUL_GATE_LEN;
 		break;
+	case PROOF_MESSAGE:
+		_size = size;
 	}
 	if (oldSize < _size) {
 		_m.lock();

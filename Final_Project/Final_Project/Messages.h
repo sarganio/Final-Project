@@ -15,6 +15,7 @@ using CryptoPP::byte;
 #define MUL_GATE_LEN sizeof(long)
 
 
+
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."
 
@@ -34,7 +35,7 @@ private:
 	std::mutex _m;
 public:
 	Message(byte type = 0);				
-	void setSize(int type);
+	void setSize(int type,unsigned int size = 0);
 	short getSize()const;
 	bool getIsRead()const;
 	void setData(const byte* dataPtr);
