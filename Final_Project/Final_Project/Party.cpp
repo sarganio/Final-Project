@@ -446,10 +446,10 @@ void Party::verifyRound1() {
 		std::cout << "pointsToInterpolate::" << pointsToInterpolate[i] << " Len:" <<pointsToInterpolate[i].length()<< endl;
 		interpolate(inputPolynomials[i],range , pointsToInterpolate[i]);
 	}
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < 6*L; i++)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
-	ZZ_pX p(2*M);
+	ZZ_pX p(2*M+1);
 	for (int i = 0; i < 6 * L; i++)
 		p += inputPolynomials[i];
 	std::cout << "p(x) = " << p << std::endl;
@@ -468,8 +468,8 @@ void Party::verifyRound1() {
 		PI[i] = omegas[i];
 	}
 	//add 2*M + 1 coeficients to f
-	for (int i = 0; i <= 2 * M; i++) {
-		PI[i] = p[i];
+	for (int i = 6*L; i < 2 * M+1+6*L; i++) {
+		PI[i] = p[i-6*L];
 	}
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
 		beforePI[i] = PI[i] - nextPI[i];
