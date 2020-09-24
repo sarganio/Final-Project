@@ -15,30 +15,6 @@ argv[2],argv[3] - IPs of other parties
 */
 
 int main(int argc, char* argv[]) {
-	//NTL::ZZ p;
-	//NTL::GenPrime(p, 5);
-	//NTL::ZZ_p::init(p);
-	//NTL::ZZ_pX f;
-	//NTL::vec_ZZ_p x, y;
-	//x.SetLength(4);
-	//y.SetLength(4);
-	//for (int i = 0; i < 4; i++)
-	//	x[i] = i;
-	////for (int i = 0; i < 10; i++)
-	////	y[i] = 2 * i;
-	//y[0] = 0;
-	//y[1] = 0;
-	//y[2] = 2;
-	//y[3] = 6;
-	//NTL::interpolate(f, x, y);
-	//cout << f;
-	//getchar();
-
-
-
-
-
-
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	//determine the ID of this party based on the IPs provided to the program.
@@ -51,7 +27,7 @@ int main(int argc, char* argv[]) {
 	cout << "My ID id: "<<myID << endl;
 	try {
 		Party p = Party(myID,1);
-		p.verifyRound1();
+		//p.verifyRound1();
 		p.connectToAllParties(IPs);
 		p.fInput();
 		Share& circuitOutput= *p.calcCircuit();
