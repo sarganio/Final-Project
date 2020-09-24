@@ -31,15 +31,15 @@ private:
 	byte _type;				//an identifier to ID each type of message.
 	unsigned short _size;	//the size of the accual message without header(_type+_size)
 	byte* _data;			//an array of length _size + 1 for null character. 
-	bool _isRead = true;	//flag to inidicate wether the message was read.
-	std::mutex _m;
+	std::mutex _isRead;	
+	std::mutex _dataMutex;
+
 public:
 	Message(byte type = 0);				
 	void setSize(int type,unsigned int size = 0);
 	short getSize()const;
-	bool getIsRead()const;
+	std::mutex& getIsRead();
 	void setData(const byte* dataPtr);
-	void setIsRead(bool val);
 	byte* getData()const;
 	std::mutex& getMutex();
 	~Message();

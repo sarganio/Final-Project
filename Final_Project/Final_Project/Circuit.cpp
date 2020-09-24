@@ -17,7 +17,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 	_circuit.resize(_numOfLayers);
 	_gatesPerLayer.resize(_numOfLayers);
 	_circuit[0].resize(NUM_OF_PARTIES);
-	_gatesPerLayer.push_back(NUM_OF_PARTIES);
+	_gatesPerLayer[0] = NUM_OF_PARTIES;
 
 	//set the first layer with Parties Shares
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
@@ -27,7 +27,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 	
 	
 	for (int i = 1; i < _numOfLayers; i++) {
-///		_gatesPerLayer.push_back(rand() % RANGE_OF_GATES + MIN_NUM_OF_GATES);
+		_gatesPerLayer[i] = (rand() % RANGE_OF_GATES + MIN_NUM_OF_GATES);
 		_circuit[i].resize(_gatesPerLayer[i]);
 
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {

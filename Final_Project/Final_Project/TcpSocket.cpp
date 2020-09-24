@@ -2,7 +2,7 @@
 #include "Helper.h"
 #include <iostream>
 #include <string>
-
+#include <condition_variable>
 using std::cerr;
 
 WSAInitializer TcpSocket::_WSAinit;
@@ -56,16 +56,17 @@ struct fd_set FDs;
 
 unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;////////////////////TODO:needs to be fit both client and server/////////////////
 	std::mutex& dataMutex =mess->getMutex();
+	std::condition_variable isRead;
+	std::unique_lock<std::mutex> canRead(mess->getMutex());
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
 		FD_SET(_socket, &FDs);
+		canRead.lock();
 		//wait for messages from socket
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
-
 		//read message type - 1B
 		//wait until the previous message is read 
-		while (!mess->getIsRead());
 		dataMutex.lock();
 		this->readBuffer(&type, 1);
 		dataMutex.unlock();
@@ -92,9 +93,11 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		dataMutex.lock();
 		memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
 		dataMutex.unlock();
-		
+
+		canRead.unlock();
+		isRead.notify_one();
 		//mark message as read buffer
-		mess->setIsRead(false);
+		//mess->setIsRead(false);
 		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
 	}
 }

@@ -12,6 +12,7 @@
 #include <string>
 #include <iostream>
 #include <assert.h>
+#include <condition_variable>
 
 #define SUCCESS 1
 #define POWER_TWO_MAX_RANGE 5
@@ -143,10 +144,12 @@ bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	return true;
 }
 void Party::readFrom(unsigned short id,byte* msg) {
-	while ( this->_msgs[id]->getIsRead());
+	std::condition_variable cv;
+	std::unique_lock<std::mutex> canRead(_msgs[id]->getMutex());
+	cv.wait(canRead);
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	//update thread that the message was read
-	this->_msgs[id]->setIsRead(true);
+	canRead.unlock();
 }
 unsigned short Party::getID()const { return this->_id; }
 void Party::calcSeq() {

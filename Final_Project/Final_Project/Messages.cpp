@@ -4,7 +4,7 @@ Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
 }
 std::mutex& Message::getMutex() {
-	return _m;
+	return _dataMutex;
 }
 void Message::setSize(int type,unsigned int size) {
 	unsigned short oldSize = _size;
@@ -29,24 +29,23 @@ void Message::setSize(int type,unsigned int size) {
 		_size = size;
 	}
 	if (oldSize < _size) {
-		_m.lock();
+		_dataMutex.lock();
 		if (_data) {
 			delete _data;
 		}
 		_data = new byte[_size]();
-		_m.unlock();
+		_dataMutex.unlock();
 	}
 	else
 		memset(_data, 0, _size);
 }
 short Message::getSize()const { return _size; }
-bool Message::getIsRead()const { return _isRead; }
+std::mutex& Message::getIsRead() { return _isRead; }
 void Message::setData(const byte* dataPtr) {
-	_m.lock();
+	_dataMutex.lock();
 	memcpy(_data, dataPtr, _size);
-	_m.unlock();
+	_dataMutex.unlock();
 }
-void Message::setIsRead(bool val) { this->_isRead = val; }
 byte* Message::getData()const { return _data; }
 Message::~Message() {
 	if (_data)
