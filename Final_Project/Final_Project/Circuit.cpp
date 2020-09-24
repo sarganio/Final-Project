@@ -15,6 +15,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
 	_circuit.resize(_numOfLayers);
+	_gatesPerLayer.resize(_numOfLayers);
 	_circuit[0].resize(NUM_OF_PARTIES);
 	_gatesPerLayer.push_back(NUM_OF_PARTIES);
 
