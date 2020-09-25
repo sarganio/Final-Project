@@ -381,9 +381,13 @@ Circuit* Party::getArithmeticCircuit()const {
 	return _arithmeticCircuit;
 }
 void Party::fVerify() {
+	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
+	vector<ZZ_pX> inputPolynomials;
+	inputPolynomials.resize(6 * L);
 	//-----Round 1-----:
-	verifyRound1();
+	verifyRound1(M,inputPolynomials);
 	//-----Round 2-----:
+	verifyRound2(M, inputPolynomials);
 
 
 	//----------------------------------------------------------------------------------
@@ -413,16 +417,11 @@ void Party::fVerify() {
 
 
 }
-void Party::verifyRound1() {
+void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 	//(a)
-	vector<int> thetas;
-	thetas.resize(L);
-	//generate L random numbers 
-	for (int i = 0; i < L; i++) {
-		Share* randomShare = fRand();
-		thetas.push_back(finalReconstruct(*randomShare));
-		delete randomShare;
-	}
+	int numOfElements = L;
+	vector<ZZ_p> thetas;
+	generateRandomElements(thetas, numOfElements);
 	//(b)
 	vec_ZZ_p omegas;
 	omegas.SetLength(6 * L);
@@ -431,8 +430,6 @@ void Party::verifyRound1() {
 	//(c)
 	vector<vec_ZZ_p> pointsToInterpolate;
 	pointsToInterpolate.resize(6 * L);
-	ZZ_pX inputPolynomials[6 * L];
-	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
 	interpolateInputPolynomials(M, pointsToInterpolate, omegas, inputPolynomials);
 	for (int i = 0; i < 6*L; i++)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
@@ -477,8 +474,39 @@ void Party::verifyRound1() {
 	delete nextPI;
 	nextPI = nullptr;
 }
+void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
+	vector<byte*>PIs;
+	PIs.resize(NUM_OF_PARTIES);
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i == _id)
+			continue;
+		else
+			PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
 
-void Party::interpolateInputPolynomials(unsigned int M, std::vector<NTL::vec_ZZ_p>& pointsToInterpolate, NTL::vec_ZZ_p& omegas, NTL::ZZ_pX  inputPolynomials[INPUTS_PER_MUL_GATE*L])
+	readFrom((_id + 1) % NUM_OF_PARTIES, PIs[(_id + 1) % NUM_OF_PARTIES]);
+	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
+	//(a)
+	vector<ZZ_p> bettas;
+	generateRandomElements(bettas, L);
+	ZZ_p r;
+	do {
+		random(r);
+	} while (rep(r) <= M);
+	//(b)
+
+}
+void Party::generateRandomElements(std::vector<ZZ_p>& thetas, int numOfElements)
+{
+	thetas.resize(numOfElements);
+	//generate L random numbers 
+	for (int i = 0; i < numOfElements; i++) {
+		Share* randomShare = fRand();
+		thetas.push_back(ZZ_p(finalReconstruct(*randomShare)));
+		delete randomShare;
+	}
+}
+
+void Party::interpolateInputPolynomials(unsigned int M, std::vector<vec_ZZ_p>& pointsToInterpolate, vec_ZZ_p& omegas, vector<ZZ_pX>& inputPolynomials)
 {
 	//build a sequance of points from 0 to M
 	vec_ZZ_p range;
