@@ -5,7 +5,7 @@ Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
 }
 std::mutex& Message::getDataMutex() {
-	return _isReadMutex;
+	return _dataMutex;
 }
 bool Message::getIsRead()const {
 	return _isRead;
