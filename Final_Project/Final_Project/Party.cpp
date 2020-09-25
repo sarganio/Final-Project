@@ -148,8 +148,8 @@ void Party::readFrom(unsigned short id,byte* msg) {
 	std::condition_variable& other = _msgs[id]->getListenerCV();
 	std::condition_variable& mine = _msgs[id]->getPartyCV();
 	std::unique_lock<std::mutex> partyUL(_msgs[id]->getIsReadMutex());
-	while (this->_msgs[id]->getIsRead())
-		mine.wait(partyUL);
+	//while (this->_msgs[id]->getIsRead())
+	mine.wait(partyUL, [&] {return !this->_msgs[id]->getIsRead(); });
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	other.notify_one();
 	this->_msgs[id]->setIsRead(true);
@@ -435,22 +435,7 @@ void Party::verifyRound1() {
 	pointsToInterpolate.resize(6 * L);
 	ZZ_pX inputPolynomials[6 * L];
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
-	//build a sequance of points from 0 to M
-	vec_ZZ_p range;
-	range.SetLength(M+1);
-	for (int i = 0; i < M+1; i++)
-		range[i] = i;
-	for (int i = 0; i < 6 * L; i++) {
-		//set number of coeffients of every polynomial to be M+1
-		pointsToInterpolate[i].SetLength(M+1);
-		//put the witness coeffient as the free coeffient
-		pointsToInterpolate[i][0] = omegas[i];
-		for (int j = 1; j < M; j++)
-			pointsToInterpolate[i][j] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
-		std::cout << "Range:" << range <<" Len:"<<range.length()<< endl;
-		std::cout << "pointsToInterpolate::" << pointsToInterpolate[i] << " Len:" <<pointsToInterpolate[i].length()<< endl;
-		interpolate(inputPolynomials[i],range , pointsToInterpolate[i]);
-	}
+	interpolateInputPolynomials(M, pointsToInterpolate, omegas, inputPolynomials);
 	for (int i = 0; i < 6*L; i++)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
@@ -478,7 +463,7 @@ void Party::verifyRound1() {
 		cout << i<<" ";
 	}
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
-		beforePI[i] = PI[i] - ZZ_p(*(long long*)(&nextPI[i]));
+		beforePI[i] = PI[i] - ZZ_p(*(unsigned long long*)(&nextPI[i]));
 	}
 	for (int i = 0; i < 2 * M; i++) {
 		byte toSend[sizeof(ZZ_p)]{};
@@ -493,4 +478,24 @@ void Party::verifyRound1() {
 
 	delete nextPI;
 	nextPI = nullptr;
+}
+
+void Party::interpolateInputPolynomials(unsigned int M, std::vector<NTL::vec_ZZ_p>& pointsToInterpolate, NTL::vec_ZZ_p& omegas, NTL::ZZ_pX  inputPolynomials[6])
+{
+	//build a sequance of points from 0 to M
+	vec_ZZ_p range;
+	range.SetLength(M + 1);
+	for (int i = 0; i < M + 1; i++)
+		range[i] = i;
+	for (int i = 0; i < 6 * L; i++) {
+		//set number of coeffients of every polynomial to be M+1
+		pointsToInterpolate[i].SetLength(M + 1);
+		//put the witness coeffient as the free coeffient
+		pointsToInterpolate[i][0] = omegas[i];
+		for (int j = 1; j < M; j++)
+			pointsToInterpolate[i][j] = this->_gGatesInputs[j * 6 * L].getValue();//t'th input ,j'th coefficient of the polynomial
+		std::cout << "Range:" << range << " Len:" << range.length() << endl;
+		std::cout << "pointsToInterpolate::" << pointsToInterpolate[i] << " Len:" << pointsToInterpolate[i].length() << endl;
+		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
+	}
 }

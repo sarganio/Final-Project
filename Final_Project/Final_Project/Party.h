@@ -4,7 +4,8 @@
 #include "Messages.h"
 
 #include "Share.h"
-
+#define NTL_NO_MIN_MAX
+#include "NTL/vec_ZZ_p.h"
 #include <vector>
 #include <string>
 #include <mutex>
@@ -56,4 +57,5 @@ public:
 	void fVerify();
 	Circuit* getArithmeticCircuit()const;
 	void verifyRound1();
+	void interpolateInputPolynomials(unsigned int M, std::vector<NTL::vec_ZZ_p>& pointsToInterpolate, NTL::vec_ZZ_p& omegas, NTL::ZZ_pX  inputPolynomials[6]);
 };
