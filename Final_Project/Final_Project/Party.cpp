@@ -455,7 +455,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 	//add 2*M + 1 coeficients to f
 	for (int i = 6*L; i < 2 * M+1+6*L; i++) {
 		PI[i] = p[i-6*L];
-		cout << i<<" ";
+		cout << PI[i] << " ";
 	}
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
 		beforePI[i] = PI[i] - ZZ_p(*(unsigned long long*)(&nextPI[i]));
@@ -482,8 +482,9 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 			continue;
 		else
 			PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
-
+	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(PROOF_MESSAGE, 2 * M + 6 * L + 1);
 	readFrom((_id + 1) % NUM_OF_PARTIES, PIs[(_id + 1) % NUM_OF_PARTIES]);
+	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(PROOF_MESSAGE, 2 * M + 6 * L + 1);
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 	//(a)
 	vector<ZZ_p> bettas;
