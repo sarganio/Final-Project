@@ -32,6 +32,7 @@ using NTL::vec_ZZ;
 using NTL::VectorRandom;
 using NTL::random;
 using NTL::ZZ;
+using NTL::vec_ZZ_pX;
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
 	ZZ p;
@@ -382,12 +383,13 @@ Circuit* Party::getArithmeticCircuit()const {
 }
 void Party::fVerify() {
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
+	ZZ_pX p;
 	vector<ZZ_pX> inputPolynomials;
 	inputPolynomials.resize(6 * L);
 	//-----Round 1-----:
-	verifyRound1(M,inputPolynomials);
+	verifyRound1(M,inputPolynomials,p);
 	//-----Round 2-----:
-	verifyRound2(M, inputPolynomials);
+	verifyRound2(M, inputPolynomials,p);
 
 
 	//----------------------------------------------------------------------------------
@@ -417,7 +419,7 @@ void Party::fVerify() {
 
 
 }
-void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
+void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& p) {
 	//(a)
 	int numOfElements = L;
 	vector<ZZ_p> thetas;
@@ -434,7 +436,6 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 	for (int i = 0; i < 6*L; i++)
 		std::cout<<"(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
-	ZZ_pX p;
 	p.SetLength(2 * M + 1);
 	for (int i = 0; i < 6 * L; i++)
 		p += inputPolynomials[i];
@@ -467,7 +468,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 	for (int i = 0; i < 2 * M+6*L+1; i++) {
 		byte rawZp[sizeof(ZZ_p)]{};
 		BytesFromZZ(rawZp, rep(beforePI[i]), sizeof(ZZ_p));
-		*(unsigned long long*)toSend[i] = *(unsigned long long*)rawZp;
+		*(unsigned long long*)&toSend[i] = *(unsigned long long*)&rawZp;
 	}
 	sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE,toSend);
 
@@ -478,18 +479,21 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 	delete nextPI;
 	nextPI = nullptr;
 }
-void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
-	vector<byte*>PIs;
+void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
+	vector<vec_ZZ_p> PIs;
 	PIs.resize(NUM_OF_PARTIES);
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
 			continue;
-		else
-			PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
+		else 
+			PIs[i].SetLength(2 * M + 6 * L + 1);
+			//PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
+	//set Message's size to: 2*M+6*L+2
 	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(PROOF_MESSAGE, 2 * M + 6 * L + 1);
-	readFrom((_id + 1) % NUM_OF_PARTIES, PIs[(_id + 1) % NUM_OF_PARTIES]);
+	//*****need to check if this is ok..*****
+	readFrom((_id + 1) % NUM_OF_PARTIES,(byte*)&PIs[(_id + 1) % NUM_OF_PARTIES]);
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(PROOF_MESSAGE, 2 * M + 6 * L + 1);
-	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
+	readFrom((_id + 2) % NUM_OF_PARTIES, (byte*)&PIs[(_id + 2) % NUM_OF_PARTIES]);
 	//(a)
 	vector<ZZ_p> bettas;
 	generateRandomElements(bettas, L);
@@ -498,6 +502,20 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 		random(r);
 	} while (rep(r) <= M);
 	//(b)
+	vector<ZZ_p> b;
+	b.resize(NUM_OF_PARTIES);
+
+	ZZ_p f_r(0);
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		for (int j = 0; j < M+1; j++) {
+			if (i == _id)
+				for (int l = 0; l < 6 * L; l++)//compute all of this party 6L polynomials at point r .e.g -f_l(r)
+					f_r += inputPolynomials[l][j] * NTL::power(r, j);
+			else
+				for (int k = 0; k < 2*M+1; k++) //computes b with every received p(x)
+					b[i] += PIs[i][k + 6 * L] * NTL::power(r, k);
+			b[i] *= bettas[j];//multiply each of the M g gate results with beta.
+		}
 
 }
 void Party::generateRandomElements(std::vector<ZZ_p>& thetas, int numOfElements)
