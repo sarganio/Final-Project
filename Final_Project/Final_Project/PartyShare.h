@@ -14,7 +14,9 @@ public:
 	void setParty(Party* p);												//setter for pointer to party.
 	int correlatedRandomness() const;										//calculate correlated randomness as described in pepare.
 	Party* getParty()const;													//getter for the pointer to party.
-	~PartyShare();
+	~PartyShare()=default;
+	Share& operator=(Share const& other);									//assighnment operator
+	//calculate the multipication of two shares
 	friend Share operator*(Share& left, PartyShare& right) {
 		//must hold, in order for the function to work properly.
 		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
@@ -33,7 +35,7 @@ public:
 			firstPartOputput += ZP;
 
 
-		//send zi to the nest party
+		//send zi to the next party
 		byte* buffer = (byte*)&firstPartOputput;
 		unsigned short id = right.getParty()->getID();
 		right.getParty()->sendTo((id + 1) % NUM_OF_PARTIES, MUL_GATE, buffer);
@@ -47,7 +49,7 @@ public:
 		output[right.getParty()->getID()].setValue(firstPartOputput);
 		output[(right.getParty()->getID() + 2) % NUM_OF_PARTIES].setValue(secondPartOutput);
 
-		//save inputs to the G gate
+		//save inputs to each g gate in the circuit
 		right.getParty()->setG_GateInput(currentNumOfMulGates * 6, left.getFirst());
 		right.getParty()->setG_GateInput(1 + currentNumOfMulGates * 6, left.getSecond());
 		right.getParty()->setG_GateInput(2 + currentNumOfMulGates * 6, right.getFirst());
@@ -59,6 +61,5 @@ public:
 
 		return output;
 	}
-	Share& operator=(Share const& other);
 };
 

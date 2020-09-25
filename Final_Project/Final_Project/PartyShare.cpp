@@ -14,10 +14,6 @@ int PartyShare::correlatedRandomness() const {
 Party* PartyShare::getParty()const { 
 	return _owner; 
 }
-PartyShare::~PartyShare() {
-	if (this->_owner)
-		delete _owner;
-}
 Share& PartyShare::operator=(Share const& other) {
 	*(Share*)this = other;
 	return *this;
