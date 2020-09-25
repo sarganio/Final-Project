@@ -8,12 +8,12 @@ class Party;
 
 class PartyShare:public Share
 {
-		Party* _owner;
+		Party* _owner;														
 public:
 	PartyShare(Share* prevOutput = nullptr, Party* p = nullptr);
-	void setParty(Party* p);
+	void setParty(Party* p);												//setter for pointer to party.
 	int correlatedRandomness() const;										//calculate correlated randomness as described in pepare.
-	Party* getParty()const;
+	Party* getParty()const;													//getter for the pointer to party.
 	~PartyShare();
 	friend Share operator*(Share& left, PartyShare& right) {
 		//must hold in order for the function to work properly.

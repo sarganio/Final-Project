@@ -28,26 +28,26 @@ enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE, PROOF_MESSAGE};
 #pragma pack(push, 1)
 typedef class Message {
 private:
-	byte _type;				//an identifier to ID each type of message.
-	unsigned short _size;	//the size of the accual message without header(_type+_size)
-	byte* _data;			//an array of length _size + 1 for null character. 
-	std::mutex _dataMutex;
-	std::mutex _isReadMutex;
+	byte _type;									//an identifier to ID each type of message.
+	unsigned short _size;						//the size of the accual message without header(_type+_size)
+	byte* _data;								//an array of length _size + 1 for null character. 
+	std::mutex _dataMutex;						//mutex protector of the data in message
+	std::mutex _isReadMutex;					//mutex to make sure that old messages dont get confused with new messages.
 	std::condition_variable _listenerCV, _partyCV;
-	bool _isRead = true;
+	bool _isRead = true;						//true if the current message was read by the party thread.
 
 public:
 	Message(byte type = 0);				
-	void setSize(int type,unsigned int size = 0);
-	short getSize()const;
-	void setData(const byte* dataPtr);
-	byte* getData()const;
-	std::mutex& getDataMutex();
-	bool getIsRead()const;
-	void setIsRead(bool val);
-	std::mutex& getIsReadMutex();
-	std::condition_variable& getListenerCV();
-	std::condition_variable& getPartyCV();
+	void setSize(int type,unsigned int size = 0);//setter for the size of the message
+	short getSize()const;						//getter for the size of message
+	void setData(const byte* dataPtr);			//copy the data from dataPtr into the message
+	byte* getData()const;						//getter for data pointer
+	std::mutex& getDataMutex();					//getter for the data mutex
+	bool getIsRead()const;						//getter for _isRead flag
+	void setIsRead(bool val);					//setter for _isRead flag
+	std::mutex& getIsReadMutex();				//getter for isReadMutex
+	std::condition_variable& getListenerCV();	//getter for ListenerCV
+	std::condition_variable& getPartyCV();		//getter for PartyCV
 	~Message();
 } Message;
 #pragma pack(pop)

@@ -66,7 +66,7 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
 		std::unique_lock<std::mutex> listenerUL(mess->getIsReadMutex());
 
-		mine.wait(listenerUL, [&] {mess->getIsRead(); });
+		mine.wait(listenerUL, [&] {return mess->getIsRead(); });
 
 		//read message type - 1B
 		//wait until the previous message is read 

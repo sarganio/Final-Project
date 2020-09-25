@@ -33,7 +33,7 @@ private:
 	vector<Share*> _shares;											//vector which contains each party's share.index of vector is the id of input's party
 	Circuit* _arithmeticCircuit;									//the function which needs to be computed.
 	void printKey(unsigned short index)const;						//recieves the index of the key's owner and print it.
-	vector<Part> _gGatesInputs;
+	vector<Part> _gGatesInputs;										//vector which contains all g gates inputs for verification stage.
 public:
 	void setG_GateInput(unsigned short index, Part value);
 	Party(short myID, long input);									//C'tor-takes an ID and a secret input as parameters
@@ -45,17 +45,19 @@ public:
 	void setShare(Share* share, int index);							//setter by index for the shares held by this party.
 	unsigned short getID()const;									//getter for this party ID
 	void calcSeq();													//calculate the joint seq. Initiates at the begining of the protocol.
-	Share* calcCircuit();												//calculate the output of all the gates in the circuit
+	Share* calcCircuit();											//calculate the output of all the gates in the circuit
 	Share* fRand();													//fRand functuality as described in the paper.
 	void fInput();													//fInput functuality as described in the paper.
 	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
 	//vector<Share*>& getAllShares();								
 	long finalReconstruct(Share&);									//function used at the end of the protocol, recieve shares from other parties and return the result.
-	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form
-	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party 
+	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form.
+	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party .
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
-	void fVerify();
-	Circuit* getArithmeticCircuit()const;
-	void verifyRound1();
-	void interpolateInputPolynomials(unsigned int M, std::vector<NTL::vec_ZZ_p>& pointsToInterpolate, NTL::vec_ZZ_p& omegas, NTL::ZZ_pX  inputPolynomials[6]);
+	void fVerify();													//fVerify functuality as described in the paper.
+	Circuit* getArithmeticCircuit()const;							//getter for the arithmetic circuit pointer.
+	void verifyRound1();											//the first round of fVerify as described in the paper.
+																	//interpulates 6*L polinomials each of degree M.note:the coefient index of pointsToInterpolate is X value.
+																	//the first coeffient is a random number from the ring Z_p. the calculated polynomials are stored in inputPolynomials.
+	void interpolateInputPolynomials(unsigned int M, std::vector<NTL::vec_ZZ_p>& pointsToInterpolate, NTL::vec_ZZ_p& omegas, NTL::ZZ_pX  inputPolynomials[INPUTS_PER_MUL_GATE*L]);
 };
