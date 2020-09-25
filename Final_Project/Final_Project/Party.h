@@ -10,7 +10,6 @@
 #include <string>
 #include <mutex>
 
-#define L  1//num of multipication gates per G gate
 #define INPUTS_PER_MUL_GATE  6
 
 using std::vector;

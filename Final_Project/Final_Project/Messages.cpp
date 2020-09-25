@@ -1,6 +1,6 @@
 #include "Messages.h"
 #include <mutex>
-
+ 
 Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
 }
@@ -32,8 +32,11 @@ void Message::setSize(int type,unsigned int size) {
 	case MUL_GATE:
 		_size = MUL_GATE_LEN;
 		break;
-	case PROOF_MESSAGE:
+	case F_VERIFY_ROUND1_MESSAGE:
 		_size = size;
+		break;
+	case F_VERIFY_ROUND2_MESSAGE:
+		_size = F_VERIFY_ROUND2_MESSAGE_LEN;
 	}
 	if (oldSize < _size) {
 		_dataMutex.lock();

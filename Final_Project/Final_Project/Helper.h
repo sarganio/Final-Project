@@ -56,6 +56,8 @@ using std::exit;
 using CryptoPP::byte;
 
 #define ZP 127 //make sure all the elements are belong to Z_p (mod p)
+#define L  1//num of multipication gates per G gate
+
 
 #include <string>
 

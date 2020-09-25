@@ -1,5 +1,5 @@
 #pragma once
-//#define WINDOWS_IGNORE_PACKING_MISMATCH
+#include "Helper.h"
 #include "secblock.h"
 #include <mutex>
 #include<cstdint>
@@ -13,6 +13,7 @@ using CryptoPP::byte;
 #define MAX_MESSAGE_SIZE 64
 #define ENC_INPUT_LEN sizeof(long)
 #define MUL_GATE_LEN sizeof(long)
+#define F_VERIFY_ROUND2_MESSAGE_LEN L*6+2
 
 
 
@@ -22,7 +23,8 @@ using CryptoPP::byte;
 #define HEADER_SIZE 3
 #define ALIGNIG sizeof(void*)
 
-enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE, PROOF_MESSAGE};
+enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE, F_VERIFY_ROUND1_MESSAGE, F_VERIFY_ROUND2_MESSAGE
+};
 
 //#pragma pack(1)//allow no padding
 #pragma pack(push, 1)

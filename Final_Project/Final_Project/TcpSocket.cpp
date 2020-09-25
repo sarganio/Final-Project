@@ -75,7 +75,7 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		dataMutex.unlock();
 
 		//read the header: size of message - 2B
-		if(type != PROOF_MESSAGE)
+		if(type != F_VERIFY_ROUND1_MESSAGE)
 			mess->setSize(type);
 		unsigned short expectedSize = mess->getSize();
 		dataMutex.lock();

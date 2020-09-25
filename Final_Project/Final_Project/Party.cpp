@@ -134,7 +134,7 @@ Party::~Party() {
 }
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
-	if(messageType == PROOF_MESSAGE)
+	if(messageType == F_VERIFY_ROUND1_MESSAGE)
 		toSend.setSize(messageType, _arithmeticCircuit->getNumOfMulGates()/L*2+6*L+1);
 	else
 		toSend.setSize(messageType);
@@ -462,7 +462,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 		beforePI[i] = PI[i] - ZZ_p(*(unsigned long long*)(&nextPI[i]));
 	}
 	//send PI_+1
-	sendTo((_id + 1) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)&nextPI);
+	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)&nextPI);
 
 	byte* toSend = new byte[2 * M + 6 * L + 1]{};
 	for (int i = 0; i < 2 * M+6*L+1; i++) {
@@ -470,7 +470,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 		BytesFromZZ(rawZp, rep(beforePI[i]), sizeof(ZZ_p));
 		*(unsigned long long*)&toSend[i] = *(unsigned long long*)&rawZp;
 	}
-	sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE,toSend);
+	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE,toSend);
 
 	//-------------------release memory section-------------------
 	thetas.clear();
@@ -489,10 +489,10 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			PIs[i].SetLength(2 * M + 6 * L + 1);
 			//PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
 	//set Message's size to: 2*M+6*L+2
-	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(PROOF_MESSAGE, 2 * M + 6 * L + 1);
+	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
 	//*****need to check if this is ok..*****
 	readFrom((_id + 1) % NUM_OF_PARTIES,(byte*)&PIs[(_id + 1) % NUM_OF_PARTIES]);
-	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(PROOF_MESSAGE, 2 * M + 6 * L + 1);
+	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
 	readFrom((_id + 2) % NUM_OF_PARTIES, (byte*)&PIs[(_id + 2) % NUM_OF_PARTIES]);
 	//(a)
 	vector<ZZ_p> bettas;
@@ -504,19 +504,23 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//(b)
 	vector<ZZ_p> b;
 	b.resize(NUM_OF_PARTIES);
-
-	ZZ_p f_r(0);
+	//store every polynomials result in f_r
+	vec_ZZ_p f_r;
+	f_r.SetLength(6 * L);
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		for (int j = 0; j < M+1; j++) {
 			if (i == _id)
 				for (int l = 0; l < 6 * L; l++)//compute all of this party 6L polynomials at point r .e.g -f_l(r)
-					f_r += inputPolynomials[l][j] * NTL::power(r, j);
+					f_r[l] += inputPolynomials[l][j] * NTL::power(r, j);
 			else
 				for (int k = 0; k < 2*M+1; k++) //computes b with every received p(x)
 					b[i] += PIs[i][k + 6 * L] * NTL::power(r, k);
 			b[i] *= bettas[j];//multiply each of the M g gate results with beta.
 		}
-
+	byte toSend[(6 * L + 2)*sizeof(ZZ_p)]{};
+	for (int j = 0; j < 6 * L; j++)
+		*(unsigned long long*)& toSend[j] = *(unsigned long long*)&f_r[j];
+	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 }
 void Party::generateRandomElements(std::vector<ZZ_p>& thetas, int numOfElements)
 {
