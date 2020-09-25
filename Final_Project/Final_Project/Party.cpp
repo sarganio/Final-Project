@@ -134,7 +134,7 @@ Party::~Party() {
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
 	if(messageType == PROOF_MESSAGE)
-		toSend.setSize(messageType, _arithmeticCircuit->getNumOfMulGates());
+		toSend.setSize(messageType, _arithmeticCircuit->getNumOfMulGates()/L*2+6*L+1);
 	else
 		toSend.setSize(messageType);
 	toSend.setData(msg);
@@ -460,12 +460,16 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials) {
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
 		beforePI[i] = PI[i] - ZZ_p(*(unsigned long long*)(&nextPI[i]));
 	}
-	for (int i = 0; i < 2 * M; i++) {
-		byte toSend[sizeof(ZZ_p)]{};
-		sendTo((_id + 1) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)&nextPI[i]);
-		BytesFromZZ(toSend, rep(beforePI[i]), sizeof(ZZ_p));
-		sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE,toSend);
+	//send PI_+1
+	sendTo((_id + 1) % NUM_OF_PARTIES, PROOF_MESSAGE, (byte*)&nextPI);
+
+	byte* toSend = new byte[2 * M + 6 * L + 1]{};
+	for (int i = 0; i < 2 * M+6*L+1; i++) {
+		byte rawZp[sizeof(ZZ_p)]{};
+		BytesFromZZ(rawZp, rep(beforePI[i]), sizeof(ZZ_p));
+		*(unsigned long long*)toSend[i] = *(unsigned long long*)rawZp;
 	}
+	sendTo((_id + 2) % NUM_OF_PARTIES, PROOF_MESSAGE,toSend);
 
 	//-------------------release memory section-------------------
 	thetas.clear();
