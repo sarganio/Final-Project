@@ -31,7 +31,6 @@ using std::thread;
 		std::cout << "Waiting for party with id+1.." << std::endl;
 
 		_t = new thread(&TcpServer::accept, this,mess);
-		//thread a(&TcpServer::messagesHandler, this);
 		_t->detach();
 	}
 

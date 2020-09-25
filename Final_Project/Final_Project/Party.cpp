@@ -143,18 +143,15 @@ bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	return true;
 }
 void Party::readFrom(unsigned short id,byte* msg) {
-	//std::mutex& m = _msgs[id]->getIsReadMutex();
-	//m.unlock();
 	std::condition_variable& other = _msgs[id]->getListenerCV();
 	std::condition_variable& mine = _msgs[id]->getPartyCV();
 	std::unique_lock<std::mutex> partyUL(_msgs[id]->getIsReadMutex());
-	//while (this->_msgs[id]->getIsRead())
+	//wait until mutex is unlocked or for a new message to be received
 	mine.wait(partyUL, [&] {return !this->_msgs[id]->getIsRead(); });
 	memcpy(msg,_msgs[id]->getData(),_msgs[id]->getSize());
 	other.notify_one();
+	//mark message as read
 	this->_msgs[id]->setIsRead(true);
-	//update thread that the message was read
-	//m.lock();
 }
 unsigned short Party::getID()const { return this->_id; }
 void Party::calcSeq() {

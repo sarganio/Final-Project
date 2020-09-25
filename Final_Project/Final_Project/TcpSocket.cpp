@@ -48,7 +48,7 @@ bool TcpSocket::isValid()const {
 int TcpSocket::socketFd()const { 
 	return isValid() ? _socket : -1; 
 }
-void TcpSocket::messagesHandler(Message* mess)// , mutex& m_type)
+void TcpSocket::messagesHandler(Message* mess)
 {
 	char type;
 // Setup timeval variable
@@ -65,9 +65,9 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		//wait for messages from socket
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
 		std::unique_lock<std::mutex> listenerUL(mess->getIsReadMutex());
-		//while (!mess->getIsRead())
-			mine.wait(listenerUL, [&] {mess->getIsRead(); });
-		//isReadMutex.lock();
+
+		mine.wait(listenerUL, [&] {mess->getIsRead(); });
+
 		//read message type - 1B
 		//wait until the previous message is read 
 		dataMutex.lock();
@@ -93,16 +93,10 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		dataMutex.unlock();
 		//let the other thread know there is a new message to be read
 		other.notify_one();
+		//mark message as ready to be read
 		mess->setIsRead(false);
 		//put the message in the mutual variable of main thread and this thread
 
-		//dataMutex.lock();
-		//memcpy_s(mess->getData(), MAX_MESSAGE_SIZE,mess->getData(),mess->getSize());
-		//dataMutex.unlock();
-
-		//isReadMutex.unlock();
-		//mark message as read buffer
-		//mess->setIsRead(false);
 		//TRACE("Got a new message from %d.\nThe message is: %s", fromID, mess->getData());
 	}
 }

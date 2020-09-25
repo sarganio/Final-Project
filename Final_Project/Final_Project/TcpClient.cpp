@@ -12,18 +12,6 @@ using std::thread;
 TcpClient::TcpClient(string myIP,unsigned short myPort, unsigned short hostPort, std::string hostIp, Message* mess,bool& isConnected) :TcpSocket(-1, hostPort)//, mutex& m):TcpSocket(-1,myPort)
 {
 	_hostAddress = hostIp;
-
-	//struct sockaddr_in myAddr;
-	// //Explicitly assigning port number by 
-	// //binding client with that port  
-	//myAddr.sin_family = AF_INET;
-	//myAddr.sin_addr.s_addr = INADDR_ANY;
-	//myAddr.sin_port = htons(myPort);
-	//myAddr.sin_addr.s_addr = inet_addr(myIP.c_str());
-
-	//if (bind(_socket, (struct sockaddr*) & myAddr, sizeof(struct sockaddr_in)) != 0)
-	//	throw std::exception("Client bind failed (port assighnment)");
-
 	_t = new thread(&TcpClient::connect, this, hostPort, hostIp, mess,std::ref(isConnected));// , m);
 	_t->detach();
 }
@@ -34,7 +22,6 @@ int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* m
 
 	sa.sin_port = htons(hostPort); // port that server will listen to
 	sa.sin_family = AF_INET;   // must be AF_INET
-	//sa.sin_addr.s_addr = InetPton(AF_INET, hostname.c_str(), &sa.sin_addr.s_addr);    // the IP of the server
 	sa.sin_addr.s_addr = inet_addr(hostname.c_str());    // the IP of the server
 
 	int status,i = 0;
