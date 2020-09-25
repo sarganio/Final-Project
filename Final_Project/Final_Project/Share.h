@@ -18,7 +18,7 @@ protected:
 public:
 	Part(char name = 0, unsigned short index = 0, long value = 0);
 	Part(const Part& other);
-	~Part() {};
+	~Part() = default;
 	inline long getValue()const;
 	inline void setValue(long value);
 	string toString()const;

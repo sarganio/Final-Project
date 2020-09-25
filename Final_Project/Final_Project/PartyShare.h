@@ -8,7 +8,7 @@ class Party;
 
 class PartyShare:public Share
 {
-		Party* _owner;														
+		Party* _owner;														//pointer to the party object in order to perform communication while a multipiction between two share accures.					
 public:
 	PartyShare(Share* prevOutput = nullptr, Party* p = nullptr);
 	void setParty(Party* p);												//setter for pointer to party.
@@ -16,7 +16,7 @@ public:
 	Party* getParty()const;													//getter for the pointer to party.
 	~PartyShare();
 	friend Share operator*(Share& left, PartyShare& right) {
-		//must hold in order for the function to work properly.
+		//must hold, in order for the function to work properly.
 		assert(right.getFirst().getIndex() < right.getSecond().getIndex());
 		assert(left.getFirst().getIndex() < left.getSecond().getIndex());
 
