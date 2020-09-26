@@ -3,14 +3,14 @@
 #include "MultiplicationGate.h"
 #include "PartyShare.h"
 
-#define MIN_NUM_OF_LAYERS 15
-#define MIN_NUM_OF_GATES 15
+#define MIN_NUM_OF_LAYERS 3
+#define MIN_NUM_OF_GATES 1
 #define RANGE_OF_LAYERS 1
-#define RANGE_OF_GATES 2
+#define RANGE_OF_GATES 1
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGates(0) {
 	
-	srand(21);
+	srand(22);
 	//srand(*(unsigned int*)seed);
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
@@ -35,7 +35,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 			int inputLayerLeft = rand() % i;
 			int gateIndexLeft = rand() % _gatesPerLayer[inputLayerLeft];
 
-			if (rand() % 2 == 0) { //Share
+			if (true) { //Share
 				
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
@@ -54,7 +54,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 			}
 			else { //const
 				
-				if (rand()%2) {//------------------TEMP------------------------------------
+				if (false) {//------------------TEMP------------------------------------
 			
 					_circuit[i][j] = new AddGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % ZP));
 
@@ -73,7 +73,7 @@ void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
 				_circuit[i][j]->calculateOutput();
-				std::cout<<"Gate:"<<i<<" "<<j<<": "/*<<_party->finalReconstruct(*_circuit[i][j]->getOutput())*/<<std::endl;
+				std::cout<<"Gate:"<<i<<" "<<j<<": "<<_party->finalReconstruct(*_circuit[i][j]->getOutput())<<std::endl;
 		}
 	}
 }

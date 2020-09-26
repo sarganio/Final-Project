@@ -35,11 +35,12 @@ using NTL::ZZ;
 using NTL::vec_ZZ_pX;
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr){
-	ZZ p;
+	ZZ p(ZP);
 	//for Dbug
 	 srand(10);
-	GenPrime(p, POWER_TWO_MAX_RANGE);
+	//GenPrime(p, POWER_TWO_MAX_RANGE);
 	NTL::ZZ_p::init(p);
+	cout << "P="<<p;
 	//make sure the input belong to the Ring Z_p 
 	 _input %= ZP;
 	//expend the vector to contain all parties' sockets
