@@ -65,4 +65,5 @@ public:
 																	//the first coeffient is a random number from the ring Z_p. the calculated polynomials are stored in inputPolynomials.
 	void interpolateInputPolynomials(unsigned int M, std::vector<vec_ZZ_p>& pointsToInterpolate, vec_ZZ_p& omegas, vector<ZZ_pX>&  inputPolynomials);
 	void verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p);
+	void verifyRound3();
 };

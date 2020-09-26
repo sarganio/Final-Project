@@ -390,8 +390,8 @@ void Party::fVerify() {
 	verifyRound1(M,inputPolynomials,p);
 	//-----Round 2-----:
 	verifyRound2(M, inputPolynomials,p);
-
-
+	//-----Round 3-----:
+	verifyRound3();
 	//----------------------------------------------------------------------------------
 	//real_1d_array x = "[0,1,2,3,4,5,6,7,8,9]";
 	//real_1d_array y = "[0,0,2,6,12,20,30,42,56,72]";
@@ -551,4 +551,17 @@ void Party::interpolateInputPolynomials(unsigned int M, std::vector<vec_ZZ_p>& p
 		std::cout << "pointsToInterpolate::" << pointsToInterpolate[i] << " Len:" << pointsToInterpolate[i].length() << endl;
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
 	}
+}
+void Party::verifyRound3(){
+	byte buffers[NUM_OF_PARTIES][(6 * L + 2) * sizeof(ZZ_p)]{};
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i == _id)
+			continue;
+	readFrom(i, buffers[i]);
+	}
+	for (int i = 0; i < F_VERIFY_ROUND2_MESSAGE_LEN; i++)
+		*(unsigned long long*)& buffers[_id] = *(unsigned long long*) & buffers[(_id + 1) % NUM_OF_PARTIES][i] + *(unsigned long long*) & buffers[(_id + 2) % NUM_OF_PARTIES][i];
+	if(*(unsigned long long*) & buffers[_id][F_VERIFY_ROUND2_MESSAGE_LEN-1])
+		throw std::exception(__FUNCTION__  "ABORT!-I'm surrounded by liers!");
+	cout << "Completed! No liers here" << endl;
 }
