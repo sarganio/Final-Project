@@ -25,9 +25,13 @@ public:
 		static unsigned int currentNumOfMulGates = 0;
 
 		//calculate z_i
-		unsigned int alpha = right.correlatedRandomness();
-		long rightFirstVal = right.getFirst().getValue(), rightSecondVal = right.getSecond().getValue();
-		long leftFisrtVal = left.getFirst().getValue(), leftSecondVal = left.getSecond().getValue();
+		int alpha = right.correlatedRandomness();
+		alpha %= ZP;
+		if (alpha < 0)
+			alpha += ZP;
+		unsigned short id = right.getParty()->getID();
+		long rightFirstVal = right[id].getValue(), rightSecondVal = right[id].getValue();
+		long leftFisrtVal = left[(id+2)%NUM_OF_PARTIES].getValue(), leftSecondVal = left[(id + 2) % NUM_OF_PARTIES].getValue();
 		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i
 		long firstPartOputput = leftSecondVal * rightSecondVal + leftSecondVal * rightFirstVal + leftFisrtVal * rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
 		firstPartOputput %= ZP;
@@ -37,7 +41,6 @@ public:
 
 		//send zi to the next party
 		byte* buffer = (byte*)&firstPartOputput;
-		unsigned short id = right.getParty()->getID();
 		right.getParty()->sendTo((id + 1) % NUM_OF_PARTIES, MUL_GATE, buffer);
 
 		//recieve z_{i-1}
