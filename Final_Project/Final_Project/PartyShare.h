@@ -30,10 +30,10 @@ public:
 		if (alpha < 0)
 			alpha += ZP;
 		unsigned short id = right.getParty()->getID();
-		long rightFirstVal = right[id].getValue(), rightSecondVal = right[id].getValue();
-		long leftFisrtVal = left[(id+2)%NUM_OF_PARTIES].getValue(), leftSecondVal = left[(id + 2) % NUM_OF_PARTIES].getValue();
+		long rightFirstVal = right[id].getValue(), rightSecondVal = right[(id + 2) % NUM_OF_PARTIES].getValue();
+		long leftFirstVal = left[id].getValue(), leftSecondVal = left[(id + 2) % NUM_OF_PARTIES].getValue();
 		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i
-		long firstPartOputput = leftSecondVal * rightSecondVal + leftSecondVal * rightFirstVal + leftFisrtVal * rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
+		long firstPartOputput = leftFirstVal * rightFirstVal + leftFirstVal * rightSecondVal + leftFirstVal * rightSecondVal + alpha;//needs to compute Zi and send it to Party _id+1
 		firstPartOputput %= ZP;
 		if (firstPartOputput < 0)
 			firstPartOputput += ZP;
