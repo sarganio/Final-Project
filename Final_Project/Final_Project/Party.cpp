@@ -455,15 +455,15 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 		PI[i] = omegas[i];
 	}
 	//add 2*M + 1 coeficients to f
-	for (int i = 6*L; i < 2 * M+1+6*L; i++) {
-		PI[i] = p[i-6*L];
-		cout << PI[i] << " ";
+	for (int i = 0; i < 2 * M+1; i++) {
+		PI[i+6*L] = p[i];
+		cout << PI[i+6 * L] << " ";
 	}
 	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
 		beforePI[i] = PI[i] - ZZ_p(*(unsigned long long*)(&nextPI[i]));
 	}
 	//send PI_+1
-	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)&nextPI);
+	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)nextPI);
 	byte* toSend = new byte[(2 * M + 6 * L + 1)*sizeof(ZZ_p)]{};
 	ZZ bytesToZZ;
 	for (int i = 0; i < 2 * M+6*L+1; i++) {
@@ -506,7 +506,6 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
-	unsigned long long value = *(unsigned long long*) & PIs[0][0 * sizeof(ZZ_p)];
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
 			continue;
@@ -516,9 +515,9 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 				ZZ temp;
 				NTL::ZZFromBytes(temp, &PIs[i][j * sizeof(ZZ_p)], sizeof(ZZ_p));
 				parsedPIs[i][j] = PIs[i][j * sizeof(ZZ_p)];
+				cout << "parsedPIs: " << parsedPIs[i] << endl;
 			}
 		}
-	cout << "parsedPIs: " << parsedPIs[1] << endl;
 	//(a)
 	vector<ZZ_p> bettas;
 	generateRandomElements(bettas, L);
