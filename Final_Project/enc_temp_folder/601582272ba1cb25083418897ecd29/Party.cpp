@@ -495,14 +495,6 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	readFrom((_id + 1) % NUM_OF_PARTIES,(byte*)&PIs[(_id + 1) % NUM_OF_PARTIES]);
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
 	readFrom((_id + 2) % NUM_OF_PARTIES, (byte*)&PIs[(_id + 2) % NUM_OF_PARTIES]);
-	vector<vec_ZZ_p> parsedPIs;
-	parsedPIs.resize(NUM_OF_PARTIES);
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		if (i == _id)
-			continue;
-		else
-			for (int j = 0; j < (2 * M + 6 * L + 1); j++)
-				parsedPIs[i][j] = *(ZZ_p*) &PIs[i][j];
 	//(a)
 	vector<ZZ_p> bettas;
 	generateRandomElements(bettas, L);
