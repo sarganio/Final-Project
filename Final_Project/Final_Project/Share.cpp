@@ -115,7 +115,9 @@ Share Share::operator+(const Share& other) const {
 Share Share::operator+(long scalar)const {
 	Part* a = nullptr;
 	Part* b = nullptr;
-
+	scalar %= ZP;
+	if (scalar < 0)
+		scalar += ZP;
 	assert(this->_value.first->getIndex() < this->_value.second->getIndex());
 
 	if (this->_value.first->getIndex() == 0) {
@@ -131,6 +133,9 @@ Share Share::operator+(long scalar)const {
 //operator * with constant overload
 Share Share::operator*(long constant)const {
 	Part* a = nullptr,* b = nullptr;
+	constant %= ZP;
+	if (constant < 0)
+		constant += ZP;
 	assert(this->_value.first->getIndex() < this->_value.second->getIndex());
 	if (this->_value.first) 
 		a = new Part(_value.first->getName(), this->_value.first->getIndex(), (this->_value.first->getValue() * constant)%ZP);

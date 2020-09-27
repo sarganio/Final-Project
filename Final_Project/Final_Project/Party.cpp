@@ -546,8 +546,8 @@ void Party::interpolateInputPolynomials(unsigned int M, std::vector<vec_ZZ_p>& p
 		pointsToInterpolate[i].SetLength(M + 1);
 		//put the witness coeffient as the free coeffient
 		pointsToInterpolate[i][0] = omegas[i];
-		for (int j = 1; j < M; j++)
-			pointsToInterpolate[i][j] = this->_gGatesInputs[j * INPUTS_PER_MUL_GATE * L].getValue();//t'th input ,j'th coefficient of the polynomial
+		for (int j = 0; j < M; j++)
+			pointsToInterpolate[i][j+1] = this->_gGatesInputs[j * INPUTS_PER_MUL_GATE * L+i].getValue();//t'th input ,j'th coefficient of the polynomial
 		std::cout << "Range:" << range << " Len:" << range.length() << endl;
 		std::cout << "pointsToInterpolate::" << pointsToInterpolate[i] << " Len:" << pointsToInterpolate[i].length() << endl;
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);

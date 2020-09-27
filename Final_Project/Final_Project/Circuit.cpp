@@ -40,7 +40,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
 
-				if(rand() % 4 ==1){//------------------TEMP------------
+				if(false){//------------------TEMP------------
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate

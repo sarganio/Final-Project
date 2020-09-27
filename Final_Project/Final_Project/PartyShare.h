@@ -32,7 +32,7 @@ public:
 		unsigned short id = right.getParty()->getID();
 		long rightFirstVal = right[id].getValue(), rightSecondVal = right[(id + 2) % NUM_OF_PARTIES].getValue();
 		long leftFirstVal = left[id].getValue(), leftSecondVal = left[(id + 2) % NUM_OF_PARTIES].getValue();
-		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i|left-u
+		//z_i = u_i*v_i+ u_i*v_{i-1}+u_{i-1}*v_i+alpha_i|left-u,right-v
 		long firstPartOputput = leftFirstVal * rightFirstVal + leftFirstVal * rightSecondVal + leftSecondVal * rightFirstVal + alpha;//needs to compute Zi and send it to Party _id+1
 		firstPartOputput %= ZP;
 		if (firstPartOputput < 0)
