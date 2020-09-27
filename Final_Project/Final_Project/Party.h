@@ -18,6 +18,7 @@ using std::string;
 using std::mutex;
 
 using NTL::ZZ_p;
+using NTL::ZZ;
 using NTL::ZZ_pX;
 using NTL::vec_ZZ_p;
 
@@ -27,6 +28,7 @@ class Circuit;
 class Party
 {
 private:
+	ZZ p;
 	unsigned short _id;												//unique identifier, lowest ip receive id = 1 and so on.
 	long _input;													//secret input.
 	byte _finalSeq[SEQ_LEN]{};										//mutual counter for all participents.
