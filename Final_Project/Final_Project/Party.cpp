@@ -473,7 +473,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 		cout << "bytesToZZ:" << bytesToZZ << endl;
 		cout << "rawZp:" << (unsigned long long)*rawZp << endl;
 		cout << "beforePI["<<i<<"]:" << beforePI[i] << endl;
-		*(unsigned long long*)&toSend[i] = *(unsigned long long*)&rawZp;
+		*(unsigned long long*)&toSend[i*sizeof(ZZ_p)] = *(unsigned long long*)rawZp;
 	}
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE,toSend);
 
