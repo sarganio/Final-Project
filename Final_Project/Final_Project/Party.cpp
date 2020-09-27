@@ -136,7 +136,7 @@ Party::~Party() {
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
 	if(messageType == F_VERIFY_ROUND1_MESSAGE)
-		toSend.setSize(messageType, _arithmeticCircuit->getNumOfMulGates()/L*2+6*L+1);
+		toSend.setSize(messageType, (_arithmeticCircuit->getNumOfMulGates()/L*2+6*L+1)*sizeof(ZZ_p));
 	else
 		toSend.setSize(messageType);
 	toSend.setData(msg);
@@ -481,28 +481,33 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 	nextPI = nullptr;
 }
 void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
-	vector<vec_ZZ_p> PIs;
-	PIs.resize(NUM_OF_PARTIES);
+	byte* PIs[NUM_OF_PARTIES];
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		if (i == _id)
+		if (i == _id) {
+			PIs[i] = nullptr;
 			continue;
-		else 
-			PIs[i].SetLength(2 * M + 6 * L + 1);
-			//PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
+		}
+		else
+			PIs[i]=new byte(sizeof(unsigned long long) * (2 * M + 6 * L + 1));
+	cout << sizeof(unsigned long long) * (2 * M + 6 * L + 1);
+	//PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
 	//set Message's size to: 2*M+6*L+2
 	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
 	//*****need to check if this is ok..*****
-	readFrom((_id + 1) % NUM_OF_PARTIES,(byte*)&PIs[(_id + 1) % NUM_OF_PARTIES]);
+	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
-	readFrom((_id + 2) % NUM_OF_PARTIES, (byte*)&PIs[(_id + 2) % NUM_OF_PARTIES]);
+	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
+	unsigned long long value = *(unsigned long long*) & PIs[0][0 * sizeof(ZZ_p)];
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
 			continue;
-		else
+		else {
+			parsedPIs[i].SetLength((2 * M + 6 * L + 1));
 			for (int j = 0; j < (2 * M + 6 * L + 1); j++)
-				parsedPIs[i][j] = *(ZZ_p*) &PIs[i][j];
+				parsedPIs[i][j] = ZZ_p(*(unsigned long long*) & PIs[i][j * sizeof(ZZ_p)]);
+		}
 	//(a)
 	vector<ZZ_p> bettas;
 	generateRandomElements(bettas, L);
