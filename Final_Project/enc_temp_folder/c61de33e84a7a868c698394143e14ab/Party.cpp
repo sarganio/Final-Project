@@ -466,8 +466,9 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)&nextPI);
 	byte* toSend = new byte[(2 * M + 6 * L + 1)*sizeof(ZZ_p)]{};
 	ZZ bytesToZZ;
+	byte rawZp[sizeof(ZZ_p)]{};
 	for (int i = 0; i < 2 * M+6*L+1; i++) {
-		byte rawZp[sizeof(ZZ_p)]{};
+		memset(rawZp, 0, sizeof(ZZ_p));
 		BytesFromZZ(rawZp, rep(beforePI[i]), sizeof(ZZ_p));
 		NTL::ZZFromBytes(bytesToZZ, rawZp, sizeof(ZZ_p));
 		cout << "bytesToZZ:" << bytesToZZ << endl;
