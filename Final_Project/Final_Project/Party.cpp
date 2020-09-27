@@ -464,11 +464,12 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 	}
 	//send PI_+1
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)&nextPI);
-
-	byte* toSend = new byte[2 * M + 6 * L + 1]{};
+	byte* toSend = new byte[(2 * M + 6 * L + 1)*sizeof(ZZ_p)]{};
 	for (int i = 0; i < 2 * M+6*L+1; i++) {
 		byte rawZp[sizeof(ZZ_p)]{};
 		BytesFromZZ(rawZp, rep(beforePI[i]), sizeof(ZZ_p));
+		cout << "rawZp:" << (unsigned long long)rawZp << endl;
+		cout << "beforePI["<<i<<"]:" << beforePI[i] << endl;
 		*(unsigned long long*)&toSend[i] = *(unsigned long long*)&rawZp;
 	}
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE,toSend);
@@ -479,6 +480,9 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 
 	delete nextPI;
 	nextPI = nullptr;
+	
+	delete toSend;
+	toSend = nullptr;
 }
 void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
 	byte* PIs[NUM_OF_PARTIES];
@@ -492,10 +496,10 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	cout << sizeof(unsigned long long) * (2 * M + 6 * L + 1);
 	//PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
 	//set Message's size to: 2*M+6*L+2
-	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
+	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1)*sizeof(ZZ_p));
 	//*****need to check if this is ok..*****
 	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
-	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, 2 * M + 6 * L + 1);
+	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * sizeof(ZZ_p));
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
@@ -505,8 +509,11 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			continue;
 		else {
 			parsedPIs[i].SetLength((2 * M + 6 * L + 1));
-			for (int j = 0; j < (2 * M + 6 * L + 1); j++)
-				parsedPIs[i][j] = ZZ_p(*(unsigned long long*) & PIs[i][j * sizeof(ZZ_p)]);
+			for (int j = 0; j < (2 * M + 6 * L + 1); j++) {
+				ZZ temp;
+				NTL::ZZFromBytes(temp, &PIs[i][j * sizeof(ZZ_p)], sizeof(ZZ_p));
+				parsedPIs[i][j] = PIs[i][j * sizeof(ZZ_p)];
+			}
 		}
 	//(a)
 	vector<ZZ_p> bettas;
