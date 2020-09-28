@@ -12,12 +12,12 @@
 
 #define INPUTS_PER_MUL_GATE  6
 #define ELEMENT_SIZE sizeof(ZZ_p)
-
+//std
 using std::vector;
 using std::pair;
 using std::string;
 using std::mutex;
-
+//NTL
 using NTL::ZZ_p;
 using NTL::ZZ;
 using NTL::ZZ_pX;
@@ -29,7 +29,7 @@ class Circuit;
 class Party
 {
 private:
-	ZZ p;
+	ZZ _P;
 	unsigned short _id;												//unique identifier, lowest ip receive id = 1 and so on.
 	long _input;													//secret input.
 	byte _finalSeq[SEQ_LEN]{};										//mutual counter for all participents.
