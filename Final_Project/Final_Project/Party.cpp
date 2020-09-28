@@ -393,31 +393,6 @@ void Party::fVerify() {
 	//-----Round 3-----:
 	verifyRound3();
 	//----------------------------------------------------------------------------------
-	//real_1d_array x = "[0,1,2,3,4,5,6,7,8,9]";
-	//real_1d_array y = "[0,0,2,6,12,20,30,42,56,72]";
-	//barycentricinterpolant p;
-	//real_1d_array a;
-	//double v;
-
-	//// barycentric model is created
-	//polynomialbuild(x, y, p);
-	//v = barycentriccalc(p, 10);
-	////
- // // a=[0,-1,+1] is decomposition of y=x^2-x in the power basis:
- // //
- // //     y = 0 - 1*x + 1*x^2
- // //
- // // We convert it to the barycentric form.
- // //
-	//polynomialbar2pow(p, a);
-	//for (int i = 0; i < 10; i++)
-	//	if (i != 9)
-	//		std::cout <<"("<< a[i] << ")x^" << i << "+";
-	//	else
-	//		std::cout << "(" << a[i] << ")x^" << i;
-
-
-
 }
 void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
 	//(a)
@@ -432,7 +407,6 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	for (int i = 0; i < 6 * L; i++)
 		random(omegas[i]);
 	//(c)
-
 	interpolateInputPolynomials(M, INPUTS_PER_MUL_GATE * L, omegas, inputPolynomials);
 	for (int i = 0; i < INPUTS_PER_MUL_GATE * L; i++)
 		std::cout << "f(" << i << ")" << inputPolynomials[i] << std::endl;
@@ -456,13 +430,15 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	}
 	//add 2*M + 1 coeficients to f
 	for (int i = 0; i < 2 * M + 1; i++) {
-		PI[i + 6 * L] = p[i];
-		cout << PI[i + 6 * L] << " ";
+		PI[i + INPUTS_PER_MUL_GATE * L] = p[i];
+		cout << PI[i + INPUTS_PER_MUL_GATE * L] << " ";
 	}
 	for (int i = 0; i < 2 * M + 1 + INPUTS_PER_MUL_GATE * L; i++) {
 		beforePI[i] = PI[i] - ZZ_p(nextPI[i]);
 	}
 	//send PI_+1
+	cout << "Sending nextPI:" << endl;
+	std::cout.write((char*)nextPI, (2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)nextPI);
 	byte* toSend = new byte[(2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE]{};
 	ZZ bytesToZZ;
@@ -470,12 +446,11 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		byte rawZp[ELEMENT_SIZE]{};
 		BytesFromZZ(rawZp, rep(beforePI[i]), ELEMENT_SIZE);
 		NTL::ZZFromBytes(bytesToZZ, rawZp, ELEMENT_SIZE);
-		cout << "beforePI[" << i << "]:" << beforePI[i] << endl;
-		cout << "nextPI[" << i << "]:" << ZZ_p(nextPI[i]) << endl;
 		*(unsigned long long*)& toSend[i * ELEMENT_SIZE] = *(unsigned long long*)rawZp;
 	}
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, toSend);
-
+	cout << "Sending BeforePI:" << endl;
+	std::cout.write((char*)toSend, (2 * M + INPUTS_PER_MUL_GATE * L + 1)*ELEMENT_SIZE);
 	//-------------------release memory section-------------------
 	thetas.clear();
 	thetas.shrink_to_fit();
@@ -483,7 +458,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	delete nextPI;
 	nextPI = nullptr;
 
-	delete toSend;
+	delete[] toSend;
 	toSend = nullptr;
 }
 void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
@@ -493,16 +468,19 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			PIs[i] = nullptr;
 			continue;
 		}
-		else
+		else//set Message's size to: 2*M+6*L+2
 			PIs[i]=new byte(sizeof(unsigned long long) * (2 * M + 6 * L + 1));
-	cout << sizeof(unsigned long long) * (2 * M + 6 * L + 1);
-	//PIs[i] = new byte[(2 * M + 6 * L + 1) * ELEMENT_SIZE]();
-	//set Message's size to: 2*M+6*L+2
+	//recieve messages from first round
 	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1)*ELEMENT_SIZE);
-	//*****need to check if this is ok..*****
 	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
+	//print raw data recieved
+	cout << "recieved PIs["<< (_id + 1) % NUM_OF_PARTIES <<"]:" << endl;
+	std::cout.write((char*)PIs[(_id + 1) % NUM_OF_PARTIES], (2 * M + INPUTS_PER_MUL_GATE * L + 1)*ELEMENT_SIZE);
+
+	cout << "recieved PIs["<< (_id + 2) % NUM_OF_PARTIES <<"]:" << endl;
+	std::cout.write((char*)PIs[(_id + 2) % NUM_OF_PARTIES], (2 * M + INPUTS_PER_MUL_GATE * L + 1)*ELEMENT_SIZE);
 
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
