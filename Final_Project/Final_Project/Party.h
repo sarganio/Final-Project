@@ -11,6 +11,7 @@
 #include <mutex>
 
 #define INPUTS_PER_MUL_GATE  6
+#define ELEMENT_SIZE sizeof(ZZ_p)
 
 using std::vector;
 using std::pair;

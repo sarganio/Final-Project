@@ -136,7 +136,7 @@ Party::~Party() {
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
 	if(messageType == F_VERIFY_ROUND1_MESSAGE)
-		toSend.setSize(messageType, (_arithmeticCircuit->getNumOfMulGates()/L*2+6*L+1)*sizeof(ZZ_p));
+		toSend.setSize(messageType, (_arithmeticCircuit->getNumOfMulGates()/L*2+6*L+1)*ELEMENT_SIZE);
 	else
 		toSend.setSize(messageType);
 	toSend.setData(msg);
@@ -420,7 +420,7 @@ void Party::fVerify() {
 
 
 }
-void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& p) {
+void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
 	//(a)
 	//generate L random elements from Zp and spread them to every party
 	int numOfElements = L;
@@ -430,7 +430,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 	//generate 6L random elements from Zp
 	vec_ZZ_p omegas;
 	omegas.SetLength(6 * L);
-	for(int i=0;i<6*L;i++)
+	for (int i = 0; i < 6 * L; i++)
 		random(omegas[i]);
 	//(c)
 
@@ -444,38 +444,38 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 	std::cout << "p(x) = " << p << std::endl;
 	//(e)
 	vec_ZZ_p PI;
-	PI.SetLength(2 * M + 1 + 6 * L);
-	
+	PI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
+
 	AutoSeededRandomPool rnd;
-	unsigned long long* nextPI = (unsigned long long*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * sizeof(ZZ_p));
+	unsigned long long* nextPI = (unsigned long long*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	vec_ZZ_p beforePI;
-	beforePI.SetLength(2 * M + 1 + 6 * L);
+	beforePI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
 
 	//add 6*L omegas to f
-	for (int i = 0; i < 6 * L; i++) {
+	for (int i = 0; i < INPUTS_PER_MUL_GATE * L; i++) {
 		PI[i] = omegas[i];
 	}
 	//add 2*M + 1 coeficients to f
-	for (int i = 0; i < 2 * M+1; i++) {
-		PI[i+6*L] = p[i];
-		cout << PI[i+6 * L] << " ";
+	for (int i = 0; i < 2 * M + 1; i++) {
+		PI[i + 6 * L] = p[i];
+		cout << PI[i + 6 * L] << " ";
 	}
-	for (int i = 0; i < 2 * M + 1 + 6 * L; i++) {
+	for (int i = 0; i < 2 * M + 1 + INPUTS_PER_MUL_GATE * L; i++) {
 		beforePI[i] = PI[i] - ZZ_p(nextPI[i]);
 	}
 	//send PI_+1
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)nextPI);
-	byte* toSend = new byte[(2 * M + 6 * L + 1)*sizeof(ZZ_p)]{};
+	byte* toSend = new byte[(2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE]{};
 	ZZ bytesToZZ;
-	for (int i = 0; i < 2 * M+6*L+1; i++) {
-		byte rawZp[sizeof(ZZ_p)]{};
-		BytesFromZZ(rawZp, rep(beforePI[i]), sizeof(ZZ_p));
-		NTL::ZZFromBytes(bytesToZZ, rawZp, sizeof(ZZ_p));
-		cout << "beforePI["<<i<<"]:" << beforePI[i] << endl;
-		cout << "nextPI["<<i<<"]:" << ZZ_p(nextPI[i]) << endl;
-		*(unsigned long long*)&toSend[i*sizeof(ZZ_p)] = *(unsigned long long*)rawZp;
+	for (int i = 0; i < 2 * M + INPUTS_PER_MUL_GATE * L + 1; i++) {
+		byte rawZp[ELEMENT_SIZE]{};
+		BytesFromZZ(rawZp, rep(beforePI[i]), ELEMENT_SIZE);
+		NTL::ZZFromBytes(bytesToZZ, rawZp, ELEMENT_SIZE);
+		cout << "beforePI[" << i << "]:" << beforePI[i] << endl;
+		cout << "nextPI[" << i << "]:" << ZZ_p(nextPI[i]) << endl;
+		*(unsigned long long*)& toSend[i * ELEMENT_SIZE] = *(unsigned long long*)rawZp;
 	}
-	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE,toSend);
+	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, toSend);
 
 	//-------------------release memory section-------------------
 	thetas.clear();
@@ -483,7 +483,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials,ZZ_pX& 
 
 	delete nextPI;
 	nextPI = nullptr;
-	
+
 	delete toSend;
 	toSend = nullptr;
 }
@@ -497,12 +497,12 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		else
 			PIs[i]=new byte(sizeof(unsigned long long) * (2 * M + 6 * L + 1));
 	cout << sizeof(unsigned long long) * (2 * M + 6 * L + 1);
-	//PIs[i] = new byte[(2 * M + 6 * L + 1) * sizeof(ZZ_p)]();
+	//PIs[i] = new byte[(2 * M + 6 * L + 1) * ELEMENT_SIZE]();
 	//set Message's size to: 2*M+6*L+2
-	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1)*sizeof(ZZ_p));
+	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1)*ELEMENT_SIZE);
 	//*****need to check if this is ok..*****
 	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
-	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * sizeof(ZZ_p));
+	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 
 	vector<vec_ZZ_p> parsedPIs;
@@ -515,7 +515,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			for (int j = 0; j < (2 * M + 6 * L + 1); j++) {
 				ZZ temp;
 				cout <<"PIs[i][j]"<<i<<" "<<j<<" "<< PIs[i][j]<<endl;
-				NTL::ZZFromBytes(temp, &PIs[i][j * sizeof(ZZ_p)], sizeof(ZZ_p));////TODO////////NOT WORKING!!
+				NTL::ZZFromBytes(temp, &PIs[i][j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
 				cout << "temp " << temp<<endl;
 				NTL::conv(parsedPIs[i][j], temp);/////////////////////////////////////TODO///////////NOT WORKING!!
 				cout << "parsedPIs[i][j] " << parsedPIs[i][j]<<endl;
@@ -547,7 +547,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 					b[i] += PIs[i][k + 6 * L] * NTL::power(r, k);
 			b[i] *= bettas[j];//multiply each of the M g gate results with beta.
 		}
-	byte toSend[(6 * L + 2)*sizeof(ZZ_p)]{};
+	byte toSend[(6 * L + 2)*ELEMENT_SIZE]{};
 	for (int j = 0; j < 6 * L; j++)
 		*(unsigned long long*)& toSend[j] = *(unsigned long long*)&f_r[j];
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
@@ -584,7 +584,7 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 	}
 }
 void Party::verifyRound3(){
-	byte buffers[NUM_OF_PARTIES][(6 * L + 2) * sizeof(ZZ_p)]{};
+	byte buffers[NUM_OF_PARTIES][(6 * L + 2) * ELEMENT_SIZE]{};
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
