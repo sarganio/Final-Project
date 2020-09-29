@@ -488,8 +488,8 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		if (i == _id)
 			continue;
 		else {
-			parsedPIs[i].SetLength((2 * M + 6 * L + 1));
-			for (int j = 0; j < (2 * M + 6 * L + 1); j++) {
+			parsedPIs[i].SetLength((2 * M + INPUTS_PER_MUL_GATE * L + 1));
+			for (int j = 0; j < (2 * M + INPUTS_PER_MUL_GATE * L + 1); j++) {
 				ZZ temp;
 				cout <<"PIs[i][j]"<<i<<" "<<j<<" "<< PIs[i][j]<<endl;
 				NTL::ZZFromBytes(temp, &PIs[i][j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
@@ -513,7 +513,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	b.resize(NUM_OF_PARTIES);
 	//store every polynomials result in f_r
 	vec_ZZ_p f_r;
-	f_r.SetLength(6 * L);
+	f_r.SetLength(INPUTS_PER_MUL_GATE * L);
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		for (int j = 0; j < M+1; j++) {
 			if (i == _id)
@@ -521,11 +521,11 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 					f_r[l] += inputPolynomials[l][j] * NTL::power(r, j);
 			else
 				for (int k = 0; k < 2*M+1; k++) //computes b with every received p(x)
-					b[i] += PIs[i][k + 6 * L] * NTL::power(r, k);
+					b[i] += PIs[i][k + INPUTS_PER_MUL_GATE * L] * NTL::power(r, k);
 			b[i] *= bettas[j];//multiply each of the M g gate results with beta.
 		}
-	byte toSend[(6 * L + 2)*ELEMENT_SIZE]{};
-	for (int j = 0; j < 6 * L; j++)
+	byte toSend[(INPUTS_PER_MUL_GATE * L + 2)*ELEMENT_SIZE]{};
+	for (int j = 0; j < INPUTS_PER_MUL_GATE * L; j++)
 		*(unsigned long long*)& toSend[j] = *(unsigned long long*)&f_r[j];
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 }
