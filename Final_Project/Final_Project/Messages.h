@@ -34,8 +34,9 @@ private:
 	unsigned short _size;						//the size of the accual message without header(_type+_size)
 	byte* _data;								//an array of length _size + 1 for null character. 
 	std::mutex _dataMutex;						//mutex protector of the data in message
+	std::mutex _isSetSizeMutex;					//mutex protector of the size of message
 	std::mutex _isReadMutex;					//mutex to make sure that old messages dont get confused with new messages.
-	std::condition_variable _listenerCV, _partyCV;
+	std::condition_variable _listenerCV, _partyCV, _isSetSizeCV;
 	bool _isRead = true;						//true if the current message was read by the party thread.
 
 public:
@@ -45,11 +46,13 @@ public:
 	void setData(const byte* dataPtr);			//copy the data from dataPtr into the message
 	byte* getData()const;						//getter for data pointer
 	std::mutex& getDataMutex();					//getter for the data mutex
+	std::mutex& getIsSetSizeMutex();				//getter for the setSize mutex
 	bool getIsRead()const;						//getter for _isRead flag
 	void setIsRead(bool val);					//setter for _isRead flag
 	std::mutex& getIsReadMutex();				//getter for isReadMutex
 	std::condition_variable& getListenerCV();	//getter for ListenerCV
 	std::condition_variable& getPartyCV();		//getter for PartyCV
+	std::condition_variable& getIsSetSizeCV();	//getter for IsSetSizeCV
 	~Message();
 } Message;
 #pragma pack(pop)

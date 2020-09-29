@@ -5,6 +5,7 @@
 #include "PartyShare.h" 
 #include <iostream>
 #include <set>
+#include <condition_variable>
 using std::cout;
 using std::endl;
 using std::string;
@@ -15,6 +16,7 @@ argv[2],argv[3] - IPs of other parties
 */
 
 int main(int argc, char* argv[]) {
+	cout << sizeof(std::condition_variable);
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	//determine the ID of this party based on the IPs provided to the program.

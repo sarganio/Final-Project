@@ -57,14 +57,16 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 	std::mutex& dataMutex = mess->getDataMutex();
 	std::condition_variable& mine = mess->getListenerCV();
 	std::condition_variable& other = mess->getPartyCV();
+	std::condition_variable& isSetSizeCV = mess->getIsSetSizeCV();
+
 	while (true) {
 		// Setup fd_set structure
 		FD_ZERO(&FDs);
 		FD_SET(_socket, &FDs);
 		//wait for messages from socket
 		select(_socket + 1, &FDs, NULL, NULL, NULL);
-		std::mutex& m = mess->getIsReadMutex();
-		std::unique_lock<std::mutex> listenerUL(m);
+		std::mutex& isReadMutex = mess->getIsReadMutex();
+		std::unique_lock<std::mutex> listenerUL(isReadMutex);
 
 		mine.wait(listenerUL, [&] {return mess->getIsRead(); });
 
@@ -77,6 +79,11 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		//read the header: size of message - 2B
 		if(type != F_VERIFY_ROUND1_MESSAGE)
 			mess->setSize(type);
+		else {
+			std::mutex& isSetSize = mess->getIsSetSizeMutex();
+			std::unique_lock<std::mutex> listenerUL(isSetSize);
+			isSetSizeCV.wait(listenerUL);
+		}
 		unsigned short expectedSize = mess->getSize();
 		dataMutex.lock();
 		this->readBuffer(mess + 1, HEADER_SIZE - 1);

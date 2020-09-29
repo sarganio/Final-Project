@@ -71,3 +71,9 @@ std::condition_variable& Message::getPartyCV() {
 std::mutex& Message::getIsReadMutex() {
 	return _isReadMutex;
 }
+std::mutex& Message::getIsSetSizeMutex() {
+	return _isSetSizeMutex;
+}
+std::condition_variable& Message::getIsSetSizeCV() {
+	return _isSetSizeCV;
+}
