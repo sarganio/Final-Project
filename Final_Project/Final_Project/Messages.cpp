@@ -3,6 +3,7 @@
  
 Message::Message(byte type) :_type(type), _size(0),_data(nullptr) {
 	setSize(type);
+	_data = new byte[300];
 }
 std::mutex& Message::getDataMutex() {
 	return _dataMutex;
@@ -38,16 +39,16 @@ void Message::setSize(int type,unsigned int size) {
 	case F_VERIFY_ROUND2_MESSAGE:
 		_size = F_VERIFY_ROUND2_MESSAGE_LEN;
 	}
-	if (oldSize < _size) {
-		_dataMutex.lock();
-		if (_data) {
-			delete _data;
-		}
-		_data = new byte[_size]();
-		_dataMutex.unlock();
-	}
-	else
-		memset(_data, 0, _size);
+	//while(!_dataMutex.try_lock());
+	//if (oldSize < _size) {
+	//	if (_data) {
+	//		delete _data;
+	//	}
+	//	_data = new byte[_size]();
+	//}
+	//else
+	//	memset(_data, 0, _size);
+	//_dataMutex.unlock();
 }
 short Message::getSize()const { return _size; }
 

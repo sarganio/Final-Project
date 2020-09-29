@@ -418,6 +418,12 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	AutoSeededRandomPool rnd;
 	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE];
 	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	cout << "Sending nextPI:" << endl;
+	std::cout.write((char*)nextPI, (2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE);
+	cout << endl;
+
+	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
+
 	vec_ZZ_p beforePI;
 	beforePI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
 
@@ -434,10 +440,6 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		beforePI[i] = PI[i] - ZZ_p(nextPI[i]);
 	}
 	//send PI_+1
-	cout << "Sending nextPI:" << endl;
-	std::cout.write((char*)nextPI, (2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE);
-	cout << endl;
-	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
 	byte* toSend = new byte[(2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE]{};
 	ZZ bytesToZZ;
 	for (int i = 0; i < 2 * M + INPUTS_PER_MUL_GATE * L + 1; i++) {
@@ -454,7 +456,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	thetas.clear();
 	thetas.shrink_to_fit();
 
-	delete nextPI;
+	delete[] nextPI;
 	nextPI = nullptr;
 
 	delete[] toSend;
@@ -468,10 +470,11 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			continue;
 		}
 		else//set Message's size to: 2*M+6*L+2
-			PIs[i]=new byte(sizeof(unsigned long long) * (2 * M + 6 * L + 1));
+			PIs[i]=new byte[ELEMENT_SIZE * (2 * M + 6 * L + 1)];
 	//recieve messages from first round
-	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1)*ELEMENT_SIZE);
+	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
+
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 	//print raw data recieved
