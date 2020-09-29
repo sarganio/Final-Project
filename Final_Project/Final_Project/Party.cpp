@@ -421,6 +421,10 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//cout << "Sending nextPI:" << endl;
 	//std::cout.write((char*)nextPI, (2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE);
 	//cout << endl;
+	
+	//prepare message for receiving
+	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
+	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
 
@@ -472,7 +476,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		else//set Message's size to: 2*M+6*L+2
 			PIs[i]=new byte[ELEMENT_SIZE * (2 * M + 6 * L + 1)];
 	//recieve messages from first round
-	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
+	//std::condition_variable& other = _msgs[(_id + 1) % NUM_OF_PARTIES]->getListenerCV();
 	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
 
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
@@ -499,11 +503,9 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 				NTL::ZZFromBytes(temp, &PIs[i][j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
 				//cout << "temp " << temp<<endl;
 				NTL::conv(parsedPIs[i][j], temp);/////////////////////////////////////TODO///////////NOT WORKING!!
-				//cout << "parsedPIs[i][j] " << parsedPIs[i][j]<<endl;
+				cout << "parsedPIs[i][j] " << parsedPIs[i][j]<<endl;
 			}
 			cout << endl;
-
-
 		}
 	//(a)
 	vector<ZZ_p> bettas;
