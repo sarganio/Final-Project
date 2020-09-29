@@ -425,7 +425,6 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//prepare message for receiving
 	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
-	Sleep(1);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
 
 	vec_ZZ_p beforePI;
