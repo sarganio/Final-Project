@@ -16,8 +16,6 @@ argv[2],argv[3] - IPs of other parties
 */
 
 int main(int argc, char* argv[]) {
-	cout << sizeof(Message);
-	
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
 	//determine the ID of this party based on the IPs provided to the program.
@@ -37,15 +35,15 @@ int main(int argc, char* argv[]) {
 		long result = p.finalReconstruct(circuitOutput);
 		cout << "The result of the function is:" << result << endl;
 		cout<<"The result is:"<< circuitOutput.toString() << endl;
-		//byte PI[120]{};
-		//for (int i = 0; i < 120; i++)
-		//	PI[i] = i + 48;
-		//p.sendTo(1,F_VERIFY_ROUND1_MESSAGE, PI);
 		p.fVerify();
 	}
 	catch (std::exception & exc) {
 		//TO DO: send an abort message.
 		cout << exc.what() << endl;
+	}
+	catch (const Party& p) {
+		std::string message = "ABORT";
+		p.broadcast((byte*)message.c_str(), ABORT_MESS);
 	}
 	
 	TRACE("Bye Bye!");

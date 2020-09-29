@@ -15,6 +15,7 @@ Party* PartyShare::getParty()const {
 	return _owner; 
 }
 Share& PartyShare::operator=(Share const& other) {
+	//use Share class's assignment operator
 	*(Share*)this = other;
 	return *this;
 }

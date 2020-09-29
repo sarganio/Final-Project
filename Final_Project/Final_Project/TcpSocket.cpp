@@ -75,7 +75,9 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		dataMutex.lock();
 		this->readBuffer(&type, 1);
 		dataMutex.unlock();
-
+		//abort execution in case of abort message
+		if (type == ABORT_MESS)
+			throw std::exception(__FUNCTION__"An abort message was received");// from Party with ID : " + std::to_string(id));
 		//read the header: size of message - 2B
 		if(type != F_VERIFY_ROUND1_MESSAGE)
 			mess->setSize(type);
