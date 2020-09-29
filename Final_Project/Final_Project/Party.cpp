@@ -39,7 +39,7 @@ Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(n
 	 srand(10);
 	//GenPrime(p, POWER_TWO_MAX_RANGE);
 	NTL::ZZ_p::init(_P);
-	cout << "P="<<_P;
+	cout << "P="<<_P<<endl;
 	//make sure the input belong to the Ring Z_p 
 	 _input %= ZP;
 	//expend the vector to contain all parties' sockets
@@ -250,13 +250,7 @@ void Party::fInput() {
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		delete randomShares[i];
 	}
-	////convert the share recieved from the other parties to Share and add it to the vector _shares
-	//for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
-	//	Share* receivedShare = new Share((i+2)%NUM_OF_PARTIES, 'a' + i);
-	//	(*receivedShare)[i].setValue(*(unsigned long*)partiesInputs[i]);
-	//	(*receivedShare)[(i+2)%NUM_OF_PARTIES].setValue(*(unsigned long*)partiesInputs[i]);////fucked
-	//	_shares[i] = receivedShare;
-	//}
+	TRACE("Secret sharing completed.");
 }
 long Party::finalReconstruct(Share& myShare) {
 	vector<Share*> outputShares;
@@ -382,6 +376,7 @@ Circuit* Party::getArithmeticCircuit()const {
 	return _arithmeticCircuit;
 }
 void Party::fVerify() {
+	TRACE("Start of verification stage.");
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
 	ZZ_pX p;
 	vector<ZZ_pX> inputPolynomials;
@@ -421,6 +416,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 
 	AutoSeededRandomPool rnd;
 	unsigned long long* nextPI = (unsigned long long*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	rnd.GenerateBlock(*(SecByteBlock*)nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	vec_ZZ_p beforePI;
 	beforePI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
 
@@ -439,6 +435,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//send PI_+1
 	cout << "Sending nextPI:" << endl;
 	std::cout.write((char*)nextPI, (2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE);
+	cout << endl;
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)nextPI);
 	byte* toSend = new byte[(2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE]{};
 	ZZ bytesToZZ;
@@ -451,6 +448,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, toSend);
 	cout << "Sending BeforePI:" << endl;
 	std::cout.write((char*)toSend, (2 * M + INPUTS_PER_MUL_GATE * L + 1)*ELEMENT_SIZE);
+	cout << endl;
 	//-------------------release memory section-------------------
 	thetas.clear();
 	thetas.shrink_to_fit();
@@ -478,9 +476,11 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//print raw data recieved
 	cout << "recieved PIs["<< (_id + 1) % NUM_OF_PARTIES <<"]:" << endl;
 	std::cout.write((char*)PIs[(_id + 1) % NUM_OF_PARTIES], (2 * M + INPUTS_PER_MUL_GATE * L + 1)*ELEMENT_SIZE);
+	cout << endl;
 
 	cout << "recieved PIs["<< (_id + 2) % NUM_OF_PARTIES <<"]:" << endl;
 	std::cout.write((char*)PIs[(_id + 2) % NUM_OF_PARTIES], (2 * M + INPUTS_PER_MUL_GATE * L + 1)*ELEMENT_SIZE);
+	cout << endl;
 
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);

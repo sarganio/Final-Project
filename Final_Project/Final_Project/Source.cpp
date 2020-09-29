@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 			myID++;
 	}
 	
-	cout << "My ID id: "<<myID << endl;
+	cout << "My ID:"<<myID << endl;
 	try {
 		Party p = Party(myID,1);
 		//p.verifyRound1();

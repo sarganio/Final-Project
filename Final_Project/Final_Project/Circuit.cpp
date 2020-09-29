@@ -67,7 +67,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 		}
 		
 	}
-
+	TRACE("Arithmetic circuit was created succssesfully")
 }
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
