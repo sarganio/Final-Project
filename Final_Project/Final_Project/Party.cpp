@@ -179,13 +179,14 @@ Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;
 	calledThisFunc++;
 	
-	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};//TODO: conver to Share!
+	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};
 	byte fromKey[KEY_LEN]{};
 	byte IV[KEY_LEN]{};
 	AutoSeededRandomPool rnd;
 	Share* ans = new Share((_id + 2) % NUM_OF_PARTIES, 'a' + calledThisFunc);
-	
-	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);
+	//byte* test = new byte[ELEMENT_SIZE];
+	_keys[_id] = new SecByteBlock(0x00,KEY_LEN);/////////////////////////////////TODO: change to byte*!
+	//rnd.GenerateBlock(test,ELEMENT_SIZE);
 	rnd.GenerateBlock(*_keys[_id],_keys[_id]->size());
 	
 	for (unsigned int i = 0; i < KEY_LEN / SEQ_LEN; i++)
@@ -415,8 +416,8 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	PI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
 
 	AutoSeededRandomPool rnd;
-	unsigned long long* nextPI = (unsigned long long*)new SecByteBlock(0x00, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
-	rnd.GenerateBlock(*(SecByteBlock*)nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE];
+	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	vec_ZZ_p beforePI;
 	beforePI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
 
@@ -436,7 +437,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	cout << "Sending nextPI:" << endl;
 	std::cout.write((char*)nextPI, (2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE);
 	cout << endl;
-	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, (byte*)nextPI);
+	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
 	byte* toSend = new byte[(2 * M + INPUTS_PER_MUL_GATE * L + 1) * ELEMENT_SIZE]{};
 	ZZ bytesToZZ;
 	for (int i = 0; i < 2 * M + INPUTS_PER_MUL_GATE * L + 1; i++) {

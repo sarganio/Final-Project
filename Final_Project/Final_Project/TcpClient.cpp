@@ -25,10 +25,8 @@ int TcpClient::connect(unsigned short hostPort, std::string hostname, Message* m
 	sa.sin_addr.s_addr = inet_addr(hostname.c_str());    // the IP of the server
 
 	int status,i = 0;
-	while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) {
+	while (status = ::connect(_socket, (struct sockaddr*) & sa, sizeof(sa))) 
 		TRACE("\rID to connect %d: Attempt #%d", hostPort - BASE_PORT, ++i);
-		//Sleep(500);
-	}
 
 	if (status == INVALID_SOCKET)
 		throw std::exception("Cant connect to server");
