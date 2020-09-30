@@ -38,7 +38,7 @@ private:
 	std::mutex _isReadMutex;					//mutex to make sure that old messages dont get confused with new messages.
 	std::condition_variable _listenerCV, _partyCV, _listenerIsSetSizeCV,_partyIsSetSizeCV;
 	bool _isRead = true;						//true if the current message was read by the party thread.
-
+	bool _isSetSize = true;
 public:
 	Message(byte type = 0);				
 	void setSize(int type,unsigned int size = 0);//setter for the size of the message
@@ -46,9 +46,11 @@ public:
 	void setData(const byte* dataPtr);			//copy the data from dataPtr into the message
 	byte* getData()const;						//getter for data pointer
 	std::mutex& getDataMutex();					//getter for the data mutex
-	std::mutex& getIsSetSizeMutex();				//getter for the setSize mutex
+	std::mutex& getIsSetSizeMutex();			//getter for the setSize mutex
 	bool getIsRead()const;						//getter for _isRead flag
+	bool getIsSetSize()const;					//getter for _isSetSize flag
 	void setIsRead(bool val);					//setter for _isRead flag
+	void setIsSetSize(bool val);					//setter for _isRead flag
 	std::mutex& getIsReadMutex();				//getter for isReadMutex
 	std::condition_variable& getListenerCV();	//getter for ListenerCV
 	std::condition_variable& getPartyCV();		//getter for PartyCV

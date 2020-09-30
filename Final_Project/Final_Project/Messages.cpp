@@ -10,8 +10,14 @@ std::mutex& Message::getDataMutex() {
 bool Message::getIsRead()const {
 	return _isRead;
 }
+bool Message::getIsSetSize()const {
+	return _isSetSize;
+}
 void Message::setIsRead(bool val) {
 	_isRead = val;
+}
+void Message::setIsSetSize(bool val) {
+	_isSetSize = val;
 }
 void Message::setSize(int type,unsigned int size) {
 	unsigned short oldSize = _size;

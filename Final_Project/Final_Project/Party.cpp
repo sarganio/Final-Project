@@ -476,9 +476,10 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			std::condition_variable& mine = _msgs[i]->getPartyIsSetSizeCV();
 			std::mutex& isSetSize = _msgs[i]->getIsSetSizeMutex();
 			std::unique_lock<std::mutex> partyUL(isSetSize);
-			mine.wait(partyUL);
+			mine.wait(partyUL , [&] {return !_msgs[i]->getIsSetSize(); });
 			_msgs[i]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 			other.notify_one();
+			_msgs[i]->setIsSetSize(true);
 		}
 
 	//prepare message for receiving
