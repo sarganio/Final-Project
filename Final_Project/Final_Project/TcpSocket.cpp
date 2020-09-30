@@ -87,6 +87,7 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 			std::condition_variable& otherIsSetSizeCV = mess->getPartyIsSetSizeCV();
 			//let the other thread know the message was received
 			mess->setIsSetSize(false);
+			otherIsSetSizeCV.notify_one();
 			mineIsSetSizeCV.wait(listenerUL, [&] {return mess->getIsSetSize(); });
 		}
 		unsigned short expectedSize = mess->getSize();
