@@ -10,7 +10,7 @@
 #include <string>
 #include <mutex>
 
-#define INPUTS_PER_MUL_GATE  6
+#define INPUTS_PER_G_GATE  6
 #define ELEMENT_SIZE sizeof(ZZ_p)
 //std
 using std::vector;
