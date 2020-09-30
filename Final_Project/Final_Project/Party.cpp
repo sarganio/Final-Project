@@ -33,6 +33,7 @@ using NTL::VectorRandom;
 using NTL::random;
 using NTL::ZZ;
 using NTL::vec_ZZ_pX;
+using NTL::BytesFromZZ;
 
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr),_P(ZP){
 	//for Dbug
@@ -394,7 +395,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//(a)
 	//generate L random elements from Zp and spread them to every party
 	int numOfElements = L;
-	vector<ZZ_p> thetas;
+	vec_ZZ_p thetas;
 	fCoin(thetas, numOfElements);
 	//(b)
 	//generate 6L random elements from Zp
@@ -464,9 +465,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	for (int i = 0; i < (2 * M + 1 + 6 * L); i++)
 		cout << beforPIData[i] << " ";
 	cout << endl;
-	//-------------------release memory section-------------------
-	thetas.clear();
-	thetas.shrink_to_fit();
+	//------------------- memory release section-------------------
 
 	delete[] nextPI;
 	nextPI = nullptr;
@@ -507,7 +506,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
 		}
 	//(a)
-	vector<ZZ_p> bettas;
+	vec_ZZ_p bettas;
 	fCoin(bettas, L);
 	ZZ_p r;
 	do {
@@ -536,30 +535,51 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		}
 	}
 	//store every polynomials result in f_r
-	vec_ZZ_p f_r;
-	f_r.SetLength(INPUTS_PER_G_GATE * L);
-	for (int i = 0; i < NUM_OF_PARTIES; i++)//computes 
-		for (int j = 0; j < M+1; j++) {
+	vector<vec_ZZ_p> f_r;
+	f_r.resize(NUM_OF_PARTIES);
+	vector<ZZ_p> p_r;
+	p_r.resize(NUM_OF_PARTIES);
+	//computes f(r) for every each polynomial from the 6L polynomials 
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		for (int j = 0; j < M + 1; j++)
 			if (i == _id)
-				for (int l = 0; l < 6 * L; l++)//compute all of this party 6L polynomials at point r .e.g -f_l(r)
-					f_r[l] += inputPolynomials[l][j] * NTL::power(r, j);
-			else
-				for (int k = 0; k < 2*M+1; k++) //computes b with every received p(r)
-					b[i] += PIs[i][k + INPUTS_PER_G_GATE * L] * NTL::power(r, k);
-			b[i] *= bettas[j];//multiply each of the M g gate results with beta.
+				continue;
+			else {//f_r
+				f_r[i].SetLength(INPUTS_PER_G_GATE * L);
+				for (int k = 0; k < INPUTS_PER_G_GATE*L; k++) //computes b with every received p(r)
+					f_r[i][k] += polynomialsRound2[i][k][j] * NTL::power(r, j);	
+			}
+	//computes p(r) for every party
+	for (int i = 0; i < NUM_OF_PARTIES;i++)
+		if (i == _id)
+			continue;
+		else {
+			for (int j = 0; j < 2 * M + 1; j++)
+				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * NTL::power(r, j);
+			for (int j = 0; j < M + 1; j++) {
+				for (int k = 0; k < 2 * M + 1; k++)
+					b[i] += parsedPIs[i][k + INPUTS_PER_G_GATE * L] * NTL::power(ZZ_p(j), k);
+				b[i] *= bettas[j];//multiply each of the M g gate results with beta.
+			}
 		}
+
 	byte toSend[(INPUTS_PER_G_GATE * L + 2)*ELEMENT_SIZE]{};
-	for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
-		*(unsigned long long*)& toSend[j] = *(unsigned long long*)&f_r[j];
-	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i == _id)
+			continue;
+		else
+			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+				BytesFromZZ(toSend, rep(f_r[i][j]), ELEMENT_SIZE);
+		sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
+	}
 }
-void Party::fCoin(std::vector<ZZ_p>& thetas, int numOfElements)
+void Party::fCoin(vec_ZZ_p& thetas, int numOfElements)
 {
-	thetas.resize(numOfElements);
+	thetas.SetLength(numOfElements);
 	//generate numOfElements random numbers 
 	for (int i = 0; i < numOfElements; i++) {
 		Share* randomShare = fRand();
-		thetas.push_back(ZZ_p(finalReconstruct(*randomShare)));
+		thetas.append(ZZ_p(finalReconstruct(*randomShare)));
 		delete randomShare;
 	}
 }
@@ -602,7 +622,7 @@ void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	for (int j = 0; j < vectorLen; j++) {
 		ZZ temp;
 		//cout <<"PIs[i][j]"<<i<<" "<<j<<" "<< (unsigned int)PIs[i][j]<<endl;
-		NTL::ZZFromBytes(temp, &rawData[j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
+		ZZFromBytes(temp, &rawData[j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
 		//cout << "temp " << temp<<endl;
 		NTL::conv(vec[j], temp);/////////////////////////////////////TODO///////////NOT WORKING!!
 		cout << "parsedPIs["<<j<<"] " << vec[j] << endl;

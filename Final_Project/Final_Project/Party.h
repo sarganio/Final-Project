@@ -63,7 +63,7 @@ public:
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
 	void fVerify();													//fVerify functuality as described in the paper.
 	Circuit* getArithmeticCircuit()const;							//getter for the arithmetic circuit pointer.
-	void fCoin(std::vector<ZZ_p>& thetas, int numOfElements);		//fCoin functuality as described in the paper.Generate numOfElements random elements fromZp and send to all parties.
+	void fCoin(vec_ZZ_p& thetas, int numOfElements);		//fCoin functuality as described in the paper.Generate numOfElements random elements fromZp and send to all parties.
 																	//interpulates numOfPolynomials polinomials each of degree polynomialsDegree .Note:the coeffient index of pointsToInterpolate is X value.
 																	//the first coeffient is a random number from Zp. The calculated polynomials are stored in inputPolynomials.
 	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_ZZ_p& omegas, vector<ZZ_pX>&  inputPolynomials)const;
