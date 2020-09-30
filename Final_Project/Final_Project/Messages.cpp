@@ -74,6 +74,8 @@ std::mutex& Message::getIsReadMutex() {
 std::mutex& Message::getIsSetSizeMutex() {
 	return _isSetSizeMutex;
 }
-std::condition_variable& Message::getIsSetSizeCV() {
-	return _isSetSizeCV;
+std::condition_variable& Message::getListenerIsSetSizeCV() {
+	return _listenerIsSetSizeCV;
+}std::condition_variable& Message::getPartyIsSetSizeCV() {
+	return _partyIsSetSizeCV;
 }

@@ -57,7 +57,7 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 	std::mutex& dataMutex = mess->getDataMutex();
 	std::condition_variable& mine = mess->getListenerCV();
 	std::condition_variable& other = mess->getPartyCV();
-	std::condition_variable& isSetSizeCV = mess->getIsSetSizeCV();
+	std::condition_variable& mineIsSetSizeCV = mess->getListenerIsSetSizeCV;
 
 	while (true) {
 		// Setup fd_set structure
@@ -84,7 +84,10 @@ unsigned short fromID = ((this->_port - BASE_PORT) + 2)%NUM_OF_PARTIES;/////////
 		else {
 			std::mutex& isSetSize = mess->getIsSetSizeMutex();
 			std::unique_lock<std::mutex> listenerUL(isSetSize);
-			isSetSizeCV.wait(listenerUL);
+			std::condition_variable& otherIsSetSizeCV = mess->getPartyIsSetSizeCV();
+			//let the other thread know the message was received
+			otherIsSetSizeCV.notify_one();
+			mineIsSetSizeCV.wait(listenerUL);
 		}
 		unsigned short expectedSize = mess->getSize();
 		dataMutex.lock();

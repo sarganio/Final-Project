@@ -36,7 +36,7 @@ private:
 	std::mutex _dataMutex;						//mutex protector of the data in message
 	std::mutex _isSetSizeMutex;					//mutex protector of the size of message
 	std::mutex _isReadMutex;					//mutex to make sure that old messages dont get confused with new messages.
-	std::condition_variable _listenerCV, _partyCV, _isSetSizeCV;
+	std::condition_variable _listenerCV, _partyCV, _listenerIsSetSizeCV,_partyIsSetSizeCV;
 	bool _isRead = true;						//true if the current message was read by the party thread.
 
 public:
@@ -52,7 +52,8 @@ public:
 	std::mutex& getIsReadMutex();				//getter for isReadMutex
 	std::condition_variable& getListenerCV();	//getter for ListenerCV
 	std::condition_variable& getPartyCV();		//getter for PartyCV
-	std::condition_variable& getIsSetSizeCV();	//getter for IsSetSizeCV
+	std::condition_variable& getListenerIsSetSizeCV();	//getter for IsSetSizeCV
+	std::condition_variable& getPartyIsSetSizeCV();	//getter for IsSetSizeCV
 	~Message();
 } Message;
 #pragma pack(pop)

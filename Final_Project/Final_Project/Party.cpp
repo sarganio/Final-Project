@@ -472,14 +472,18 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		}
 		else {//set Message's size to: 2*M+6*L+2
 			PIs[i] = new byte[ELEMENT_SIZE * (2 * M + 6 * L + 1)];
-			std::condition_variable& isSetSizeCV  = _msgs[i]->getIsSetSizeCV();
+			std::condition_variable& other = _msgs[i]->getListenerIsSetSizeCV();
+			std::condition_variable& mine = _msgs[i]->getPartyIsSetSizeCV();
+			std::mutex& isSetSize = _msgs[i]->getIsSetSizeMutex();
+			std::unique_lock<std::mutex> partyUL(isSetSize);
+			mine.wait(partyUL);
 			_msgs[i]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
-			isSetSizeCV.notify_one();
+			other.notify_one();
 		}
 
 	//prepare message for receiving
-	_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
-	_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
+	//_msgs[(_id + 1) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
+	//_msgs[(_id + 2) % NUM_OF_PARTIES]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 	//recieve messages from first round
 	//std::condition_variable& other = _msgs[(_id + 1) % NUM_OF_PARTIES]->getListenerCV();
 	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
