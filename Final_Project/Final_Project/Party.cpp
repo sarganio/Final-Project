@@ -516,19 +516,25 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//(b)
 	vector<ZZ_p> b;
 	b.resize(NUM_OF_PARTIES);
-	NTL::vec_ZZ_pX polynomialsRound2;
-	polynomialsRound2.SetLength(NUM_OF_PARTIES);
+	vector<vec_ZZ_pX> polynomialsRound2;
+	polynomialsRound2.resize(NUM_OF_PARTIES);
+	
 
 	//set length for each polynomials and update omega according to the rellevant PI message
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
 		else {
-			polynomialsRound2[i].SetLength(M + 1);
+			polynomialsRound2[i].SetLength(6 * L);
 			//update omegas
-			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) 
-				polynomialsRound2[i][0] = parsedPIs[i][j];
+			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) {
+				polynomialsRound2[i][j].SetLength(M + 1);
+				polynomialsRound2[i][j][0] = parsedPIs[i][j];
+				for (int k = 1; k < M + 1; k++)
+					polynomialsRound2[i][j][k] = inputPolynomials[j][k];
+			}
 		}
+	}
 	//store every polynomials result in f_r
 	vec_ZZ_p f_r;
 	f_r.SetLength(INPUTS_PER_G_GATE * L);
