@@ -507,7 +507,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		}
 	//(a)
 	vec_ZZ_p bettas;
-	fCoin(bettas, L);
+	fCoin(bettas, M);
 	ZZ_p r;
 	do {
 		random(r);
@@ -543,7 +543,7 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		for (int j = 0; j < M + 1; j++)
 			if (i == _id)
-				continue;
+				break;
 			else {//f_r
 				f_r[i].SetLength(INPUTS_PER_G_GATE * L);
 				for (int k = 0; k < INPUTS_PER_G_GATE*L; k++) //computes b with every received p(r)
