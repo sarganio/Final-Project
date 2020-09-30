@@ -56,17 +56,18 @@ public:
 	void fInput();													//fInput functuality as described in the paper.
 	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
 	//vector<Share*>& getAllShares();								
+	void verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p);//the first round of fVerify as described in the paper.
 	long finalReconstruct(Share&);									//function used at the end of the protocol, recieve shares from other parties and return the result.
 	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form.
 	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party .
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
 	void fVerify();													//fVerify functuality as described in the paper.
 	Circuit* getArithmeticCircuit()const;							//getter for the arithmetic circuit pointer.
-	void verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p);//the first round of fVerify as described in the paper.
 	void fCoin(std::vector<ZZ_p>& thetas, int numOfElements);		//fCoin functuality as described in the paper.Generate numOfElements random elements fromZp and send to all parties.
 																	//interpulates numOfPolynomials polinomials each of degree polynomialsDegree .Note:the coeffient index of pointsToInterpolate is X value.
 																	//the first coeffient is a random number from Zp. The calculated polynomials are stored in inputPolynomials.
 	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_ZZ_p& omegas, vector<ZZ_pX>&  inputPolynomials)const;
 	void verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p);
 	void verifyRound3();
+	void rawDataToVec(vector<vec_ZZ_p>& vec, unsigned int vectorLen, byte* rawData[NUM_OF_PARTIES]);
 };
