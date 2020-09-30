@@ -606,15 +606,25 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 }
 void Party::verifyRound3(){
 	byte buffers[NUM_OF_PARTIES][(6 * L + 2) * ELEMENT_SIZE]{};
+	vector<vec_ZZ_p> parsedFinal;
+	vector<vec_ZZ_p> constructedElements;
+	parsedFinal.resize(NUM_OF_PARTIES);
+	constructedElements.resize(NUM_OF_PARTIES);
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
-	readFrom(i, buffers[i]);
+		readFrom(i, buffers[i]);
+		rawDataToVec(parsedFinal[i], (6 * L + 2) * ELEMENT_SIZE, buffers[i]);
 	}
-	for (int i = 0; i < F_VERIFY_ROUND2_MESSAGE_LEN; i++)
-		*(unsigned long long*)& buffers[_id] = *(unsigned long long*) & buffers[(_id + 1) % NUM_OF_PARTIES][i] + *(unsigned long long*) & buffers[(_id + 2) % NUM_OF_PARTIES][i];
-	if(*(unsigned long long*) & buffers[_id][F_VERIFY_ROUND2_MESSAGE_LEN-1])
-		throw std::exception(__FUNCTION__  "ABORT!-I'm surrounded by liers!");
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i == _id)
+			continue;
+		else
+			for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN; j++)
+				constructedElements[i][j] = parsedFinal[i][j] + myFinal[i][j];
+
+	/*if(*(unsigned long long*) & buffers[_id][F_VERIFY_ROUND2_MESSAGE_LEN-1])
+		throw std::exception(__FUNCTION__  "ABORT!-I'm surrounded by liers!");*/
 	cout << "Completed! No liers here" << endl;
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
