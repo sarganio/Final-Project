@@ -69,5 +69,5 @@ public:
 	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_ZZ_p& omegas, vector<ZZ_pX>&  inputPolynomials)const;
 	void verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p);
 	void verifyRound3();
-	void rawDataToVec(vector<vec_ZZ_p>& vec, unsigned int vectorLen, byte* rawData[NUM_OF_PARTIES]);
+	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
 };

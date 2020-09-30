@@ -425,7 +425,12 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
 	//
-
+	vec_ZZ_p nextPIData;
+	cout << "PI_i+1: ";
+	rawDataToVec(nextPIData, (2 * M + 1 + 6 * L), nextPI);
+	for (int i = 0; i < (2 * M + 1 + 6 * L); i++)
+		cout << nextPIData[i] << " ";
+	cout << endl;
 	vec_ZZ_p beforePI;
 	beforePI.SetLength(2 * M + 1 + INPUTS_PER_MUL_GATE * L);
 
@@ -434,10 +439,12 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		PI[i] = omegas[i];
 	}
 	//add 2*M + 1 coeficients to f
+	cout << "P(x) Coeffients:";
 	for (int i = 0; i < 2 * M + 1; i++) {
 		PI[i + INPUTS_PER_MUL_GATE * L] = p[i];
 		cout << PI[i + INPUTS_PER_MUL_GATE * L] << " ";
 	}
+	cout << endl;
 	for (int i = 0; i < 2 * M + 1 + INPUTS_PER_MUL_GATE * L; i++) {
 		beforePI[i] = PI[i] - ZZ_p(nextPI[i]);
 	}
@@ -487,8 +494,10 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 
 	vector<vec_ZZ_p> parsedPIs;
-	//parse the data received
-	rawDataToVec(parsedPIs, (2 * M + INPUTS_PER_MUL_GATE * L + 1), PIs);
+	parsedPIs.resize(NUM_OF_PARTIES);
+	for(int i=0;i<NUM_OF_PARTIES;i++)
+		//parse the data received
+		rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_MUL_GATE * L + 1), PIs[i]);
 	//(a)
 	vector<ZZ_p> bettas;
 	fCoin(bettas, L);
@@ -561,20 +570,19 @@ void Party::verifyRound3(){
 		throw std::exception(__FUNCTION__  "ABORT!-I'm surrounded by liers!");
 	cout << "Completed! No liers here" << endl;
 }
-void Party::rawDataToVec(vector<vec_ZZ_p>& vec, unsigned int vectorLen, byte* rawData[NUM_OF_PARTIES]) {
-	vec.resize(NUM_OF_PARTIES);
+void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
 			continue;
 		else {
-			vec[i].SetLength(vectorLen);
+			vec.SetLength(vectorLen);
 			for (int j = 0; j < vectorLen; j++) {
 				ZZ temp;
 				//cout <<"PIs[i][j]"<<i<<" "<<j<<" "<< (unsigned int)PIs[i][j]<<endl;
 				NTL::ZZFromBytes(temp, &rawData[i][j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
 				//cout << "temp " << temp<<endl;
-				NTL::conv(vec[i][j], temp);/////////////////////////////////////TODO///////////NOT WORKING!!
-				cout << "parsedPIs[i][j] " << vec[i][j] << endl;
+				NTL::conv(vec[j], temp);/////////////////////////////////////TODO///////////NOT WORKING!!
+				cout << "parsedPIs[j] " << vec[j] << endl;
 			}
 			cout << endl;
 		}
