@@ -383,7 +383,7 @@ void Party::fVerify() {
 	ZZ_pX p;
 	vec_ZZ_p polynomialAtR;
 	vector<ZZ_pX> inputPolynomials;
-	inputPolynomials.resize(6 * L);
+	inputPolynomials.resize(INPUTS_PER_G_GATE * L);
 	//-----Round 1-----:
 	verifyRound1(M,inputPolynomials,p);
 	//-----Round 2-----:
@@ -401,8 +401,8 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//(b)
 	//generate 6L random elements from Zp
 	vec_ZZ_p omegas;
-	omegas.SetLength(6 * L);
-	for (int i = 0; i < 6 * L; i++)
+	omegas.SetLength(INPUTS_PER_G_GATE * L);
+	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
 		random(omegas[i]);
 	//(c)
 	interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, omegas, inputPolynomials);
@@ -615,10 +615,12 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 	}
 }
 void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
-	byte buffer[(6 * L + 2) * ELEMENT_SIZE]{};
+	byte buffer[(INPUTS_PER_G_GATE * L + 2) * ELEMENT_SIZE]{};
 	vec_ZZ_p parsedFinal;
 	vec_ZZ_p constructedElements;
-	
+
+	parsedFinal.SetLength(INPUTS_PER_G_GATE * L + 2);
+	constructedElements.SetLength(INPUTS_PER_G_GATE * L + 2);
 	readFrom((_id+1)%NUM_OF_PARTIES, buffer);
 	rawDataToVec(parsedFinal, (6 * L + 2) * ELEMENT_SIZE, buffer);
 
@@ -631,11 +633,8 @@ void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	vec.SetLength(vectorLen);
 	for (int j = 0; j < vectorLen; j++) {
 		ZZ temp;
-		//cout <<"PIs[i][j]"<<i<<" "<<j<<" "<< (unsigned int)PIs[i][j]<<endl;
-		ZZFromBytes(temp, &rawData[j * ELEMENT_SIZE], ELEMENT_SIZE);////TODO////////NOT WORKING!!
-		//cout << "temp " << temp<<endl;
-		NTL::conv(vec[j], temp);/////////////////////////////////////TODO///////////NOT WORKING!!
-		cout << "parsedPIs["<<j<<"] " << vec[j] << endl;
+		ZZFromBytes(temp, &rawData[j * ELEMENT_SIZE], ELEMENT_SIZE);
+		NTL::conv(vec[j], temp);
 	}
 	cout << endl;
 }
