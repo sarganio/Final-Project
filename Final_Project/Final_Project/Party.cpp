@@ -421,8 +421,8 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	PI.SetLength(2 * M + 1 + INPUTS_PER_G_GATE * L);
 
 	AutoSeededRandomPool rnd;
-	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE];
-	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]();
+	//rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
