@@ -426,9 +426,6 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
-	//
-	vec_ZZ_p nextPIData;
-	rawDataToVec(nextPIData, (2 * M + 1 + 6 * L), nextPI);
 
 	vec_ZZ_p beforePI;
 	beforePI.SetLength(2 * M + 1 + INPUTS_PER_G_GATE * L);
@@ -450,12 +447,10 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	for (int i = 0; i < 2 * M + INPUTS_PER_G_GATE * L + 1; i++) {
 		byte rawZp[ELEMENT_SIZE]{};
 		BytesFromZZ(rawZp, rep(beforePI[i]), ELEMENT_SIZE);
-		NTL::ZZFromBytes(bytesToZZ, rawZp, ELEMENT_SIZE);
 		*(unsigned long long*)& toSend[i * ELEMENT_SIZE] = *(unsigned long long*)rawZp;
 	}
 	sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, toSend);
-	vec_ZZ_p beforPIData;
-	rawDataToVec(beforPIData, (2 * M + 1 + 6 * L),toSend);
+
 	//------------------- memory release section-------------------
 
 	delete[] nextPI;
@@ -466,35 +461,35 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 }
 void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p, vec_ZZ_p& calculationForRound3) {
 	byte* PIs[NUM_OF_PARTIES];
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id) {
 			PIs[i] = nullptr;
-			continue;
 		}
-		else {//set Message's size to: 2*M+6*L+2
+		else {//set Message's size to: 2*M+6*L+2 before receiving the data
 			PIs[i] = new byte[ELEMENT_SIZE * (2 * M + 6 * L + 1)];
 			std::condition_variable& other = _msgs[i]->getListenerIsSetSizeCV();
 			std::condition_variable& mine = _msgs[i]->getPartyIsSetSizeCV();
 			std::mutex& isSetSize = _msgs[i]->getIsSetSizeMutex();
 			std::unique_lock<std::mutex> partyUL(isSetSize);
-			mine.wait(partyUL , [&] {return !_msgs[i]->getIsSetSize(); });
+			mine.wait(partyUL, [&] {return !_msgs[i]->getIsSetSize(); });
 			_msgs[i]->setSize(F_VERIFY_ROUND1_MESSAGE, (2 * M + 6 * L + 1) * ELEMENT_SIZE);
 			other.notify_one();
 			_msgs[i]->setIsSetSize(true);
 		}
+	}
 
-	readFrom((_id + 1) % NUM_OF_PARTIES,PIs[(_id + 1) % NUM_OF_PARTIES]);
+	readFrom((_id + 1) % NUM_OF_PARTIES, PIs[(_id + 1) % NUM_OF_PARTIES]);
 	readFrom((_id + 2) % NUM_OF_PARTIES, PIs[(_id + 2) % NUM_OF_PARTIES]);
 
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
+	//convert the message recevied to ZZ_p elements
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
 			continue;
-		else {
+		else
 			//parse the data received
 			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
-		}
 	//(a)
 	vec_ZZ_p bettas;
 	fCoin(bettas, M);
@@ -502,28 +497,27 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	do {
 		random(r);
 	} while (rep(r) <= M);
+	cout << "r = " << r << endl;
 	//(b)
 	vector<ZZ_p> b;
 	b.resize(NUM_OF_PARTIES);
 	vector<vec_ZZ_pX> polynomialsRound2;
 	polynomialsRound2.resize(NUM_OF_PARTIES);
-	
 
 	//set length for each polynomials and update omega according to the rellevant PI message
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (i == _id)
-			continue;
-		else {
-			polynomialsRound2[i].SetLength(6 * L);
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i != _id)
+		{
+			polynomialsRound2[i].SetLength(INPUTS_PER_G_GATE * L);
 			//update omegas
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) {
 				polynomialsRound2[i][j].SetLength(M + 1);
 				polynomialsRound2[i][j][0] = parsedPIs[i][j];
 				for (int k = 1; k < M + 1; k++)
-					polynomialsRound2[i][j][k] = inputPolynomials[j][k];
+					polynomialsRound2[i][j][k] = inputPolynomials[j][k - 1];
 			}
+
 		}
-	}
 	//store every polynomials result in f_r
 	vector<vec_ZZ_p> f_r;
 	f_r.resize(NUM_OF_PARTIES);
@@ -536,40 +530,41 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 				break;
 			else {//f_r
 				f_r[i].SetLength(INPUTS_PER_G_GATE * L);
-				for (int k = 0; k < INPUTS_PER_G_GATE*L; k++) //computes b with every received p(r)
-					f_r[i][k] += polynomialsRound2[i][k][j] * NTL::power(r, j);	
+				for (int k = 0; k < INPUTS_PER_G_GATE * L; k++) //computes b with every received p(r)
+					f_r[i][k] += polynomialsRound2[i][k][j] * power(r, j);
 			}
 	//computes p(r) for every party
-	for (int i = 0; i < NUM_OF_PARTIES;i++)
-		if (i == _id)
-			continue;
-		else {
+	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+		if (i != _id)
+		{
 			for (int j = 0; j < 2 * M + 1; j++)
-				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * NTL::power(r, j);
+				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * power(r, j);
 			for (int j = 0; j < M + 1; j++) {
 				for (int k = 0; k < 2 * M + 1; k++)
-					b[i] += parsedPIs[i][k + INPUTS_PER_G_GATE * L] * NTL::power(ZZ_p(j), k);
+					b[i] += parsedPIs[i][k + INPUTS_PER_G_GATE * L] * power(ZZ_p(j), k);
 				b[i] *= bettas[j];//multiply each of the M g gate results with beta.
 			}
 		}
+	}
 
-	byte toSend[(INPUTS_PER_G_GATE * L + 2)*ELEMENT_SIZE]{};
+	byte toSend[(INPUTS_PER_G_GATE * L + 2) * ELEMENT_SIZE]{};
 	calculationForRound3.SetLength(INPUTS_PER_G_GATE * L + 2);
+	//send message to id-1 and save calculations for round 3
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (i == _id)
-			continue;
-		//send message to id-1 and save calculations for round 3
-		else if (i == (_id + 2) % NUM_OF_PARTIES) {//send the polynomials at point r and b to party i-1
-				for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
-					BytesFromZZ(toSend, rep(f_r[i][j]), ELEMENT_SIZE);
-				sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
-			}
-			else {//save the polynonials at point r for round 3
-				for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
-					calculationForRound3[j] = f_r[i][j];
-				calculationForRound3[INPUTS_PER_G_GATE * L] = p_r[i];
-				calculationForRound3[INPUTS_PER_G_GATE * L+1] = b[i];
-			}
+		if (i == (_id + 2) % NUM_OF_PARTIES)
+		{
+			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+				BytesFromZZ(toSend, rep(f_r[i][j]), ELEMENT_SIZE);
+			//send the polynomials at point r and b to party i-1
+			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
+		}
+		else if(i==(_id+1)%NUM_OF_PARTIES) {
+			//save the polynonials at point r for round 3
+			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+				calculationForRound3[j] = f_r[i][j];
+			calculationForRound3[INPUTS_PER_G_GATE * L] = p_r[i];
+			calculationForRound3[INPUTS_PER_G_GATE * L + 1] = b[i];
+		}
 	}
 }
 void Party::fCoin(vec_ZZ_p& thetas, int numOfElements)
@@ -599,7 +594,7 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 0; j < polynomialsDegree; j++)
 			pointsToInterpolate[i][j+1] = this->_gGatesInputs[j * numOfPolynomials +i].getValue();//t'th input ,j'th coefficient of the polynomial
-		std::cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
+		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
 	}
 	inputPolynomials[4].SetLength(polynomialsDegree + 1);///////////////TO BE DELETED
@@ -624,7 +619,7 @@ void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	for (int j = 0; j < vectorLen; j++) {
 		ZZ temp;
 		ZZFromBytes(temp, &rawData[j * ELEMENT_SIZE], ELEMENT_SIZE);
-		NTL::conv(vec[j], temp);
+		conv(vec[j], temp);
 	}
 	cout << endl;
 }
