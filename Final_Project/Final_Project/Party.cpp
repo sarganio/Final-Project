@@ -607,11 +607,15 @@ void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
 	parsedFinal.SetLength(INPUTS_PER_G_GATE * L + 2);
 	constructedElements.SetLength(INPUTS_PER_G_GATE * L + 2);
 	readFrom((_id+1)%NUM_OF_PARTIES, buffer);
-	rawDataToVec(parsedFinal, (6 * L + 2) * ELEMENT_SIZE, buffer);
+	rawDataToVec(parsedFinal, (INPUTS_PER_G_GATE * L + 2) * ELEMENT_SIZE, buffer);
 
 	for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN; j++)
 		constructedElements[j] = parsedFinal[j] + polynomialsAtPointR[j];
+
 	cout << "Final construction:"<<constructedElements;
+	//for (int i = 0; i < L; i++)
+	cout << "P(r) = "<<cFunction(constructedElements);
+
 	//cout << "Completed! No liers here" << endl;
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
@@ -622,4 +626,8 @@ void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 		conv(vec[j], temp);
 	}
 	cout << endl;
+}
+ZZ_p Party::cFunction(vec_ZZ_p inputsToGGate)const {
+	return inputsToGGate[0] * inputsToGGate[2] + inputsToGGate[0] * inputsToGGate[3] + inputsToGGate[1] * inputsToGGate[2] + inputsToGGate[4] - inputsToGGate[5];
+
 }

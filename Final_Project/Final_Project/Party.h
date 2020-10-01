@@ -70,4 +70,5 @@ public:
 	void verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p,vec_ZZ_p& calculationForRound3);
 	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);
 	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
+	ZZ_p cFunction(vec_ZZ_p inputsToGGate)const;
 };
