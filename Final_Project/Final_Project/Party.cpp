@@ -492,6 +492,9 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			//parse the data received
 			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
 			cout <<i<< ".received PI :" << parsedPIs[i] << endl;
+			ZZ_pX func;
+			conv(func, parsedPIs[i]);
+			cout << "P(r) = " << NTL::eval(func, ZZ_p(i)) << endl;;
 		}
 	//(a)
 	vec_ZZ_p bettas;
