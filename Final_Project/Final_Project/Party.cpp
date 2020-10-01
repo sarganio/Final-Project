@@ -609,7 +609,7 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 		//put the witness coeffient as the free coeffient
 		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 0; j < polynomialsDegree; j++)
-			pointsToInterpolate[i][j+1] = this->_gGatesInputs[j * numOfPolynomials +i].getValue();//t'th input ,j'th coefficient of the polynomial
+			pointsToInterpolate[i][j+1] = this->_gGatesInputs[j * numOfPolynomials + i].getValue();//t'th input ,j'th coefficient of the polynomial
 		std::cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
 	}

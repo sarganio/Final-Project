@@ -53,13 +53,15 @@ public:
 		output[(right.getParty()->getID() + 2) % NUM_OF_PARTIES].setValue(secondPartOutput);
 
 		//save inputs to each g gate in the circuit
-		right.getParty()->setG_GateInput(currentNumOfMulGates * 6, left.getFirst());
-		right.getParty()->setG_GateInput(1 + currentNumOfMulGates * 6, left.getSecond());
-		right.getParty()->setG_GateInput(2 + currentNumOfMulGates * 6, right.getFirst());
-		right.getParty()->setG_GateInput(3 + currentNumOfMulGates * 6, right.getSecond());
-		right.getParty()->setG_GateInput(4 + currentNumOfMulGates * 6, Part('a', id, alpha));
-		right.getParty()->setG_GateInput(5 + currentNumOfMulGates * 6, output[id]);
-
+		Party* partyPtr = right.getParty();
+		partyPtr->setG_GateInput(currentNumOfMulGates * INPUTS_PER_G_GATE, left[id]);
+		partyPtr->setG_GateInput(1 + currentNumOfMulGates * INPUTS_PER_G_GATE, left[(id+2)%NUM_OF_PARTIES]);
+		partyPtr->setG_GateInput(2 + currentNumOfMulGates * INPUTS_PER_G_GATE, right[id]);
+		partyPtr->setG_GateInput(3 + currentNumOfMulGates * INPUTS_PER_G_GATE, right[(id + 2) % NUM_OF_PARTIES]);
+		partyPtr->setG_GateInput(4 + currentNumOfMulGates * INPUTS_PER_G_GATE, Part('a', id, alpha));
+		partyPtr->setG_GateInput(5 + currentNumOfMulGates * INPUTS_PER_G_GATE, output[id]);
+		for (int i = 0; i < INPUTS_PER_G_GATE; i++)
+			std::cout << right.getParty()->_gGatesInputs[i + currentNumOfMulGates * INPUTS_PER_G_GATE].getValue()<<" ";
 		currentNumOfMulGates++;
 
 		return output;

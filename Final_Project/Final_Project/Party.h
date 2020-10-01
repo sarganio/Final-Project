@@ -39,8 +39,8 @@ private:
 	vector<Share*> _shares;											//vector which contains each party's share.index of vector is the id of input's party
 	Circuit* _arithmeticCircuit;									//the function which needs to be computed.
 	void printKey(unsigned short index)const;						//recieves the index of the key's owner and print it.
-	vector<Part> _gGatesInputs;										//vector which contains all g gates inputs for verification stage.
 public:
+	vector<Part> _gGatesInputs;										//vector which contains all g gates inputs for verification stage.
 	void setG_GateInput(unsigned short index, Part value);
 	Party(short myID, long input);									//C'tor-takes an ID and a secret input as parameters
 	bool sendTo(unsigned short id, byte messageType,byte* msg)const;//send message to party[id]
