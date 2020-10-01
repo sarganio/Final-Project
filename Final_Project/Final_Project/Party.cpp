@@ -35,6 +35,7 @@ using NTL::ZZ;
 using NTL::vec_ZZ_pX;
 using NTL::BytesFromZZ;
 
+
 Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(nullptr),_P(ZP){
 	//for Dbug
 	 srand(10);
@@ -487,9 +488,11 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
 			continue;
-		else
+		else {
 			//parse the data received
 			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
+			cout <<i<< ".received PI :" << parsedPIs[i] << endl;
+		}
 	//(a)
 	vec_ZZ_p bettas;
 	fCoin(bettas, M);
@@ -532,14 +535,14 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 			else {//f_r
 				f_r[i].SetLength(INPUTS_PER_G_GATE * L);
 				for (int k = 0; k < INPUTS_PER_G_GATE * L; k++) //computes b with every received p(r)
-					f_r[i][k] += polynomialsRound2[i][k][j] * power(r, j);
+					f_r[i][k] += polynomialsRound2[i][k][j] * power(r[0], j);
 			}
 	//computes p(r) for every party
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i != _id)
 		{
 			for (int j = 0; j < 2 * M + 1; j++)
-				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * power(r, j);
+				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * power(r[0], j);
 			for (int j = 0; j < M + 1; j++) {
 				for (int k = 0; k < 2 * M + 1; k++)
 					b[i] += parsedPIs[i][k + INPUTS_PER_G_GATE * L] * power(ZZ_p(j), k);
@@ -574,7 +577,7 @@ void Party::fCoin(vec_ZZ_p& thetas, int numOfElements)
 	//generate numOfElements random numbers 
 	for (int i = 0; i < numOfElements; i++) {
 		Share* randomShare = fRand();
-		thetas.append(ZZ_p(finalReconstruct(*randomShare)));
+		thetas[i] = ZZ_p(finalReconstruct(*randomShare));
 		delete randomShare;
 	}
 }
