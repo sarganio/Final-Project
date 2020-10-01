@@ -381,14 +381,15 @@ void Party::fVerify() {
 	TRACE("Start of verification stage.");
 	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
 	ZZ_pX p;
+	vec_ZZ_p polynomialAtR;
 	vector<ZZ_pX> inputPolynomials;
 	inputPolynomials.resize(6 * L);
 	//-----Round 1-----:
 	verifyRound1(M,inputPolynomials,p);
 	//-----Round 2-----:
-	verifyRound2(M, inputPolynomials,p);
+	verifyRound2(M, inputPolynomials,p, polynomialAtR);
 	//-----Round 3-----:
-	verifyRound3();
+	verifyRound3(polynomialAtR);
 	//----------------------------------------------------------------------------------
 }
 void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
@@ -473,7 +474,7 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	delete[] toSend;
 	toSend = nullptr;
 }
-void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p) {
+void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p, vec_ZZ_p& calculationForRound3) {
 	byte* PIs[NUM_OF_PARTIES];
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id) {
@@ -564,13 +565,22 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		}
 
 	byte toSend[(INPUTS_PER_G_GATE * L + 2)*ELEMENT_SIZE]{};
+	calculationForRound3.SetLength(INPUTS_PER_G_GATE * L + 2);
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id)
 			continue;
-		else
-			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
-				BytesFromZZ(toSend, rep(f_r[i][j]), ELEMENT_SIZE);
-		sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
+		//send message to id-1 and save calculations for round 3
+		else if (i == (_id + 2) % NUM_OF_PARTIES) {//send the polynomials at point r and b to party i-1
+				for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+					BytesFromZZ(toSend, rep(f_r[i][j]), ELEMENT_SIZE);
+				sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
+			}
+			else {//save the polynonials at point r for round 3
+				for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+					calculationForRound3[j] = f_r[i][j];
+				calculationForRound3[INPUTS_PER_G_GATE * L] = p_r[i];
+				calculationForRound3[INPUTS_PER_G_GATE * L+1] = b[i];
+			}
 	}
 }
 void Party::fCoin(vec_ZZ_p& thetas, int numOfElements)
@@ -604,28 +614,18 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
 	}
 }
-void Party::verifyRound3(){
-	byte buffers[NUM_OF_PARTIES][(6 * L + 2) * ELEMENT_SIZE]{};
-	vector<vec_ZZ_p> parsedFinal;
-	vector<vec_ZZ_p> constructedElements;
-	parsedFinal.resize(NUM_OF_PARTIES);
-	constructedElements.resize(NUM_OF_PARTIES);
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (i == _id)
-			continue;
-		readFrom(i, buffers[i]);
-		rawDataToVec(parsedFinal[i], (6 * L + 2) * ELEMENT_SIZE, buffers[i]);
-	}
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		if (i == _id)
-			continue;
-		else
-			for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN; j++)
-				constructedElements[i][j] = parsedFinal[i][j] + myFinal[i][j];
+void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
+	byte buffer[(6 * L + 2) * ELEMENT_SIZE]{};
+	vec_ZZ_p parsedFinal;
+	vec_ZZ_p constructedElements;
+	
+	readFrom((_id+1)%NUM_OF_PARTIES, buffer);
+	rawDataToVec(parsedFinal, (6 * L + 2) * ELEMENT_SIZE, buffer);
 
-	/*if(*(unsigned long long*) & buffers[_id][F_VERIFY_ROUND2_MESSAGE_LEN-1])
-		throw std::exception(__FUNCTION__  "ABORT!-I'm surrounded by liers!");*/
-	cout << "Completed! No liers here" << endl;
+	for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN; j++)
+		constructedElements[j] = parsedFinal[j] + polynomialsAtPointR[j];
+	cout << "Final construction:"<<constructedElements;
+	//cout << "Completed! No liers here" << endl;
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	vec.SetLength(vectorLen);

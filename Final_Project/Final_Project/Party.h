@@ -67,7 +67,7 @@ public:
 																	//interpulates numOfPolynomials polinomials each of degree polynomialsDegree .Note:the coeffient index of pointsToInterpolate is X value.
 																	//the first coeffient is a random number from Zp. The calculated polynomials are stored in inputPolynomials.
 	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_ZZ_p& omegas, vector<ZZ_pX>&  inputPolynomials)const;
-	void verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p);
-	void verifyRound3();
+	void verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX& p,vec_ZZ_p& calculationForRound3);
+	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);
 	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
 };
