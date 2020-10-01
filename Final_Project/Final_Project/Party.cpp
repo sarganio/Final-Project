@@ -410,8 +410,8 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		std::cout << "f(" << i << ")" << inputPolynomials[i] << std::endl;
 	//(d)
 	p.SetLength(2 * M + 1);
-	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
-		p += inputPolynomials[i];
+	//for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
+		p += inputPolynomials[0]* inputPolynomials[2]+ inputPolynomials[0]* inputPolynomials[3]+ inputPolynomials[1]* inputPolynomials[2]+ inputPolynomials[4]- inputPolynomials[5];
 	std::cout << "p(x) = " << p << std::endl;
 	//(e)
 	vec_ZZ_p PI;
