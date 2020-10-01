@@ -25,7 +25,8 @@ public:
 		static unsigned int currentNumOfMulGates = 0;
 
 		//calculate z_i
-		int alpha = right.correlatedRandomness();
+		//int alpha = right.correlatedRandomness();
+		int alpha = 0;
 		alpha %= ZP;
 		if (alpha < 0)
 			alpha += ZP;
@@ -60,8 +61,8 @@ public:
 		partyPtr->setG_GateInput(3 + currentNumOfMulGates * INPUTS_PER_G_GATE, right[(id + 2) % NUM_OF_PARTIES]);
 		partyPtr->setG_GateInput(4 + currentNumOfMulGates * INPUTS_PER_G_GATE, Part('a', id, alpha));
 		partyPtr->setG_GateInput(5 + currentNumOfMulGates * INPUTS_PER_G_GATE, output[id]);
-		for (int i = 0; i < INPUTS_PER_G_GATE; i++)
-			std::cout << right.getParty()->_gGatesInputs[i + currentNumOfMulGates * INPUTS_PER_G_GATE].getValue()<<" ";
+		//for (int i = 0; i < INPUTS_PER_G_GATE; i++)
+			std::cout << " C is: " << (partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 3].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 1].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 4].getValue() - partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 5].getValue())%ZP;
 		currentNumOfMulGates++;
 
 		return output;
