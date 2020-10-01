@@ -71,4 +71,5 @@ public:
 	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);
 	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
 	ZZ_p cFunction(vec_ZZ_p inputsToGGate)const;
+	ZZ_p setFunctionAtPoint(const ZZ_pX& function, ZZ_p functionDegree, ZZ_p point)const;
 };

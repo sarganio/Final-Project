@@ -415,8 +415,8 @@ void Party::verifyRound1(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	std::cout << "p(x) = " << p << std::endl;
 	//(e)
 	Party* partyPtr = this;
-	for(int currentNumOfMulGates = 1; currentNumOfMulGates<M; currentNumOfMulGates++)
-		std::cout << " C is: " << (partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 3].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 1].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 4].getValue() - partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 5].getValue()) % ZP;
+	for(int currentNumOfMulGates =1; currentNumOfMulGates<M; currentNumOfMulGates++)
+		cout<<" C is: "<< (partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 3].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 1].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 4].getValue() - partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 5].getValue()) % ZP;
 	vec_ZZ_p PI;
 	PI.SetLength(2 * M + 1 + INPUTS_PER_G_GATE * L);
 
@@ -493,10 +493,11 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 	//(a)
 	vec_ZZ_p bettas;
 	fCoin(bettas, M);
-	ZZ_p r;
+	vec_ZZ_p r;
+	r.SetLength(1);
 	do {
-		random(r);
-	} while (rep(r) <= M);
+		fCoin(r,1);
+	} while (rep(r[0]) <= M);
 	cout << "r = " << r << endl;
 	//(b)
 	vector<ZZ_p> b;
@@ -630,4 +631,10 @@ void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 ZZ_p Party::cFunction(vec_ZZ_p inputsToGGate)const {
 	return inputsToGGate[0] * inputsToGGate[2] + inputsToGGate[0] * inputsToGGate[3] + inputsToGGate[1] * inputsToGGate[2] + inputsToGGate[4] - inputsToGGate[5];
 
+}
+ZZ_p Party::setFunctionAtPoint(const ZZ_pX& function,ZZ_p functionDegree, ZZ_p point)const {
+	ZZ_p ans;
+	for(int i=0;i<rep(functionDegree)+1;i++)
+		ans += function[i] * power(point, i);
+	return ans;
 }
