@@ -484,18 +484,6 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
-	//convert the message recevied to ZZ_p elements
-	for (int i = 0; i < NUM_OF_PARTIES; i++)
-		if (i == _id)
-			continue;
-		else {
-			//parse the data received
-			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
-			cout <<i<< ".received PI :" << parsedPIs[i] << endl;
-			ZZ_pX func;
-			conv(func, parsedPIs[i]);
-			cout << "P(r) = " << NTL::eval(func, ZZ_p(i)) << endl;;
-		}
 	//(a)
 	vec_ZZ_p bettas;
 	fCoin(bettas, M);
@@ -505,6 +493,22 @@ void Party::verifyRound2(unsigned int M, vector<ZZ_pX>& inputPolynomials, ZZ_pX&
 		fCoin(r,1);
 	} while (rep(r[0]) <= M);
 	cout << "r = " << r << endl;
+	//convert the message recevied to ZZ_p elements
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i == _id)
+			continue;
+		else {
+			//parse the data received
+			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
+			cout <<i<< ".received PI :" << parsedPIs[i] << endl;
+			ZZ_pX func;
+			func.SetLength(2 * M + 1);
+			//conv(func, parsedPIs[i]);
+			for (int j = 0; j < 2 * M + 1; j++)
+				func[j] = parsedPIs[i][j + 6 * L];
+			cout << "func: " << func << endl;;
+			cout << "P(r) = " << NTL::eval(func, r) << endl;;
+		}
 	//(b)
 	vector<ZZ_p> b;
 	b.resize(NUM_OF_PARTIES);
@@ -598,7 +602,7 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength(polynomialsDegree + 1);
 		//put the witness coeffient as the free coeffient
-		pointsToInterpolate[i][0] = omegas[i];
+		pointsToInterpolate[i][0] = 0;//omegas[i];
 		for (int j = 0; j < polynomialsDegree; j++)
 			pointsToInterpolate[i][j+1] = this->_gGatesInputs[j * numOfPolynomials +i].getValue();//t'th input ,j'th coefficient of the polynomial
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
