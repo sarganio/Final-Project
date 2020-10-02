@@ -386,10 +386,13 @@ void Party::fVerify() {
 	vec_ZZ_p polynomialAtR;
 	vec_vec_ZZ_p pointsToInterpolate;
 	//-----Round 1-----:
+	cout << "Round1:" << endl;
 	verifyRound1(M, pointsToInterpolate,p);
 	//-----Round 2-----:
+	cout << "Round2:" << endl;
 	verifyRound2(M, pointsToInterpolate,p, polynomialAtR);
 	//-----Round 3-----:
+	cout << "Round3:" << endl;
 	verifyRound3(polynomialAtR);
 	//----------------------------------------------------------------------------------
 }
@@ -407,10 +410,10 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	omegas.SetLength(INPUTS_PER_G_GATE * L);
 	//for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
 	//	random(omegas[i]);
-
+	pointsToInterpolate.SetLength(INPUTS_PER_G_GATE * L);
 	//(c)
 	//prepare the vector of points to be interpolated
-	for (int i = 0; i < INPUTS_PER_G_GATE; i++) {
+	for (int i = 0; i < INPUTS_PER_G_GATE*L; i++) {
 		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength(2 * M + 1);
 		//put the witness coeffient as the free coeffient
