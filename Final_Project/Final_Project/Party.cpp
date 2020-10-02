@@ -417,7 +417,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength( M + 1);
 		//put the witness coeffient as the free coeffient
-		pointsToInterpolate[i][0] = omegas[i];
+		pointsToInterpolate[i][0] = 0;//omegas[i];
 		for (int j = 1; j < M+1 ; j++)
 			pointsToInterpolate[i][j] = this->_gGatesInputs[(j-1) * INPUTS_PER_G_GATE * L + i].getValue();//t'th input ,j'th coefficient of the polynomial
 
@@ -442,7 +442,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 
 	AutoSeededRandomPool rnd;
 	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]();
-	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	//rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
@@ -635,11 +635,11 @@ void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
 	readFrom((_id+1)%NUM_OF_PARTIES, buffer);
 	rawDataToVec(parsedFinal, INPUTS_PER_G_GATE * L + 2, buffer);
 
-	for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN; j++)
+	for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN/ELEMENT_SIZE; j++)
 		constructedElements[j] = parsedFinal[j] + polynomialsAtPointR[j];
 	cout << "Receved: " << parsedFinal << endl;
-	cout << "Final construction:"<<constructedElements;
-	cout << "g(f(r)) = " << cFunction(constructedElements);
+	cout << "Final construction:"<<constructedElements<<endl;
+	cout << "g(f(r)) = " << cFunction(constructedElements)<<endl;
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	vec.SetLength(vectorLen);
