@@ -552,6 +552,19 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				for (int k = 1; k <  M + 1; k++)
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
+			for (int k = 0; k <  L*M; k++) {
+				if (i == (_id + 2) % NUM_OF_PARTIES) {
+					pointsToInterpolateRound2[i][1][k] = 0;
+					pointsToInterpolateRound2[i][3][k] = 0;
+					pointsToInterpolateRound2[i][4][k] *= -1;
+				}
+				if (i == (_id + 1) % NUM_OF_PARTIES) {
+					pointsToInterpolateRound2[i][0][k] = 0;
+					pointsToInterpolateRound2[i][2][k] = 0;
+					pointsToInterpolateRound2[i][4][k] *= -1;
+					pointsToInterpolateRound2[i][5][k] = 0;
+				}
+			}
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 
 		}
@@ -585,7 +598,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	calculationForRound3.SetLength(INPUTS_PER_G_GATE * L + 2);
 	//send message to id-1 and save calculations for round 3
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (i == (_id + 2) % NUM_OF_PARTIES)
+		if (i == (_id + 1) % NUM_OF_PARTIES)
 		{
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				BytesFromZZ(toSend + ELEMENT_SIZE*j, rep(f_r[i][j]), ELEMENT_SIZE);
@@ -597,7 +610,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			cout << "p_r :" << p_r[i] << endl;
 			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
-		else if(i==(_id+1)%NUM_OF_PARTIES) {
+		else if(i==(_id+2)%NUM_OF_PARTIES) {
 			//save the polynonials at point r for round 3
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				calculationForRound3[j] = f_r[i][j];
