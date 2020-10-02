@@ -424,7 +424,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
 	interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolate,inputPolynomials);
-	inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
+	//inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
 
 	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
 		std::cout << "f(" << i << ")" << inputPolynomials[i] << std::endl;
@@ -612,7 +612,7 @@ void Party::fCoin(vec_ZZ_p& thetas, int numOfElements)
 	}
 }
 
-void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate,vec_ZZ_pX inputPolynomials)const
+void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate,vec_ZZ_pX& inputPolynomials)const
 {
 	//build a sequance of points from 0 to M
 	vec_ZZ_p range;
@@ -620,7 +620,6 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 	for (int i = 0; i < polynomialsDegree + 1; i++)
 		range[i] = i;
 	for (int i = 0; i < numOfPolynomials; i++) {
-		
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
 	}
 }

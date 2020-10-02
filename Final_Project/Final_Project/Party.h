@@ -69,7 +69,7 @@ public:
 	void fCoin(vec_ZZ_p& thetas, int numOfElements);		//fCoin functuality as described in the paper.Generate numOfElements random elements fromZp and send to all parties.
 																	//interpulates numOfPolynomials polinomials each of degree polynomialsDegree .Note:the coeffient index of pointsToInterpolate is X value.
 																	//the first coeffient is a random number from Zp. The calculated polynomials are stored in inputPolynomials.
-	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate, vec_ZZ_pX inputPolynomials)const;
+	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate, vec_ZZ_pX& inputPolynomials)const;
 	void verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p,vec_ZZ_p& calculationForRound3);
 	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);
 	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
