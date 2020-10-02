@@ -55,9 +55,12 @@ using std::exit;
 #include <cstddef>
 using CryptoPP::byte;
 
+#define NTL_NO_MIN_MAX
+#include "NTL/ZZ_p.h"
+
 #define ZP 127 //make sure all the elements are belong to Z_p (mod p)
 #define L  1//num of multipication gates per G gate
-
+#define ELEMENT_SIZE sizeof(NTL::ZZ_p)
 
 #include <string>
 

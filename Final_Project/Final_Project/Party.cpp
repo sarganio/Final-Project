@@ -590,6 +590,8 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				BytesFromZZ(toSend + ELEMENT_SIZE*j, rep(f_r[i][j]), ELEMENT_SIZE);
 			//send the polynomials at point r and b to party i-1
+			BytesFromZZ(toSend + ELEMENT_SIZE * INPUTS_PER_G_GATE * L, rep(b[i]), ELEMENT_SIZE);
+			BytesFromZZ(toSend + ELEMENT_SIZE *( INPUTS_PER_G_GATE * L+1), rep(p_r[i]), ELEMENT_SIZE);
 			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
 		else if(i==(_id+1)%NUM_OF_PARTIES) {

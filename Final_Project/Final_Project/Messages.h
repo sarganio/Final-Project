@@ -1,6 +1,7 @@
 #pragma once
 #include "Helper.h"
 #include "secblock.h"
+
 #include <mutex>
 #include<cstdint>
 #include <cstddef>
@@ -13,7 +14,7 @@ using CryptoPP::byte;
 #define MAX_MESSAGE_SIZE 64
 #define ENC_INPUT_LEN sizeof(long)
 #define MUL_GATE_LEN sizeof(long)
-#define F_VERIFY_ROUND2_MESSAGE_LEN L*6+2
+#define F_VERIFY_ROUND2_MESSAGE_LEN (L*6+2)*ELEMENT_SIZE
 
 
 
