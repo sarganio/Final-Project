@@ -424,7 +424,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
 	interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolate,inputPolynomials);
-	//inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
+	inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
 
 	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
 		std::cout << "f(" << i << ")" << inputPolynomials[i] << std::endl;
@@ -541,15 +541,15 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//set length for each polynomials and update omega according to the rellevant PI message
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i != _id) {
-			polynomialsRound2[i].SetLength(INPUTS_PER_G_GATE);
+			polynomialsRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			pointsToInterpolateRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) {
-				pointsToInterpolateRound2[i][j].SetLength(2 * M + 1);
+				pointsToInterpolateRound2[i][j].SetLength( M + 1);
 				pointsToInterpolateRound2[i][j][0] = parsedPIs[i][j];
-				for (int k = 1; k < 2 * M + 1; k++)
+				for (int k = 1; k <  M + 1; k++)
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
-			interpolateInputPolynomials(2 * M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
+			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 
 		}
 	}
@@ -564,8 +564,8 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		for (int j = 0; j < M + 1; j++)
 			if (i != _id) {//f_r
 				f_r[i].SetLength(INPUTS_PER_G_GATE * L);
-				for (int k = 0; k < INPUTS_PER_G_GATE * L; k++) //computes b with every received p(r)
-					f_r[i][k] += polynomialsRound2[i][k][j] * power(r[0], j);//possible improve - change to eval()
+				for (int k = 0; k < INPUTS_PER_G_GATE * L; k++)
+					f_r[i][k] = eval(polynomialsRound2[i][k], r[0]);
 			}
 	//computes p(r) and b for every party
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
@@ -637,10 +637,6 @@ void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
 		constructedElements[j] = parsedFinal[j] + polynomialsAtPointR[j];
 
 	cout << "Final construction:"<<constructedElements;
-	//for (int i = 0; i < L; i++)
-	cout << "P(r) = "<<cFunction(constructedElements);
-
-	//cout << "Completed! No liers here" << endl;
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	vec.SetLength(vectorLen);
