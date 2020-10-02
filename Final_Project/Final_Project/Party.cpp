@@ -573,10 +573,10 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		{
 			for (int j = 0; j < 2 * M + 1; j++)
 				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * power(r[0], j);
-			for (int j = 0; j < M + 1; j++) {
+			for (int j = 1; j < M +1; j++) {
 				for (int k = 0; k < 2 * M + 1; k++)
 					b[i] += parsedPIs[i][k + INPUTS_PER_G_GATE * L] * power(ZZ_p(j), k);
-				b[i] *= bettas[j];//multiply each of the M g gate results with beta.
+				b[i] *= bettas[j-1];//multiply each of the M g gate results with beta.
 			}
 		}
 	}
@@ -588,7 +588,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		if (i == (_id + 2) % NUM_OF_PARTIES)
 		{
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
-				BytesFromZZ(toSend, rep(f_r[i][j]), ELEMENT_SIZE);
+				BytesFromZZ(toSend + ELEMENT_SIZE*j, rep(f_r[i][j]), ELEMENT_SIZE);
 			//send the polynomials at point r and b to party i-1
 			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
@@ -631,12 +631,13 @@ void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
 	parsedFinal.SetLength(INPUTS_PER_G_GATE * L + 2);
 	constructedElements.SetLength(INPUTS_PER_G_GATE * L + 2);
 	readFrom((_id+1)%NUM_OF_PARTIES, buffer);
-	rawDataToVec(parsedFinal, (INPUTS_PER_G_GATE * L + 2) * ELEMENT_SIZE, buffer);
+	rawDataToVec(parsedFinal, INPUTS_PER_G_GATE * L + 2, buffer);
 
 	for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN; j++)
 		constructedElements[j] = parsedFinal[j] + polynomialsAtPointR[j];
-
+	cout << "Receved: " << parsedFinal << endl;
 	cout << "Final construction:"<<constructedElements;
+	cout << "g(f(r)) = " << cFunction(constructedElements);
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	vec.SetLength(vectorLen);
