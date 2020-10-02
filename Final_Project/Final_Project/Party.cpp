@@ -512,6 +512,8 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		fCoin(r, 1);
 	} while (rep(r[0]) <= M);
 	cout << "r = " << r << endl;
+	vector<ZZ_p> p_r;
+	p_r.resize(NUM_OF_PARTIES);
 	//convert the message recevied to ZZ_p elements
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		if (i == _id)
@@ -526,7 +528,8 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			for (int j = 0; j < 2 * M + 1; j++)
 				func[j] = parsedPIs[i][j + 6 * L];
 			cout << "func: " << func << endl;;
-			cout << "P(r) = " << NTL::eval(func, r) << endl;;
+			 p_r[i] = NTL::eval(func, r[0]);
+			 cout << "p(r) = " << p_r[i] << endl;
 		}
 	//(b)
 	vector<ZZ_p> b;
@@ -557,8 +560,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//store every polynomials result in f_r
 	vector<vec_ZZ_p> f_r;
 	f_r.resize(NUM_OF_PARTIES);
-	vector<ZZ_p> p_r;
-	p_r.resize(NUM_OF_PARTIES);
+
 	//computes f(r) for every each polynomial from the 6L polynomials 
 	for (int i = 0; i < NUM_OF_PARTIES; i++)
 		for (int j = 0; j < M + 1; j++)
@@ -571,8 +573,6 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i != _id)
 		{
-			for (int j = 0; j < 2 * M + 1; j++)
-				p_r[i] += parsedPIs[i][j + INPUTS_PER_G_GATE * L] * power(r[0], j);
 			for (int j = 1; j < M +1; j++) {
 				for (int k = 0; k < 2 * M + 1; k++)
 					b[i] += parsedPIs[i][k + INPUTS_PER_G_GATE * L] * power(ZZ_p(j), k);
@@ -592,6 +592,9 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			//send the polynomials at point r and b to party i-1
 			BytesFromZZ(toSend + ELEMENT_SIZE * INPUTS_PER_G_GATE * L, rep(b[i]), ELEMENT_SIZE);
 			BytesFromZZ(toSend + ELEMENT_SIZE *( INPUTS_PER_G_GATE * L+1), rep(p_r[i]), ELEMENT_SIZE);
+			cout <<i<<":f_r :"<< f_r[i] << endl;
+			cout << "b :" << b[i] << endl;
+			cout << "p_r :" << p_r[i] << endl;
 			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
 		else if(i==(_id+1)%NUM_OF_PARTIES) {
