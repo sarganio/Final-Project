@@ -25,8 +25,7 @@ public:
 		static unsigned int currentNumOfMulGates = 0;
 
 		//calculate z_i
-		//int alpha = right.correlatedRandomness();
-		int alpha = 0;
+		int alpha = right.correlatedRandomness();
 		alpha %= ZP;
 		if (alpha < 0)
 			alpha += ZP;

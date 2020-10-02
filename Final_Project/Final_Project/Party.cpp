@@ -408,8 +408,8 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//generate 6L random elements from Zp
 	vec_ZZ_p omegas;
 	omegas.SetLength(INPUTS_PER_G_GATE * L);
-	//for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
-	//	random(omegas[i]);
+	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
+		random(omegas[i]);
 	pointsToInterpolate.SetLength(INPUTS_PER_G_GATE * L);
 	//(c)
 	//prepare the vector of points to be interpolated
@@ -417,14 +417,14 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength( M + 1);
 		//put the witness coeffient as the free coeffient
-		pointsToInterpolate[i][0] = 0;//omegas[i];
+		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 1; j < M+1 ; j++)
 			pointsToInterpolate[i][j] = this->_gGatesInputs[(j-1) * INPUTS_PER_G_GATE * L + i].getValue();//t'th input ,j'th coefficient of the polynomial
 
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
 	interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolate,inputPolynomials);
-	inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
+	//inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
 
 	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
 		std::cout << "f(" << i << ")" << inputPolynomials[i] << std::endl;
@@ -442,7 +442,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 
 	AutoSeededRandomPool rnd;
 	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]();
-	//rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
