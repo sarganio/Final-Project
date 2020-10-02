@@ -415,11 +415,11 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//prepare the vector of points to be interpolated
 	for (int i = 0; i < INPUTS_PER_G_GATE*L; i++) {
 		//set number of coeffients of every polynomial to be M+1
-		pointsToInterpolate[i].SetLength(2 * M + 1);
+		pointsToInterpolate[i].SetLength( M + 1);
 		//put the witness coeffient as the free coeffient
 		pointsToInterpolate[i][0] = 0;//omegas[i];
-		for (int j = 0; j < 2 * M; j++)
-			pointsToInterpolate[i][j + 1] = this->_gGatesInputs[j * INPUTS_PER_G_GATE * L + i].getValue();//t'th input ,j'th coefficient of the polynomial
+		for (int j = 1; j < M+1 ; j++)
+			pointsToInterpolate[i][j] = this->_gGatesInputs[(j-1) * INPUTS_PER_G_GATE * L + i].getValue();//t'th input ,j'th coefficient of the polynomial
 
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
@@ -550,6 +550,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
 			interpolateInputPolynomials(2 * M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
+
 		}
 	}
 
