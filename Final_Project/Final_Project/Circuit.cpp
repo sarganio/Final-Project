@@ -10,7 +10,7 @@
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGates(0) {
 	
-	srand(22);
+	srand(24);
 	//srand(*(unsigned int*)seed);
 
 	_numOfLayers = rand() % RANGE_OF_LAYERS + MIN_NUM_OF_LAYERS;
@@ -72,8 +72,9 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
+				std::cout << "Gate:" << i << " " << j << ": ";
 				_circuit[i][j]->calculateOutput();
-				std::cout<<"Gate:"<<i<<" "<<j<<": "<<_party->finalReconstruct(*_circuit[i][j]->getOutput())<<std::endl;
+				cout<<"Output:"<< _party->finalReconstruct(*_circuit[i][j]->getOutput()) << std::endl;
 		}
 	}
 }

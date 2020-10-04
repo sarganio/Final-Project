@@ -568,10 +568,22 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][5][k] = 0;
 				}
 			}
-			cout<<"i = "<<i<< pointsToInterpolateRound2[i]<<endl;
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 		}
 	}
+	for(int i=0;i<NUM_OF_PARTIES;i++)
+		if (i != _id) {
+			cout << "Received from ID=" << i << endl;
+			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+				cout << "pointsToInterpolate(" << j << "):" << pointsToInterpolateRound2[i][j] << endl;
+		}
+
+	for (int i = 0; i < NUM_OF_PARTIES; i++)
+		if (i != _id) {
+			cout << "Received from ID=" << i << endl;
+			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
+				std::cout << "f" << j << "(x)" << polynomialsRound2[i][j] << std::endl;
+		}
 
 	//store every polynomials result in f_r
 	vector<vec_ZZ_p> f_r;
