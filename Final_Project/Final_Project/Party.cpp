@@ -581,12 +581,12 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 2) % NUM_OF_PARTIES) {
-			cout << "f(x) created from ID=" << i << " inputs, the prover is " << (i + 2) % NUM_OF_PARTIES << endl;
+			cout << "f(x) created from ID=" << (i+1)%NUM_OF_PARTIES << " inputs, the prover is " << i << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				std::cout << "f" << j << "(x)" << polynomialsRound2[i][j] << std::endl;
 		}
 		if (i == (_id + 1) % NUM_OF_PARTIES) {
-			cout << "f(x) created from ID=" << i << " inputs, the prover is " << (i + 1) % NUM_OF_PARTIES << endl;
+			cout << "f(x) created from ID=" << (i+2)%NUM_OF_PARTIES << " inputs, the prover is " << i << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				std::cout << "f" << j << "(x)" << polynomialsRound2[i][j] << std::endl;
 		}
@@ -633,14 +633,14 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			//send the polynomials at point r and b to party i-1
 			BytesFromZZ(toSend + ELEMENT_SIZE * INPUTS_PER_G_GATE * L, rep(p_r[i]), ELEMENT_SIZE);
 			BytesFromZZ(toSend + ELEMENT_SIZE *( INPUTS_PER_G_GATE * L+1), rep(b[i]), ELEMENT_SIZE);
-			cout << "calculted from ID=" << i << " inputs , the prover is " << (i + 2) % NUM_OF_PARTIES << endl;
+			cout << "calculted from ID=" << (i+1)%NUM_OF_PARTIES << " inputs , the prover is " << i << endl;
 			cout <<"f(r)"<< f_r[i] << endl;//i+2 => _id+4 =>_id + 1
 			cout << "b :" << b[i] << endl;
 			cout << "p(r) :" << p_r[i] << endl;
-			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
+			sendTo((i + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
 		else if (i == (_id + 1) % NUM_OF_PARTIES) {
-			cout << "calculted from ID=" << i << " inputs , the prover is " << (i + 1) % NUM_OF_PARTIES << endl;
+			cout << "calculted from ID=" << (i+2)%NUM_OF_PARTIES << " inputs , the prover is " << i << endl;
 			cout << "f(r)" << f_r[i] << endl;
 			cout << "b :" << b[i] << endl;
 			cout << "p(r) :" << p_r[i] << endl;
