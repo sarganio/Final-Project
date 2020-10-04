@@ -42,7 +42,7 @@ private:
 	vector<Share*> _shares;											//vector which contains each party's share.index of vector is the id of input's party
 	Circuit* _arithmeticCircuit;									//the function which needs to be computed.
 	void printKey(unsigned short index)const;						//recieves the index of the key's owner and print it.
-	vector<Share> _multipicationGateOutputs;
+	vector<Part> _multipicationGateOutputs;
 public:
 	vector<Part> _gGatesInputs;										//vector which contains all g gates inputs for verification stage.
 	void setG_GateInput(unsigned short index, Part value);
@@ -76,6 +76,6 @@ public:
 	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
 	ZZ_p cFunction(vec_ZZ_p inputsToGGate)const;
 	ZZ_p setFunctionAtPoint(const ZZ_pX& function, ZZ_p functionDegree, ZZ_p point)const;
-	Share& getMultipicationOutput(unsigned short index);
-	void setMultipicationOutput(Share& toSave);
+	Part& getMultipicationOutput(unsigned short index);
+	void setMultipicationOutput(Part& toSave);
 };

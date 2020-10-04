@@ -56,7 +56,7 @@ public:
 		output[(partyPtr->getID() + 2) % NUM_OF_PARTIES].setValue(secondPartOutput);
 
 		//partyPtr->setG_GateInput(partyPtr->getArithmeticCircuit()->getNumOfMulGates() * INPUTS_PER_G_GATE + currentNumOfMulGates, (partyPtr->getID() + 2) % NUM_OF_PARTIES);
-		partyPtr->setMultipicationOutput(output);
+		partyPtr->setMultipicationOutput(output[(partyPtr->getID() + 2) % NUM_OF_PARTIES]);
 
 		//save inputs to each g gate in the circuit
 		partyPtr->setG_GateInput(currentNumOfMulGates * INPUTS_PER_G_GATE, left[id]);

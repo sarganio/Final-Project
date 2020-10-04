@@ -558,7 +558,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][1][k] = 0;
 					pointsToInterpolateRound2[i][3][k] = 0;
 					pointsToInterpolateRound2[i][4][k] *= -1;
-					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k)[(_id+2)%NUM_OF_PARTIES].getValue();
+					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k).getValue();
 				}
 				if (i == (_id + 1) % NUM_OF_PARTIES) {
 					pointsToInterpolateRound2[i][0][k] = 0;
@@ -677,9 +677,9 @@ ZZ_p Party::setFunctionAtPoint(const ZZ_pX& function,ZZ_p functionDegree, ZZ_p p
 		ans += function[i] * power(point, i);
 	return ans;
 }
-Share& Party::getMultipicationOutput(unsigned short index){
+Part& Party::getMultipicationOutput(unsigned short index){
 	return _multipicationGateOutputs[index];
 }
-void Party::setMultipicationOutput(Share& toSave) {
+void Party::setMultipicationOutput(Part& toSave) {
 	_multipicationGateOutputs.push_back(toSave);
 }
