@@ -545,7 +545,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//set length for each polynomials and update omega according to the rellevant PI message
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i != _id) {
-			polynomialsRound2[i].SetLength(INPUTS_PER_G_GATE*L+1);
+			polynomialsRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			pointsToInterpolateRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) {
 				pointsToInterpolateRound2[i][j].SetLength( M + 1);
@@ -553,18 +553,18 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				for (int k = 1; k <  M + 1; k++)
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
-			for (int k = 0; k <  L*M; k++) {
+			for (int k = 1; k <  L*M+1; k++) {
 				if (i == (_id + 2) % NUM_OF_PARTIES) {
-					pointsToInterpolateRound2[i][2][k] = 0;
-					pointsToInterpolateRound2[i][4][k] = 0;
-					pointsToInterpolateRound2[i][5][k] *= -1;
-					pointsToInterpolateRound2[i][6][k] = getMultipicationOutput(k).getValue();
-				}
-				if (i == (_id + 1) % NUM_OF_PARTIES) {
 					pointsToInterpolateRound2[i][1][k] = 0;
 					pointsToInterpolateRound2[i][3][k] = 0;
-					pointsToInterpolateRound2[i][5][k] *= -1;
-					pointsToInterpolateRound2[i][6][k] = 0;
+					pointsToInterpolateRound2[i][4][k] *= -1;
+					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k).getValue();
+				}
+				if (i == (_id + 1) % NUM_OF_PARTIES) {
+					pointsToInterpolateRound2[i][0][k] = 0;
+					pointsToInterpolateRound2[i][2][k] = 0;
+					pointsToInterpolateRound2[i][4][k] *= -1;
+					pointsToInterpolateRound2[i][5][k] = 0;
 				}
 			}
 			cout<<"i = "<<i<< pointsToInterpolateRound2[i]<<endl;
