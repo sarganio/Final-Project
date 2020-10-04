@@ -93,7 +93,7 @@ void Party::connectToAllParties(string IPs[NUM_OF_PARTIES]) {
 	while (!from->isValid());
 	while (!isConnected);
 
-	TRACE("Succssesfully connected to all parties!\n");
+	TRACE("Succssesfully connected to all parties!");
 
 }
 void Party::broadcast(byte* msg, byte messageType)const {
@@ -387,13 +387,13 @@ void Party::fVerify() {
 	vec_ZZ_p polynomialAtR;
 	vec_vec_ZZ_p pointsToInterpolate;
 	//-----Round 1-----:
-	cout << "Round1:" << endl;
+	cout << "\n-----Round 1-----" << endl << endl;
 	verifyRound1(M, pointsToInterpolate,p);
 	//-----Round 2-----:
-	cout << "Round2:" << endl;
+	cout << "\n-----Round 2-----" << endl << endl;
 	verifyRound2(M, pointsToInterpolate,p, polynomialAtR);
 	//-----Round 3-----:
-	cout << "Round3:" << endl;
+	cout << "\n-----Round 3-----" << endl << endl;
 	verifyRound3(polynomialAtR);
 	//----------------------------------------------------------------------------------
 }
@@ -409,8 +409,8 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//generate 6L random elements from Zp
 	vec_ZZ_p omegas;
 	omegas.SetLength(INPUTS_PER_G_GATE * L);
-	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
-		random(omegas[i]);
+	//for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
+	//	random(omegas[i]);
 	pointsToInterpolate.SetLength(INPUTS_PER_G_GATE * L);
 	//(c)
 	//prepare the vector of points to be interpolated
@@ -418,26 +418,27 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		//set number of coeffients of every polynomial to be M+1
 		pointsToInterpolate[i].SetLength( M + 1);
 		//put the witness coeffient as the free coeffient
-		pointsToInterpolate[i][0] = 0;//omegas[i];
+		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 1; j < M+1 ; j++)
 			pointsToInterpolate[i][j] = this->_gGatesInputs[(j-1) * INPUTS_PER_G_GATE * L + i].getValue();//j'th input ,j'th coefficient of the polynomial
 
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
+	cout << endl;
 	interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolate,inputPolynomials);
 	//inputPolynomials[4].SetLength(2*M + 1);///////////////TO BE DELETED
 
 	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
-		std::cout << "f(" << i << ")" << inputPolynomials[i] << std::endl;
+		std::cout << "f" << i << "(x)" << inputPolynomials[i] << std::endl;
 	//(d)
 	p.SetLength(2 * M + 1);
 	//for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
 		p = inputPolynomials[0]* inputPolynomials[2]+ inputPolynomials[0]* inputPolynomials[3]+ inputPolynomials[1]* inputPolynomials[2]+ inputPolynomials[4]- inputPolynomials[5];
 	std::cout << "p(x) = " << p << std::endl;
 	//(e)
-	Party* partyPtr = this;
-	for(int currentNumOfMulGates =1; currentNumOfMulGates<M; currentNumOfMulGates++)
-		cout<<" C is: "<< (partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 3].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 1].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 4].getValue() - partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 5].getValue()) % ZP;
+	//Party* partyPtr = this;
+	//for(int currentNumOfMulGates =1; currentNumOfMulGates<M; currentNumOfMulGates++)
+		//cout<<"C is: "<< (partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 3].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 1].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 4].getValue() - partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 5].getValue()) % ZP;
 	vec_ZZ_p PI;
 	PI.SetLength(2 * M + 1 + INPUTS_PER_G_GATE * L);
 
@@ -522,13 +523,13 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		else {
 			//parse the data received
 			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
-			cout << i << ".received PI :" << parsedPIs[i] << endl;
+			cout <<"Received PI from ID="<<i<<" :" << parsedPIs[i] << endl;
 			ZZ_pX func;
 			func.SetLength(2 * M + 1);
 			//conv(func, parsedPIs[i]);
 			for (int j = 0; j < 2 * M + 1; j++)
 				func[j] = parsedPIs[i][j + 6 * L];
-			cout << "func: " << func << endl;;
+			cout << "p(x): " << func << endl;;
 			 p_r[i] = NTL::eval(func, r[0]);
 			 cout << "p(r) = " << p_r[i] << endl;
 		}
@@ -655,7 +656,8 @@ void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
 
 	for (int j = 0; j < F_VERIFY_ROUND2_MESSAGE_LEN/ELEMENT_SIZE; j++)
 		constructedElements[j] = parsedFinal[j] + polynomialsAtPointR[j];
-	cout << "Receved: " << parsedFinal << endl;
+	cout << "Received: " << parsedFinal << endl << endl;
+	cout << "[f'1(r),f'2(r),f'3(r),f'4(r),f'5(r),f'6(r),p(r),b(r)]" << endl;
 	cout << "Final construction:"<<constructedElements<<endl;
 	cout << "g(f(r)) = " << cFunction(constructedElements)<<endl;
 }
@@ -666,7 +668,6 @@ void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 		ZZFromBytes(temp, &rawData[j * ELEMENT_SIZE], ELEMENT_SIZE);
 		conv(vec[j], temp);
 	}
-	cout << endl;
 }
 ZZ_p Party::cFunction(vec_ZZ_p inputsToGGate)const {
 	return inputsToGGate[0] * inputsToGGate[2] + inputsToGGate[0] * inputsToGGate[3] + inputsToGGate[1] * inputsToGGate[2] + inputsToGGate[4] - inputsToGGate[5];
