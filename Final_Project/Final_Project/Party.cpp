@@ -248,7 +248,8 @@ void Party::fInput() {
 	//build circuit
 	_arithmeticCircuit = new Circuit(_finalSeq, this);
 
-	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates()* INPUTS_PER_G_GATE);
+	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates()* INPUTS_PER_G_GATE+_arithmeticCircuit->getNumOfMulGates());
+	_multipicationGateOutputs.resize(_arithmeticCircuit->getNumOfMulGates());
 
 	//release the memory which was allocated in fRand
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
@@ -557,7 +558,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][1][k] = 0;
 					pointsToInterpolateRound2[i][3][k] = 0;
 					pointsToInterpolateRound2[i][4][k] *= -1;
-					pointsToInterpolateRound2[i][5][k] = _arithmeticCircuit->getMultipicationOutput(k)[(_id+2)%NUM_OF_PARTIES].getValue();
+					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k)[(_id+2)%NUM_OF_PARTIES].getValue();
 				}
 				if (i == (_id + 1) % NUM_OF_PARTIES) {
 					pointsToInterpolateRound2[i][0][k] = 0;
@@ -675,4 +676,10 @@ ZZ_p Party::setFunctionAtPoint(const ZZ_pX& function,ZZ_p functionDegree, ZZ_p p
 	for(int i=0;i<rep(functionDegree)+1;i++)
 		ans += function[i] * power(point, i);
 	return ans;
+}
+Share& Party::getMultipicationOutput(unsigned short index){
+	return _multipicationGateOutputs[index];
+}
+void Party::setMultipicationOutput(Share& toSave) {
+	_multipicationGateOutputs.push_back(toSave);
 }
