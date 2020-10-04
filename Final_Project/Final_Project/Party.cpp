@@ -544,41 +544,32 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	pointsToInterpolateRound2.resize(NUM_OF_PARTIES);
 
 	//set length for each polynomials and update omega according to the rellevant PI message
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
+	for (int i = 0; i < NUM_OF_PARTIES; i++) 
 		if (i != _id) {
 			polynomialsRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			pointsToInterpolateRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) {
 				pointsToInterpolateRound2[i][j].SetLength( M + 1);
 				pointsToInterpolateRound2[i][j][0] = parsedPIs[i][j];
-				for (int k = 1; k <  M + 1; k++)
+				//copy inputs from previous round
+				for (int k = 1; k < M + 1; k++) 
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
-			for (int k = 1; k <  L*M+1; k++) {
-				if (i == (_id + 2) % NUM_OF_PARTIES) {//inputs of i+1 from prover point of view, or i-1 from mine point of view
-					pointsToInterpolateRound2[i][1][k] = 0;
-					pointsToInterpolateRound2[i][3][k] = 0;
+			if (i == (_id + 1) % NUM_OF_PARTIES) 
+				for (int k = 1; k <  L*M+1; k++) 
 					pointsToInterpolateRound2[i][4][k] *= -1;
-					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k).getValue();
-				}
-				if (i == (_id + 1) % NUM_OF_PARTIES) {//inputs of i-1 from prover point of view, or i+1 from mine point of view
-					pointsToInterpolateRound2[i][0][k] = 0;
-					pointsToInterpolateRound2[i][2][k] = 0;
-					pointsToInterpolateRound2[i][4][k] *= -1;
-					pointsToInterpolateRound2[i][5][k] = 0;
-				}
-			}
+			orderInputVector(pointsToInterpolateRound2[i], i);
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 		}
-	}
+
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 2) % NUM_OF_PARTIES) {
-			cout << "Input point of ID=" << i << ", the prover is" << (i + 2) % NUM_OF_PARTIES << endl;
+			cout << "Input point of ID=" << i << ", the prover is " << (i + 2) % NUM_OF_PARTIES << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				cout << "pointsToInterpolate(" << j << "):" << pointsToInterpolateRound2[i][j] << endl;
 		}
 		if (i == (_id + 1) % NUM_OF_PARTIES) {
-			cout << "Input point of ID=" << i << ", the prover is" << (i + 1) % NUM_OF_PARTIES << endl;
+			cout << "Input point of ID=" << i << ", the prover is " << (i + 1) % NUM_OF_PARTIES << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				cout << "pointsToInterpolate(" << j << "):" << pointsToInterpolateRound2[i][j] << endl;
 		}
@@ -586,12 +577,12 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 2) % NUM_OF_PARTIES) {
-			cout << "f(x) created from ID=" << i << " inputs, the prover is" << (i + 2) % NUM_OF_PARTIES << endl;
+			cout << "f(x) created from ID=" << i << " inputs, the prover is " << (i + 2) % NUM_OF_PARTIES << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				std::cout << "f" << j << "(x)" << polynomialsRound2[i][j] << std::endl;
 		}
 		if (i == (_id + 1) % NUM_OF_PARTIES) {
-			cout << "f(x) created from ID=" << i << " inputs, the prover is" << (i + 1) % NUM_OF_PARTIES << endl;
+			cout << "f(x) created from ID=" << i << " inputs, the prover is " << (i + 1) % NUM_OF_PARTIES << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				std::cout << "f" << j << "(x)" << polynomialsRound2[i][j] << std::endl;
 		}
@@ -638,14 +629,14 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			//send the polynomials at point r and b to party i-1
 			BytesFromZZ(toSend + ELEMENT_SIZE * INPUTS_PER_G_GATE * L, rep(p_r[i]), ELEMENT_SIZE);
 			BytesFromZZ(toSend + ELEMENT_SIZE *( INPUTS_PER_G_GATE * L+1), rep(b[i]), ELEMENT_SIZE);
-			cout << "calculted from ID=" << i << " inputs , the prover is" << (i + 2) % NUM_OF_PARTIES << endl;
+			cout << "calculted from ID=" << i << " inputs , the prover is " << (i + 2) % NUM_OF_PARTIES << endl;
 			cout <<"f(r)"<< f_r[i] << endl;//i+2 => _id+4 =>_id + 1
 			cout << "b :" << b[i] << endl;
 			cout << "p(r) :" << p_r[i] << endl;
 			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
 		else if (i == (_id + 1) % NUM_OF_PARTIES) {
-			cout << "calculted from ID=" << i << " inputs , the prover is" << (i + 1) % NUM_OF_PARTIES << endl;
+			cout << "calculted from ID=" << i << " inputs , the prover is " << (i + 1) % NUM_OF_PARTIES << endl;
 			cout << "f(r)" << f_r[i] << endl;
 			cout << "b :" << b[i] << endl;
 			cout << "p(r) :" << p_r[i] << endl;
@@ -719,4 +710,35 @@ Part& Party::getMultipicationOutput(unsigned short index){
 }
 void Party::setMultipicationOutput(Part& toSave) {
 	_multipicationGateOutputs.push_back(toSave);
+}
+void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex) {
+	cout << "vector received:" << inputVector << endl;
+	cout << "Prover:" << proverIndex << endl;
+	if (proverIndex == (_id + 1) % NUM_OF_PARTIES) {
+		inputVector[1] = inputVector[0];
+		NTL::clear(inputVector[0]);
+		cout << "0->1:" << inputVector << endl;
+
+		inputVector[3] = inputVector[2];
+		NTL::clear(inputVector[2]);
+		cout << "2->3:" << inputVector << endl;
+
+		inputVector[4] *= -1;
+		cout << "-4->4:" << inputVector << endl;
+
+		NTL::clear(inputVector[5]);
+	}
+	if (proverIndex == (_id + 2) % NUM_OF_PARTIES) {
+		inputVector[0] = inputVector[1];
+		NTL::clear(inputVector[1]);
+		cout << "1->0:" << inputVector << endl;
+
+		inputVector[2] = inputVector[3];
+		NTL::clear(inputVector[3]);
+		cout << "3->2:" << inputVector << endl;
+
+		inputVector[4] *= -1;
+		cout << "-4->4:" << inputVector << endl;
+
+	}
 }

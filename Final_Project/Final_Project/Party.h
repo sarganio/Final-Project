@@ -78,4 +78,5 @@ public:
 	ZZ_p setFunctionAtPoint(const ZZ_pX& function, ZZ_p functionDegree, ZZ_p point)const;
 	Part& getMultipicationOutput(unsigned short index);
 	void setMultipicationOutput(Part& toSave);
+	void orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex);
 };
