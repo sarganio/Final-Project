@@ -419,7 +419,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		//put the witness coeffient as the free coeffient
 		pointsToInterpolate[i][0] = 0;//omegas[i];
 		for (int j = 1; j < M+1 ; j++)
-			pointsToInterpolate[i][j] = this->_gGatesInputs[(j-1) * INPUTS_PER_G_GATE * L + i].getValue();//t'th input ,j'th coefficient of the polynomial
+			pointsToInterpolate[i][j] = this->_gGatesInputs[(j-1) * INPUTS_PER_G_GATE * L + i].getValue();//j'th input ,j'th coefficient of the polynomial
 
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
@@ -557,6 +557,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][1][k] = 0;
 					pointsToInterpolateRound2[i][3][k] = 0;
 					pointsToInterpolateRound2[i][4][k] *= -1;
+					pointsToInterpolateRound2[i][5][k] = _arithmeticCircuit->getMultipicationOutput(k)[(_id+2)%NUM_OF_PARTIES].getValue();
 				}
 				if (i == (_id + 1) % NUM_OF_PARTIES) {
 					pointsToInterpolateRound2[i][0][k] = 0;
@@ -566,7 +567,6 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				}
 			}
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
-
 		}
 	}
 
@@ -603,14 +603,14 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				BytesFromZZ(toSend + ELEMENT_SIZE*j, rep(f_r[i][j]), ELEMENT_SIZE);
 			//send the polynomials at point r and b to party i-1
-			BytesFromZZ(toSend + ELEMENT_SIZE * INPUTS_PER_G_GATE * L, rep(b[i]), ELEMENT_SIZE);
-			BytesFromZZ(toSend + ELEMENT_SIZE *( INPUTS_PER_G_GATE * L+1), rep(p_r[i]), ELEMENT_SIZE);
+			BytesFromZZ(toSend + ELEMENT_SIZE * INPUTS_PER_G_GATE * L, rep(p_r[i]), ELEMENT_SIZE);
+			BytesFromZZ(toSend + ELEMENT_SIZE *( INPUTS_PER_G_GATE * L+1), rep(b[i]), ELEMENT_SIZE);
 			cout <<i<<":f_r :"<< f_r[i] << endl;
 			cout << "b :" << b[i] << endl;
 			cout << "p_r :" << p_r[i] << endl;
 			sendTo((_id + 2) % NUM_OF_PARTIES, F_VERIFY_ROUND2_MESSAGE, toSend);
 		}
-		else if(i==(_id+2)%NUM_OF_PARTIES) {
+		else if (i == (_id + 2) % NUM_OF_PARTIES) {
 			//save the polynonials at point r for round 3
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				calculationForRound3[j] = f_r[i][j];

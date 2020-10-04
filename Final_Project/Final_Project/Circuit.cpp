@@ -67,6 +67,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 		}
 		
 	}
+	_multipicationGateOutputs.resize(_numOfMulGates);
 	TRACE("Arithmetic circuit was created succssesfully")
 }
 void Circuit::calculateOutput() {
@@ -93,4 +94,10 @@ Circuit::~Circuit() {
 }
 unsigned int Circuit::getNumOfMulGates()const {
 	return _numOfMulGates;
+}
+Share& Circuit::getMultipicationOutput(unsigned short index){
+	return _multipicationGateOutputs[index];
+}
+void Circuit::setMultipicationOutput(Share& toSave) {
+	_multipicationGateOutputs.push_back(toSave);
 }

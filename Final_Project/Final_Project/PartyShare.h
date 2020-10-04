@@ -48,13 +48,16 @@ public:
 		long secondPartOutput = 0;
 		right.getParty()->readFrom((id + 2) % NUM_OF_PARTIES, (byte*)&secondPartOutput);
 
+		Party* partyPtr = right.getParty();
+
 		//set output values to be: (z_{i-1},z_i)
 		Share output((id + 2) % NUM_OF_PARTIES, 'z');
 		output[right.getParty()->getID()].setValue(firstPartOputput);
 		output[(right.getParty()->getID() + 2) % NUM_OF_PARTIES].setValue(secondPartOutput);
 
+		partyPtr->getArithmeticCircuit()->setMultipicationOutput(output);
+
 		//save inputs to each g gate in the circuit
-		Party* partyPtr = right.getParty();
 		partyPtr->setG_GateInput(currentNumOfMulGates * INPUTS_PER_G_GATE, left[id]);
 		partyPtr->setG_GateInput(1 + currentNumOfMulGates * INPUTS_PER_G_GATE, left[(id+2)%NUM_OF_PARTIES]);
 		partyPtr->setG_GateInput(2 + currentNumOfMulGates * INPUTS_PER_G_GATE, right[id]);
