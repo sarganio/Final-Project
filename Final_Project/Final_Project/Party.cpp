@@ -555,9 +555,9 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				for (int k = 1; k < M + 1; k++) 
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
-			if (i == (_id + 1) % NUM_OF_PARTIES) 
-				for (int k = 1; k <  L*M+1; k++) 
-					pointsToInterpolateRound2[i][4][k] *= -1;
+			if (i == (_id + 1) % NUM_OF_PARTIES)
+				for (int k = 1; k < L * M + 1; k++)
+					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k).getValue();
 			orderInputVector(pointsToInterpolateRound2[i], i);
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 		}
