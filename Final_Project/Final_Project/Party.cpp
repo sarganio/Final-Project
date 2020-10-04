@@ -556,26 +556,24 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
 			if (i == (_id + 2) % NUM_OF_PARTIES) {
-				for (int k = 1; k < L * M + 1; k++) {
-					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k).getValue();
-					cout << "zi->5:" << pointsToInterpolateRound2[i];
-				}
-				orderInputVector(pointsToInterpolateRound2[i], (i+2)%NUM_OF_PARTIES);
+				for (int k = 1; k < L * M + 1; k++)
+					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k - 1).getValue();
+				orderInputVector(pointsToInterpolateRound2[i], i);
 			}
 			else
-				orderInputVector(pointsToInterpolateRound2[i], (i + 1)%NUM_OF_PARTIES);
+				orderInputVector(pointsToInterpolateRound2[i], i);
 			
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 		}
 
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 2) % NUM_OF_PARTIES) {
-			cout << "Input point of ID=" << i << ", the prover is " << (i + 2) % NUM_OF_PARTIES << endl;
+			cout << "Input point of ID=" << (i+1)%NUM_OF_PARTIES << ", the prover is " << i << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				cout << "pointsToInterpolate(" << j << "):" << pointsToInterpolateRound2[i][j] << endl;
 		}
 		if (i == (_id + 1) % NUM_OF_PARTIES) {
-			cout << "Input point of ID=" << i << ", the prover is " << (i + 1) % NUM_OF_PARTIES << endl;
+			cout << "Input point of ID=" << (i + 2) % NUM_OF_PARTIES << ", the prover is " << i << endl;
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++)
 				cout << "pointsToInterpolate(" << j << "):" << pointsToInterpolateRound2[i][j] << endl;
 		}
@@ -715,7 +713,8 @@ Part& Party::getMultipicationOutput(unsigned short index){
 	return _multipicationGateOutputs[index];
 }
 void Party::setMultipicationOutput(Part& toSave) {
-	_multipicationGateOutputs.push_back(toSave);
+	static int numOfElements = 0;
+	_multipicationGateOutputs[numOfElements++] = toSave;
 }
 void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex) {
 	cout << "vector received:" << inputVector << endl;
