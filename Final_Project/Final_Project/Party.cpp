@@ -446,14 +446,18 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]();
 	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 
-	//vec_ZZ_p nextPI_ZZ_p;
-	//nextPI_ZZ_p.SetLength(2 * M + 1 + 6 * L);
+	vec_ZZ_p nextPI_ZZ_p;
+	nextPI_ZZ_p.SetLength(2 * M + 1 + 6 * L);
 
-	//char nextPIBuffer[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]{};
-	//for (int i = 0; i < (2 * M + 1 + 6 * L); i++)
-	//	nextPI_ZZ_p[i] = BytesFromZZ(nextPIBuffer,ZZ_p(nextPI[i * ELEMENT_SIZE]);
+	rawDataToVec(nextPI_ZZ_p, (2 * M + 1 + 6 * L), nextPI);
+	cout << "nextPI:" << nextPI_ZZ_p << endl;
+	//send PI_i+1 ti i+1
+	for (int i = 0; i < 2 * M + INPUTS_PER_G_GATE * L + 1; i++) {
+		byte rawZp[ELEMENT_SIZE]{};
+		BytesFromZZ(rawZp, rep(nextPI_ZZ_p[i]), ELEMENT_SIZE);
+		*(unsigned long long*)& nextPI[i * ELEMENT_SIZE] = *(unsigned long long*)rawZp;
+	}
 	
-	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
 
 	vec_ZZ_p beforePI;
