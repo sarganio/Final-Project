@@ -409,8 +409,8 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	//generate 6L random elements from Zp
 	vec_ZZ_p omegas;
 	omegas.SetLength(INPUTS_PER_G_GATE * L);
-	//for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
-	//	random(omegas[i]);
+	for (int i = 0; i < INPUTS_PER_G_GATE * L; i++)
+		random(omegas[i]);
 	pointsToInterpolate.SetLength(INPUTS_PER_G_GATE * L);
 	//(c)
 	//prepare the vector of points to be interpolated
@@ -444,7 +444,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 
 	AutoSeededRandomPool rnd;
 	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]();
-	//rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
 	
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
