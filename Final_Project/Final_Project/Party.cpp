@@ -445,6 +445,13 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	AutoSeededRandomPool rnd;
 	byte* nextPI = new byte[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]();
 	rnd.GenerateBlock(nextPI, (2 * M + 1 + 6 * L) * ELEMENT_SIZE);
+
+	//vec_ZZ_p nextPI_ZZ_p;
+	//nextPI_ZZ_p.SetLength(2 * M + 1 + 6 * L);
+
+	//char nextPIBuffer[(2 * M + 1 + 6 * L) * ELEMENT_SIZE]{};
+	//for (int i = 0; i < (2 * M + 1 + 6 * L); i++)
+	//	nextPI_ZZ_p[i] = BytesFromZZ(nextPIBuffer,ZZ_p(nextPI[i * ELEMENT_SIZE]);
 	
 	//Sleep(2);
 	sendTo((_id + 1) % NUM_OF_PARTIES, F_VERIFY_ROUND1_MESSAGE, nextPI);
@@ -461,7 +468,9 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		PI[i + INPUTS_PER_G_GATE * L] = p[i];
 
 	for (int i = 0; i < 2 * M + 1 + INPUTS_PER_G_GATE * L; i++) {
-		beforePI[i] = PI[i] - ZZ_p(nextPI[i]);
+		ZZ_p randomE = ZZ_p(*(long long*)&nextPI[i * ELEMENT_SIZE]);
+		cout << "Random element[" << i << "]:" << randomE << endl;
+		beforePI[i] = PI[i] - randomE;
 	}
 	//send PI_+1
 	byte* toSend = new byte[(2 * M + INPUTS_PER_G_GATE * L + 1) * ELEMENT_SIZE]{};
@@ -550,7 +559,6 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			pointsToInterpolateRound2[i].SetLength(INPUTS_PER_G_GATE*L);
 			for (int j = 0; j < INPUTS_PER_G_GATE * L; j++) {
 				pointsToInterpolateRound2[i][j].SetLength( M + 1);
-				pointsToInterpolateRound2[i][j][0] = parsedPIs[i][j];
 				//copy inputs from previous round
 				for (int k = 1; k < M + 1; k++) 
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
@@ -562,6 +570,9 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			}
 			else
 				orderInputVector(pointsToInterpolateRound2[i], i);
+			//set omegas as the fisrt point
+			for(int j=0;j<INPUTS_PER_G_GATE*L;j++)
+				pointsToInterpolateRound2[i][j][0] = parsedPIs[i][j];
 			
 			interpolateInputPolynomials(M, INPUTS_PER_G_GATE * L, pointsToInterpolateRound2[i], polynomialsRound2[i]);
 		}
