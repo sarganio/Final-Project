@@ -732,33 +732,26 @@ void Party::setMultipicationOutput(Part& toSave) {
 	_multipicationGateOutputs[numOfElements++] = toSave;
 }
 void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex) {
-	cout << "vector received:" << inputVector << endl;
-	cout << "Prover:" << proverIndex << endl;
+
 	if (proverIndex == (_id + 1) % NUM_OF_PARTIES) {
 		inputVector[1] = inputVector[0];
 		NTL::clear(inputVector[0]);
-		cout << "0->1:" << inputVector << endl;
-
+	
 		inputVector[3] = inputVector[2];
 		NTL::clear(inputVector[2]);
-		cout << "2->3:" << inputVector << endl;
 
 		inputVector[4] *= -1;
-		cout << "-4->4:" << inputVector << endl;
 
 		NTL::clear(inputVector[5]);
 	}
 	if (proverIndex == (_id + 2) % NUM_OF_PARTIES) {
 		inputVector[0] = inputVector[1];
 		NTL::clear(inputVector[1]);
-		cout << "1->0:" << inputVector << endl;
 
 		inputVector[2] = inputVector[3];
 		NTL::clear(inputVector[3]);
-		cout << "3->2:" << inputVector << endl;
 
 		inputVector[4] *= -1;
-		cout << "-4->4:" << inputVector << endl;
 
 	}
 }
