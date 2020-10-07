@@ -37,10 +37,10 @@ private:
 	byte _finalSeq[SEQ_LEN]{};										//mutual counter for all participents.
 	vector<TcpSocket*> _sockets;									//socket for all TCP connection with other parties.
 	vector<Message*>_msgs;											//vector which contains all recieved messages
-	vector<SecByteBlock*>_keys;										//vector which contains all the keys required for generating random numbers
+	vector<byte*>_keys;										//vector which contains all the keys required for generating random numbers
 	vector<Share*> _shares;											//vector which contains each party's share.index of vector is the id of input's party
 	Circuit* _arithmeticCircuit;									//the function which needs to be computed.
-	void printKey(unsigned short index)const;						//recieves the index of the key's owner and print it.
+	//void printKey(unsigned short index)const;						//recieves the index of the key's owner and print it.
 	vector<Part> _multipicationGateOutputs;
 public:
 	vector<Part> _gGatesInputs;										//vector which contains all g gates inputs for verification stage.
