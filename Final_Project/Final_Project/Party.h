@@ -11,7 +11,6 @@
 #include <string>
 #include <mutex>
 
-#define INPUTS_PER_G_GATE  6
 //#define ELEMENT_SIZE sizeof(ZZ_p)
 //std
 using std::vector;
@@ -60,7 +59,9 @@ public:
 	void fInput();													//fInput functuality as described in the paper.
 	long reconstruct(vector<Share*>& myShare);						//receives all the Parts of a given share.
 	//vector<Share*>& getAllShares();								
-	void verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpulate, ZZ_pX& p);//the first round of fVerify as described in the paper.
+	void verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpulate, ZZ_pX& p);
+	void vecToRawData(unsigned int numOfElements, NTL::vec_ZZ_p& vec, byte* rawData)const;
+	//the first round of fVerify as described in the paper.
 	long finalReconstruct(Share&);									//function used at the end of the protocol, recieve shares from other parties and return the result.
 	Share& RecieveShareFrom(unsigned short id);						//read raw data of share from the socket convert it to Share class form.
 	void sendShareTo(unsigned short id, Share& toSend)const;		//convert a share to raw data and send it to specified by id party .
@@ -71,7 +72,9 @@ public:
 																	//interpulates numOfPolynomials polinomials each of degree polynomialsDegree .Note:the coeffient index of pointsToInterpolate is X value.
 																	//the first coeffient is a random number from Zp. The calculated polynomials are stored in inputPolynomials.
 	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate, vec_ZZ_pX& inputPolynomials)const;//perform interpolation on the given points
-	void verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p,vec_ZZ_p& calculationForRound3);//round 2 of the verification stage as described in the paper 
+	void verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p,vec_ZZ_p& calculationForRound3);
+	void printVecVec(NTL::vec_vec_ZZ_p& pointsToInterpolateRound2)const;
+	//round 2 of the verification stage as described in the paper 
 	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);				//round 3 of the verification stage as described in the paper
 	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);//convert an array of bytes to ZZ_p elements
 	ZZ_p cFunction(vec_ZZ_p inputsToGGate)const;					//caculate cFunction as described in papere.
