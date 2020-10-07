@@ -28,8 +28,11 @@ int main(int argc, char* argv[]) {
 	cout << "My ID:"<<myID << endl;
 	try {
 		Party p = Party(myID,1);
-
 		p.connectToAllParties(IPs);
+		//vec_ZZ_p nums;
+		//unsigned int a = 100;
+		//p.fCoin(nums,a);
+		//cout << nums;
 		p.fInput();
 		Share& circuitOutput= *p.calcCircuit();
 		long result = p.finalReconstruct(circuitOutput);

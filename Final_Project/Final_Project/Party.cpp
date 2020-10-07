@@ -184,11 +184,9 @@ Share* Party::fRand() {
 	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};
 	byte IV[KEY_LEN]{};
 	Share* ans = new Share((_id + 2) % NUM_OF_PARTIES, 'a' + calledThisFunc);
-	//byte* test = new byte[ELEMENT_SIZE];
 	AutoSeededRandomPool rnd;
-	_keys[_id] = new byte[KEY_LEN]();///TODO: change to byte*!
+	_keys[_id] = new byte[KEY_LEN]();
 	rnd.GenerateBlock(_keys[_id],KEY_LEN);
-	//rnd.GenerateBlock(_keys[_id],_keys[_id]->size());
 	
 	for (unsigned int i = 0; i < KEY_LEN / SEQ_LEN; i++)
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
@@ -204,7 +202,8 @@ Share* Party::fRand() {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
-		Helper::encryptAES(alpha[i], KEY_LEN,SecByteBlock(_keys[i],KEY_LEN),IV); 
+		SecByteBlock key(_keys[i], KEY_LEN);
+		Helper::encryptAES(alpha[i], KEY_LEN,key,IV); 
 		(*(long*)alpha[i]) %= ZP;
 		(*ans)[i] = (*(long*)alpha[i])>0?*(long*)alpha[i]: (*(long*)alpha[i])+ZP;
 		//TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
@@ -525,11 +524,11 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		if (i == _id)
 			continue;
 		else {
+			//parse the data received
+			rawDataToVec(parsedPIs[i], orderOfPI, PIs[i]);
 			//release PIs memory
 			delete[] PIs[i];
 			PIs[i] = nullptr;
-			//parse the data received
-			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
 			cout <<"Received PI from ID="<<i<<" :" << parsedPIs[i] << endl;
 			ZZ_pX p;
 			p.SetLength(2 * M + 1);
@@ -562,8 +561,9 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
 			if (i == (_id + 2) % NUM_OF_PARTIES) {
-				for (int k = 1; k < L * M + 1; k++)
-					pointsToInterpolateRound2[i][5][k] = getMultipicationOutput(k - 1).getValue();
+				for(int l=1;i<L+1;l++)//l'th g gate
+					for (int k = 1; k < M + 1; k++)//k'th coeffient
+						pointsToInterpolateRound2[i][5*l][k] = getMultipicationOutput(k - 1).getValue();
 				orderInputVector(pointsToInterpolateRound2[i], i);
 			}
 			else
@@ -660,7 +660,7 @@ void Party::printVecVec(NTL::vec_vec_ZZ_p& pointsToInterpolateRound2)const
 	for (int j = 0; j < pointsToInterpolateRound2.length(); j++)
 		cout << "pointsToInterpolate(" << j << "):" << pointsToInterpolateRound2[j] << endl;
 }
-void Party::fCoin(vec_ZZ_p& thetas, int numOfElements)
+void Party::fCoin(vec_ZZ_p& thetas, unsigned int numOfElements)
 {
 	thetas.SetLength(numOfElements);
 	//generate numOfElements random numbers 
