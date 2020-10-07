@@ -19,6 +19,4 @@ public:
 	Share* getOutput();							//get the result of the circuit
 	~Circuit();									//D'tor - deallocate all gates memmory.
 	unsigned int getNumOfMulGates()const;		//getter for _numOfMulGates.
-	//Share& getMultipicationOutput(unsigned short index);
-	//void setMultipicationOutput(Share& toSave);
 };

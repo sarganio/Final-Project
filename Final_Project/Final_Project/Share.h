@@ -13,7 +13,7 @@ class Part {
 protected:				
 	long _value = 0;
 	unsigned short _index;//the index of the part e.g a_# , x_#
-	char _name;
+	char _name;			//the name of the part e.g. ?_0 ?_1 ?_3
 public:
 	Part(char name = 0, unsigned short index = 0, long value = 0);
 	Part(const Part& other);

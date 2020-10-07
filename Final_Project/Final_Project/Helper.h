@@ -61,8 +61,8 @@ using CryptoPP::byte;
 #define ZP 127 //make sure all the elements are belong to Z_p (mod p)
 #define L  1//num of multipication gates per G gate
 #define ELEMENT_SIZE sizeof(NTL::ZZ_p)
-#define DISHONEST_PARTY_ID 0
-#define LIE_MUL_GATE_INDEX 3
+#define DISHONEST_PARTY_ID 0//the id of the dishonest party
+#define LIE_MUL_GATE_INDEX 3//the index of the multipication gate at which the dishonest party cheat
 
 #include <string>
 

@@ -718,12 +718,7 @@ ZZ_p Party::cFunction(vec_ZZ_p inputsToGGate)const {
 	return inputsToGGate[0] * inputsToGGate[2] + inputsToGGate[0] * inputsToGGate[3] + inputsToGGate[1] * inputsToGGate[2] + inputsToGGate[4] - inputsToGGate[5];
 
 }
-ZZ_p Party::setFunctionAtPoint(const ZZ_pX& function,ZZ_p functionDegree, ZZ_p point)const {
-	ZZ_p ans;
-	for(int i=0;i<rep(functionDegree)+1;i++)
-		ans += function[i] * power(point, i);
-	return ans;
-}
+
 Part& Party::getMultipicationOutput(unsigned short index){
 	return _multipicationGateOutputs[index];
 }
