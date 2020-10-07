@@ -1,7 +1,6 @@
 #pragma once
 #include "Helper.h"
 #include "secblock.h"
-
 #include <mutex>
 #include<cstdint>
 #include <cstddef>
@@ -16,16 +15,13 @@ using CryptoPP::byte;
 #define MUL_GATE_LEN sizeof(long)
 #define F_VERIFY_ROUND2_MESSAGE_LEN (L*6+2)*ELEMENT_SIZE
 
-
-
 #define BASE_PORT 62000
 #define BASE_IP "192.168.0."
 
 #define HEADER_SIZE 3
 #define ALIGNIG sizeof(void*)
 
-enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE, F_VERIFY_ROUND1_MESSAGE, F_VERIFY_ROUND2_MESSAGE, ABORT_MESS
-};
+enum types{SEQ = 1,KEY,RECONSTRUCT, ENC_INPUT,MUL_GATE, F_VERIFY_ROUND1_MESSAGE, F_VERIFY_ROUND2_MESSAGE, ABORT_MESS};
 
 //#pragma pack(1)//allow no padding
 #pragma pack(push, 1)
@@ -39,7 +35,7 @@ private:
 	std::mutex _isReadMutex;					//mutex to make sure that old messages dont get confused with new messages.
 	std::condition_variable _listenerCV, _partyCV, _listenerIsSetSizeCV,_partyIsSetSizeCV;
 	bool _isRead = true;						//true if the current message was read by the party thread.
-	bool _isSetSize = true;
+	bool _isSetSize = true;	
 public:
 	Message(byte type = 0);				
 	void setSize(int type,unsigned int size = 0);//setter for the size of the message
