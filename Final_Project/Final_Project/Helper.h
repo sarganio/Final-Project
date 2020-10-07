@@ -62,7 +62,7 @@ using CryptoPP::byte;
 #include <string>
 
 #define ZP 127 //make sure all the elements are belong to Z_p (mod p)
-#define L  1//num of multipication gates per G gate
+#define L  2//num of multipication gates per G gate
 #define INPUTS_PER_G_GATE  6
 #define ELEMENT_SIZE sizeof(NTL::ZZ_p)
 #define DISHONEST_PARTY_ID -1//the id of the dishonest party

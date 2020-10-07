@@ -8,7 +8,7 @@
 #define RANGE_OF_LAYERS 1
 #define RANGE_OF_GATES 1
 
-#define PERCENTAGE_FOR_MUL_GATE 1 // 1-100
+#define PERCENTAGE_FOR_MUL_GATE 100 // 1-100
  
 
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGates(0) {
@@ -46,7 +46,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
 				
-				if(rand() % 100 < PERCENTAGE_FOR_MUL_GATE){
+				if(rand() % 100 > PERCENTAGE_FOR_MUL_GATE){
 					//add a add gate
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
@@ -62,7 +62,7 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 			}
 			else { //const
 				
-				if (rand() % 100 < PERCENTAGE_FOR_MUL_GATE) {
+				if (rand() % 100 > PERCENTAGE_FOR_MUL_GATE) {
 					// add gate
 					_circuit[i][j] = new AddGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % ZP));
 				}

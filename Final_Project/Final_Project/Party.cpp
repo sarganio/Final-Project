@@ -248,7 +248,7 @@ void Party::fInput() {
 	//build circuit
 	_arithmeticCircuit = new Circuit(_finalSeq, this);
 
-	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates()* INPUTS_PER_G_GATE+_arithmeticCircuit->getNumOfMulGates());
+	this->_gGatesInputs.resize(_arithmeticCircuit->getNumOfMulGates()* INPUTS_PER_G_GATE);
 	_multipicationGateOutputs.resize(_arithmeticCircuit->getNumOfMulGates());
 
 	//release the memory which was allocated in fRand
@@ -382,7 +382,7 @@ Circuit* Party::getArithmeticCircuit()const {
 }
 void Party::fVerify() {
 	TRACE("Start of verification stage.");
-	unsigned int M = _arithmeticCircuit->getNumOfMulGates() / L;//as descussed in the pepare
+	unsigned int M = std::ceil(_arithmeticCircuit->getNumOfMulGates() / double(L));//as descussed in the pepare
 	ZZ_pX p;
 	vec_ZZ_p polynomialAtR;
 	vec_vec_ZZ_p pointsToInterpolate;
