@@ -183,13 +183,12 @@ Share* Party::fRand() {
 	calledThisFunc++;
 	
 	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};
-	byte fromKey[KEY_LEN]{};
 	byte IV[KEY_LEN]{};
 	AutoSeededRandomPool rnd;
 	Share* ans = new Share((_id + 2) % NUM_OF_PARTIES, 'a' + calledThisFunc);
 	//byte* test = new byte[ELEMENT_SIZE];
-	_keys[_id] = new byte[KEY_LEN];/////////////////////////////////TODO: change to byte*!
-	rnd.GenerateBlock(_keys[_id],ELEMENT_SIZE);
+	_keys[_id] = new byte[KEY_LEN]();///TODO: change to byte*!
+	rnd.GenerateBlock(_keys[_id],KEY_LEN);
 	//rnd.GenerateBlock(_keys[_id],_keys[_id]->size());
 	
 	for (unsigned int i = 0; i < KEY_LEN / SEQ_LEN; i++)
@@ -198,9 +197,9 @@ Share* Party::fRand() {
 
 	//send this party key to the next party
 	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
-	readFrom((_id + 2) % NUM_OF_PARTIES, fromKey);
+	_keys[(_id + 2) % NUM_OF_PARTIES] = new byte[KEY_LEN]();
+	readFrom((_id + 2) % NUM_OF_PARTIES, _keys[(_id + 2) % NUM_OF_PARTIES]);
 
-	_keys[(_id + 2) % NUM_OF_PARTIES] = new byte(KEY_LEN);
 
 	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
