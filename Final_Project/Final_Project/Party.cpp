@@ -181,12 +181,11 @@ void Party::calcSeq() {
 Share* Party::fRand() {
 	static unsigned int calledThisFunc = 0;
 	calledThisFunc++;
-	
 	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};
 	byte IV[KEY_LEN]{};
-	AutoSeededRandomPool rnd;
 	Share* ans = new Share((_id + 2) % NUM_OF_PARTIES, 'a' + calledThisFunc);
 	//byte* test = new byte[ELEMENT_SIZE];
+	AutoSeededRandomPool rnd;
 	_keys[_id] = new byte[KEY_LEN]();///TODO: change to byte*!
 	rnd.GenerateBlock(_keys[_id],KEY_LEN);
 	//rnd.GenerateBlock(_keys[_id],_keys[_id]->size());
@@ -217,6 +216,8 @@ Share* Party::fRand() {
 		delete _keys[i];
 		_keys[i] = nullptr;
 	}
+	//increment SEQ
+	*(unsigned int*)_finalSeq += 1;
 	return ans;
 }
 void Party::fInput() {
@@ -491,7 +492,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			PIs[i] = nullptr;
 		}
 		else {//set Message's size to: 2*M+6*L+2 before receiving the data
-			PIs[i] = new byte[ELEMENT_SIZE * orderOfPI];
+			PIs[i] = new byte[ELEMENT_SIZE * orderOfPI]();
 			std::condition_variable& other = _msgs[i]->getListenerIsSetSizeCV();
 			std::condition_variable& mine = _msgs[i]->getPartyIsSetSizeCV();
 			std::mutex& isSetSize = _msgs[i]->getIsSetSizeMutex();
@@ -524,6 +525,9 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		if (i == _id)
 			continue;
 		else {
+			//release PIs memory
+			delete[] PIs[i];
+			PIs[i] = nullptr;
 			//parse the data received
 			rawDataToVec(parsedPIs[i], (2 * M + INPUTS_PER_G_GATE * L + 1), PIs[i]);
 			cout <<"Received PI from ID="<<i<<" :" << parsedPIs[i] << endl;
