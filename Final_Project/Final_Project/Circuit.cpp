@@ -8,8 +8,12 @@
 #define RANGE_OF_LAYERS 1
 #define RANGE_OF_GATES 1
 
+#define PERCENTAGE_FOR_MUL_GATE 1 // 1-100
+ 
+
 Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGates(0) {
-	
+	 
+	//srand with constant is for debug only - use seed for release
 	srand(24);
 	//srand(*(unsigned int*)seed);
 
@@ -32,34 +36,38 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
 			
+			//Layer and gae index for the left input to gate
 			int inputLayerLeft = rand() % i;
 			int gateIndexLeft = rand() % _gatesPerLayer[inputLayerLeft];
 
-			if (true) { //Share
+			if (rand() % 2) { // add new gate with share - else add new gate with const
 				
+				//Layer and gae index for the right input to gate
 				int inputLayerRight = rand() % i;
 				int gateIndexRight = rand() % _gatesPerLayer[inputLayerRight];
-
-				if(false){//------------------TEMP------------
+				
+				if(rand() % 100 < PERCENTAGE_FOR_MUL_GATE){
+					//add a add gate
 					_circuit[i][j] = new AddGate<Share>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), _circuit[inputLayerRight][gateIndexRight]->getOutput());
 				}
 				else {// multiplication gate
+					//add a multiplication gate
 					//take the output of some previuos layer and extend it.From share to be PartyShare
-					//_circuit[inputLayerRight][gateIndexRight]->setOutput(new PartyShare(_circuit[inputLayerRight][gateIndexRight]->getOutput(), _party));
 					//create the multiplication with share gate
 					_circuit[inputLayerRight][gateIndexRight]->getOutput()->setParty(_party);
 					_circuit[i][j] = new MultiplicationGate<PartyShare>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(),_circuit[inputLayerRight][gateIndexRight]->getOutput());
+					//count multiplication gates
 					_numOfMulGates++;
 				}
 			}
 			else { //const
 				
-				if (false) {//------------------TEMP------------------------------------
-			
+				if (rand() % 100 < PERCENTAGE_FOR_MUL_GATE) {
+					// add gate
 					_circuit[i][j] = new AddGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % ZP));
-
 				}
-				else {// multiplication gate
+				else {
+					// multiplication gate
 					_circuit[i][j] = new MultiplicationGate<long>(_circuit[inputLayerLeft][gateIndexLeft]->getOutput(), new long(rand() % ZP));
 				}
 			
@@ -69,19 +77,25 @@ Circuit::Circuit(byte seed[SEQ_LEN], Party* party) : _party(party), _numOfMulGat
 	}
 	TRACE("Arithmetic circuit was created succssesfully")
 }
+
 void Circuit::calculateOutput() {
 	for (int i = 1; i < _numOfLayers; i++) {
 		for (int j = 0; j < _gatesPerLayer[i]; j++) {
 				std::cout << "Gate:" << i << " " << j << ": ";
+				//calculte the output of gate[i][j]
 				_circuit[i][j]->calculateOutput();
+				//reconstruct the output for debugging, remove when banchmarking
 				cout<<"Output:"<< _party->finalReconstruct(*_circuit[i][j]->getOutput()) << std::endl;
 		}
 	}
 }
+
 Share* Circuit::getOutput() {
 	calculateOutput();
 	unsigned short lastLayerIndex = _numOfLayers - 1;
 	unsigned short lastGate = this->_gatesPerLayer[_numOfLayers - 1] - 1;
+
+	//output of thr circuit defined to be the last gate output
 	return this->_circuit[lastLayerIndex][lastGate]->getOutput();
 }
 Circuit::~Circuit() {
@@ -92,12 +106,7 @@ Circuit::~Circuit() {
 				_circuit[i][j] = nullptr;
 			}
 }
+
 unsigned int Circuit::getNumOfMulGates()const {
 	return _numOfMulGates;
 }
-//Share& Circuit::getMultipicationOutput(unsigned short index){
-//	return _multipicationGateOutputs[index];
-//}
-//void Circuit::setMultipicationOutput(Share& toSave) {
-//	_multipicationGateOutputs.push_back(toSave);
-//}

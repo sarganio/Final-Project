@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	cout << "My ID:"<<myID << endl;
 	try {
 		Party p = Party(myID,1);
-		//p.verifyRound1();
+
 		p.connectToAllParties(IPs);
 		p.fInput();
 		Share& circuitOutput= *p.calcCircuit();
