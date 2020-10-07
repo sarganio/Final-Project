@@ -419,9 +419,12 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		pointsToInterpolate[i].SetLength(M + 1);
 		//put the witness coeffient as the free coeffient
 		pointsToInterpolate[i][0] = omegas[i];
-		for (int j = 1; j < M + 1; j++)
-			pointsToInterpolate[i][j] = this->_gGatesInputs[(j - 1) * INPUTS_PER_G_GATE * L + i].getValue();//j'th input ,j'th coefficient of the polynomial
-
+		for (int j = 1; j < M + 1; j++) {
+			if ((j - 1) * INPUTS_PER_G_GATE * L + i >= _gGatesInputs.capacity())
+				pointsToInterpolate[i][j] = 0;
+			else
+				pointsToInterpolate[i][j] = this->_gGatesInputs[(j - 1) * INPUTS_PER_G_GATE * L + i].getValue();//j'th input ,j'th coefficient of the polynomial
+		}
 		cout << "pointsToInterpolate(" << i << "):" << pointsToInterpolate[i] << endl;
 	}
 	cout << endl;
