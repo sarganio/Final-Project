@@ -718,12 +718,7 @@ ZZ_p Party::cFunction(vec_ZZ_p inputsToGGate)const {
 	return inputsToGGate[0] * inputsToGGate[2] + inputsToGGate[0] * inputsToGGate[3] + inputsToGGate[1] * inputsToGGate[2] + inputsToGGate[4] - inputsToGGate[5];
 
 }
-ZZ_p Party::setFunctionAtPoint(const ZZ_pX& function,ZZ_p functionDegree, ZZ_p point)const {
-	ZZ_p ans;
-	for(int i=0;i<rep(functionDegree)+1;i++)
-		ans += function[i] * power(point, i);
-	return ans;
-}
+
 Part& Party::getMultipicationOutput(unsigned short index){
 	return _multipicationGateOutputs[index];
 }
@@ -732,11 +727,12 @@ void Party::setMultipicationOutput(Part& toSave) {
 	_multipicationGateOutputs[numOfElements++] = toSave;
 }
 void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex) {
-
+	cout << "vector received:" << inputVector << endl;
+	cout << "Prover:" << proverIndex << endl;
 	if (proverIndex == (_id + 1) % NUM_OF_PARTIES) {
 		inputVector[1] = inputVector[0];
 		NTL::clear(inputVector[0]);
-	
+
 		inputVector[3] = inputVector[2];
 		NTL::clear(inputVector[2]);
 

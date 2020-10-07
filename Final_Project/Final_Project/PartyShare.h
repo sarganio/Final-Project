@@ -40,6 +40,8 @@ public:
 
 		Party* partyPtr = right.getParty();
 
+		if (partyPtr->getID() == DISHONEST_PARTY_ID && currentNumOfMulGates == LIE_MUL_GATE_INDEX)//lie at mul gate number
+			firstPartOputput++;
 		//send zi to the next party
 		byte* buffer = (byte*)&firstPartOputput;
 		partyPtr->sendTo((id + 1) % NUM_OF_PARTIES, MUL_GATE, buffer);

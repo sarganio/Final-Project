@@ -67,16 +67,15 @@ public:
 	~Party();														//D'tor- release dynamicly allocated memory in heap.
 	void fVerify();													//fVerify functuality as described in the paper.
 	Circuit* getArithmeticCircuit()const;							//getter for the arithmetic circuit pointer.
-	void fCoin(vec_ZZ_p& thetas, int numOfElements);		//fCoin functuality as described in the paper.Generate numOfElements random elements fromZp and send to all parties.
+	void fCoin(vec_ZZ_p& thetas, int numOfElements);				//fCoin functuality as described in the paper.Generate numOfElements random elements fromZp and send to all parties.
 																	//interpulates numOfPolynomials polinomials each of degree polynomialsDegree .Note:the coeffient index of pointsToInterpolate is X value.
 																	//the first coeffient is a random number from Zp. The calculated polynomials are stored in inputPolynomials.
-	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate, vec_ZZ_pX& inputPolynomials)const;
-	void verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p,vec_ZZ_p& calculationForRound3);
-	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);
-	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);
-	ZZ_p cFunction(vec_ZZ_p inputsToGGate)const;
-	ZZ_p setFunctionAtPoint(const ZZ_pX& function, ZZ_p functionDegree, ZZ_p point)const;
-	Part& getMultipicationOutput(unsigned short index);
-	void setMultipicationOutput(Part& toSave);
-	void orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex);
+	void interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned int numOfPolynomials, vec_vec_ZZ_p& pointsToInterpolate, vec_ZZ_pX& inputPolynomials)const;//perform interpolation on the given points
+	void verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p,vec_ZZ_p& calculationForRound3);//round 2 of the verification stage as described in the paper 
+	void verifyRound3(vec_ZZ_p& polynomialsAtPointR);				//round 3 of the verification stage as described in the paper
+	void rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData);//convert an array of bytes to ZZ_p elements
+	ZZ_p cFunction(vec_ZZ_p inputsToGGate)const;					//caculate cFunction as described in papere.
+	Part& getMultipicationOutput(unsigned short index);				//get a Part of multipication gate output by index.
+	void setMultipicationOutput(Part& toSave);						//set a Part of the current multipication gate.
+	void orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex);//order the inputs to the g gates so the order will be coherent with all parties.
 };
