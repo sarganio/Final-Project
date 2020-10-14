@@ -48,7 +48,6 @@ Party::Party(short myID,long input):_id(myID),_input(input),_arithmeticCircuit(n
 	//expend the vector to contain all parties' sockets
 	this->_sockets.resize(NUM_OF_PARTIES);
 	this->_msgs.resize(NUM_OF_PARTIES);
-	this->_keys.resize(NUM_OF_PARTIES);
 	this->_shares.resize(NUM_OF_PARTIES);
 
 	//this->_mtx.resize(NUM_OF_PARTIES);
@@ -124,16 +123,7 @@ Party::~Party() {
 		}
 		_msgs.pop_back();
 	}
-	//delete all the sockets of the party
-	while (_keys.size()) {
-		byte* toFree = _keys.back();
-		//safety check before using delete
-		if (toFree) {
-			delete toFree;
-			toFree = nullptr;
-		}
-		_keys.pop_back();
-	}
+
 }
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
@@ -183,38 +173,31 @@ Share* Party::fRand() {
 	calledThisFunc++;
 	byte alpha[NUM_OF_PARTIES][KEY_LEN]{};
 	byte IV[KEY_LEN]{};
+	byte keys[NUM_OF_PARTIES][KEY_LEN]{};
 	Share* ans = new Share((_id + 2) % NUM_OF_PARTIES, 'a' + calledThisFunc);
 	AutoSeededRandomPool rnd;
-	_keys[_id] = new byte[KEY_LEN]();
-	rnd.GenerateBlock(_keys[_id],KEY_LEN);
+	rnd.GenerateBlock(keys[_id],KEY_LEN);
 	
 	for (unsigned int i = 0; i < KEY_LEN / SEQ_LEN; i++)
 		*(unsigned int*)(IV+i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 		//*(unsigned int*)(IV + i * SEQ_LEN) = *(unsigned int*)_finalSeq;
 
 	//send this party key to the next party
-	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, _keys[_id]);
-	_keys[(_id + 2) % NUM_OF_PARTIES] = new byte[KEY_LEN]();
-	readFrom((_id + 2) % NUM_OF_PARTIES, _keys[(_id + 2) % NUM_OF_PARTIES]);
+	sendTo((_id + 1) % NUM_OF_PARTIES,KEY, keys[_id]);
+	readFrom((_id + 2) % NUM_OF_PARTIES, keys[(_id + 2) % NUM_OF_PARTIES]);
 
 
 	for (unsigned short i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == (_id + 1)%NUM_OF_PARTIES)
 			continue;
 		memcpy_s(alpha[i], sizeof(int), &_finalSeq, sizeof(int));
-		SecByteBlock key(_keys[i], KEY_LEN);
+		SecByteBlock key(keys[i], KEY_LEN);
 		Helper::encryptAES(alpha[i], KEY_LEN,key,IV); 
 		(*(long*)alpha[i]) %= ZP;
 		(*ans)[i] = (*(long*)alpha[i])>0?*(long*)alpha[i]: (*(long*)alpha[i])+ZP;
 		//TRACE("Alpha %d:%u", i, *(unsigned int*)alpha[i]);
 	}
-	//free vector of keys
-	for (int i = 0; i < NUM_OF_PARTIES; i++) {
-		if (!_keys[i])
-			continue;
-		delete _keys[i];
-		_keys[i] = nullptr;
-	}
+
 	//increment SEQ
 	*(unsigned int*)_finalSeq += 1;
 	return ans;
@@ -532,7 +515,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			p.SetLength(2 * M + 1);
 			//conv(func, parsedPIs[i]);
 			for (int j = 0; j < 2 * M + 1; j++)
-				p[j] = parsedPIs[i][j + 6 * L];
+				p[j] = parsedPIs[i][j + INPUTS_PER_G_GATE * L];
 			cout << "p(x): " << p << endl;;
 			 p_r[i] = NTL::eval(p, r[0]);
 			 cout << "p(r) = " << p_r[i] << endl;
