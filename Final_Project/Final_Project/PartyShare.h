@@ -66,10 +66,14 @@ public:
 		partyPtr->setG_GateInput(3 + currentNumOfMulGates * INPUTS_PER_G_GATE, right[(id + 2) % NUM_OF_PARTIES]);
 		partyPtr->setG_GateInput(4 + currentNumOfMulGates * INPUTS_PER_G_GATE, Part('a', id, alpha));
 		partyPtr->setG_GateInput(5 + currentNumOfMulGates * INPUTS_PER_G_GATE, output[id]);
-		cout << "Inputs to g Gate: ";
+		cout << "Inputs to c function:";
 		for (int i = 0; i < INPUTS_PER_G_GATE; i++)
 			std::cout << partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + i].getValue() << " ";
-		std::cout << ",C is:" << (partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 0].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 3].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 1].getValue() * partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 2].getValue() + partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 4].getValue() - partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + 5].getValue()) % ZP << endl;;
+		vec_ZZ_p currentInputs;
+		currentInputs.SetLength(INPUTS_PER_G_GATE);
+		for (int i = 0; i < INPUTS_PER_G_GATE; i++)
+			currentInputs[i] = partyPtr->_gGatesInputs[currentNumOfMulGates * INPUTS_PER_G_GATE + i].getValue();
+		std::cout << ",C is:" << partyPtr->cFunction<vec_ZZ_p, ZZ_p>(currentInputs) << endl;
 		currentNumOfMulGates++;
 
 		return output;

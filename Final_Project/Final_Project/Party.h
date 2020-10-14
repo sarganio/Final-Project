@@ -87,6 +87,5 @@ public:
 	void gGateOutput(vec_ZZ_p& thetas, T& polynomials, G& output)const {
 		for (int i = 0; i < L; i++)
 			output = thetas[i] * cFunction<T, G>(polynomials);
-		cout << output;
 	}
 };

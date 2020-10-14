@@ -543,7 +543,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			}
 			for (int l = 1; l < L + 1; l++) {//l'th g gate
 				if (i == (_id + 2) % NUM_OF_PARTIES)
-					for (int k = 1; k < M + 1; k++)//k'th coeffient
+					for (int k = 1; k < M + 1; k++)//set the correct output of the multipication gates
 						pointsToInterpolateRound2[i][5 * l][k] = getMultipicationOutput((k - 1) * l).getValue();
 				orderInputVector(pointsToInterpolateRound2[i], i, l);
 			}
