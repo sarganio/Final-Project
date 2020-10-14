@@ -383,26 +383,26 @@ void Party::fVerify() {
 	TRACE("Start of verification stage.");
 	unsigned int M = std::ceil(_arithmeticCircuit->getNumOfMulGates() / double(L));//as descussed in the pepare
 	ZZ_pX p;
+	vec_ZZ_p thetas;
 	vec_ZZ_p polynomialAtR;
 	vec_vec_ZZ_p pointsToInterpolate;
 	//-----Round 1-----:
 	cout << "\n-----Round 1-----" << endl << endl;
-	verifyRound1(M, pointsToInterpolate,p);
+	verifyRound1(thetas,M, pointsToInterpolate,p);
 	//-----Round 2-----:
 	cout << "\n-----Round 2-----" << endl << endl;
 	verifyRound2(M, pointsToInterpolate,p, polynomialAtR);
 	//-----Round 3-----:
 	cout << "\n-----Round 3-----" << endl << endl;
-	verifyRound3(polynomialAtR);
+	verifyRound3(thetas,polynomialAtR);
 	//----------------------------------------------------------------------------------
 }
-void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p) {
+void Party::verifyRound1(vec_ZZ_p& thetas,unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p) {
 	vec_ZZ_pX inputPolynomials;
 	inputPolynomials.SetLength(INPUTS_PER_G_GATE * L);
 	//(a)
 	//generate L random elements from Zp and spread them to every party
 	int numOfElements = L;
-	vec_ZZ_p thetas;
 	fCoin(thetas, numOfElements);
 	//(b)
 	//generate 6L random elements from Zp
@@ -434,7 +434,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		std::cout << "f" << i << "(x)" << inputPolynomials[i] << std::endl;
 	//(d)
 	p.SetLength(2 * M + 1);
-	p = inputPolynomials[0]* inputPolynomials[2]+ inputPolynomials[0]* inputPolynomials[3]+ inputPolynomials[1]* inputPolynomials[2]+ inputPolynomials[4]- inputPolynomials[5];
+	gGateOutput(thetas, inputPolynomials, p);
 	std::cout << "p(x) = " << p << std::endl;
 	//(e)
 	unsigned int orderOfPI = 2 * M + 1 + INPUTS_PER_G_GATE * L;
@@ -485,7 +485,7 @@ void Party::verifyRound1(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 
 void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_pX& p, vec_ZZ_p& calculationForRound3) {
 	byte* PIs[NUM_OF_PARTIES];
-	unsigned int orderOfPI = 2 * M + 6 * L + 1;
+	unsigned int orderOfPI = 2 * M + INPUTS_PER_G_GATE * L + 1;
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i == _id) {
 			PIs[i] = nullptr;
@@ -561,7 +561,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
 			if (i == (_id + 2) % NUM_OF_PARTIES) {
-				for(int l=1;i<L+1;l++)//l'th g gate
+				for(int l=1;l<L+1;l++)//l'th g gate
 					for (int k = 1; k < M + 1; k++)//k'th coeffient
 						pointsToInterpolateRound2[i][5*l][k] = getMultipicationOutput(k - 1).getValue();
 				orderInputVector(pointsToInterpolateRound2[i], i);
@@ -682,10 +682,11 @@ void Party::interpolateInputPolynomials(unsigned int polynomialsDegree, unsigned
 		interpolate(inputPolynomials[i], range, pointsToInterpolate[i]);
 	}
 }
-void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
+void Party::verifyRound3(vec_ZZ_p& thetas,vec_ZZ_p& polynomialsAtPointR){
 	byte buffer[(INPUTS_PER_G_GATE * L + 2) * ELEMENT_SIZE]{};
 	vec_ZZ_p parsedFinal;
 	vec_ZZ_p constructedElements;
+	ZZ_p g_r;
 
 	parsedFinal.SetLength(INPUTS_PER_G_GATE * L + 2);
 	constructedElements.SetLength(INPUTS_PER_G_GATE * L + 2);
@@ -697,7 +698,8 @@ void Party::verifyRound3(vec_ZZ_p& polynomialsAtPointR){
 	cout << "Received: " << parsedFinal << endl << endl;
 	cout << "[f'1(r),f'2(r),f'3(r),f'4(r),f'5(r),f'6(r),p(r),b(r)]" << endl;
 	cout << "Final construction:"<<constructedElements<<endl;
-	cout << "g(f(r)) = " << cFunction(constructedElements)<<endl;
+	gGateOutput<vec_ZZ_p, ZZ_p>(thetas, constructedElements, g_r);
+	cout << "g(f(r)) = " << g_r << endl;
 }
 void Party::rawDataToVec(vec_ZZ_p& vec, unsigned int vectorLen, byte* rawData) {
 	vec.SetLength(vectorLen);
@@ -715,10 +717,7 @@ void Party::vecToRawData(unsigned int numOfElements, NTL::vec_ZZ_p& vec, byte* r
 		*(unsigned long long*)& rawData[i * ELEMENT_SIZE] = *(unsigned long long*)rawZp;
 	}
 }
-ZZ_p Party::cFunction(vec_ZZ_p inputsToGGate)const {
-	return inputsToGGate[0] * inputsToGGate[2] + inputsToGGate[0] * inputsToGGate[3] + inputsToGGate[1] * inputsToGGate[2] + inputsToGGate[4] - inputsToGGate[5];
 
-}
 
 Part& Party::getMultipicationOutput(unsigned short index){
 	return _multipicationGateOutputs[index];
