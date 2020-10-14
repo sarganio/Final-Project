@@ -509,8 +509,6 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 	vector<vec_ZZ_p> parsedPIs;
 	parsedPIs.resize(NUM_OF_PARTIES);
 	//(a)
-	vec_ZZ_p bettas;
-	fCoin(bettas, M);
 	vec_ZZ_p r;
 	r.SetLength(1);
 	do {
@@ -560,14 +558,12 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				for (int k = 1; k < M + 1; k++) 
 					pointsToInterpolateRound2[i][j][k] = pointsToInterpolate[j][k];
 			}
-			if (i == (_id + 2) % NUM_OF_PARTIES) {
-				for(int l=1;l<L+1;l++)//l'th g gate
+			for (int l = 1; l < L + 1; l++) {//l'th g gate
+				if (i == (_id + 2) % NUM_OF_PARTIES)
 					for (int k = 1; k < M + 1; k++)//k'th coeffient
-						pointsToInterpolateRound2[i][5*l][k] = getMultipicationOutput(k - 1).getValue();
-				orderInputVector(pointsToInterpolateRound2[i], i);
+						pointsToInterpolateRound2[i][5 * l][k] = getMultipicationOutput((k - 1) * l).getValue();
+				orderInputVector(pointsToInterpolateRound2[i], i, l);
 			}
-			else
-				orderInputVector(pointsToInterpolateRound2[i], i);
 			//set omegas as the fisrt point
 			for(int j=0;j<INPUTS_PER_G_GATE*L;j++)
 				pointsToInterpolateRound2[i][j][0] = parsedPIs[i][j];
@@ -609,7 +605,8 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				for (int k = 0; k < INPUTS_PER_G_GATE * L; k++)
 					f_r[i][k] = eval(polynomialsRound2[i][k], r[0]);
 			}
-
+	vec_ZZ_p bettas;
+	fCoin(bettas, M);
 	//computes p(r) and b for every party
 	for (int i = 0; i < NUM_OF_PARTIES; i++) {
 		if (i != _id)
@@ -726,26 +723,28 @@ void Party::setMultipicationOutput(Part& toSave) {
 	static int numOfElements = 0;
 	_multipicationGateOutputs[numOfElements++] = toSave;
 }
-void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex) {
+void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex, unsigned int l) {
+	l--;
+	int offset = l * INPUTS_PER_G_GATE;
 	if (proverIndex == (_id + 1) % NUM_OF_PARTIES) {
-		inputVector[1] = inputVector[0];
-		NTL::clear(inputVector[0]);
+		inputVector[1 + offset] = inputVector[0 + offset];
+		NTL::clear(inputVector[0 + offset]);
 
-		inputVector[3] = inputVector[2];
-		NTL::clear(inputVector[2]);
+		inputVector[3 + offset] = inputVector[2 + offset];
+		NTL::clear(inputVector[2 + offset]);
 
-		inputVector[4] *= -1;
+		inputVector[4 + offset] *= -1;
 
-		NTL::clear(inputVector[5]);
+		NTL::clear(inputVector[5 + offset]);
 	}
 	if (proverIndex == (_id + 2) % NUM_OF_PARTIES) {
-		inputVector[0] = inputVector[1];
-		NTL::clear(inputVector[1]);
+		inputVector[0 + offset] = inputVector[1 + offset];
+		NTL::clear(inputVector[1 + offset]);
 
-		inputVector[2] = inputVector[3];
-		NTL::clear(inputVector[3]);
+		inputVector[2 + offset] = inputVector[3 + offset];
+		NTL::clear(inputVector[3 + offset]);
 
-		inputVector[4] *= -1;
+		inputVector[4 + offset] *= -1;
 
 	}
 }

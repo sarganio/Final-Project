@@ -83,7 +83,7 @@ public:
 	}
 	Part& getMultipicationOutput(unsigned short index);				//get a Part of multipication gate output by index.
 	void setMultipicationOutput(Part& toSave);						//set a Part of the current multipication gate.
-	void orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex);//order the inputs to the g gates so the order will be coherent with all parties.
+	void orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverIndex,unsigned int l);//order the inputs to the g gates so the order will be coherent with all parties.
 	template<typename T, typename G>
 	void gGateOutput(vec_ZZ_p& thetas, T& polynomials, G& output)const {
 		for (int i = 0; i < L; i++)
