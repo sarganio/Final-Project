@@ -14,9 +14,9 @@
 #define TRACE(msg, ...) // do nothing
 #endif
 
-#include "pch.h"
-#include "aes.h"
-#include "osrng.h"
+#include "CryptoPP/pch.h"
+#include "CryptoPP/aes.h"
+#include "CryptoPP/osrng.h"
 #include <WinSock2.h>
 #include <Windows.h>
 #include <iostream>
@@ -28,25 +28,25 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-#include "cryptlib.h"
+#include "CryptoPP/cryptlib.h"
 using CryptoPP::Exception;
 
-#include "hex.h"
+#include "CryptoPP/hex.h"
 using CryptoPP::HexEncoder;
 using CryptoPP::HexDecoder;
 
-#include "filters.h"
+#include "CryptoPP/filters.h"
 using CryptoPP::StringSink;
 using CryptoPP::StringSource;
 using CryptoPP::StreamTransformationFilter;
 
-#include "aes.h"
+#include "CryptoPP/aes.h"
 using CryptoPP::AES;
 
-#include "ccm.h"
+#include "CryptoPP/ccm.h"
 using CryptoPP::CBC_Mode;
 
-#include "secblock.h"
+#include "CryptoPP/secblock.h"
 using CryptoPP::SecByteBlock;
 
 #include <cstdlib>
