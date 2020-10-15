@@ -14,7 +14,7 @@ using std::set;
 argv[1] - my IP
 argv[2],argv[3] - IPs of other parties
 */
-
+//just for Idan
 int main(int argc, char* argv[]) {
 	short i,myID = 0;
 	string IPs[NUM_OF_PARTIES] = { string(argv[1]) };
