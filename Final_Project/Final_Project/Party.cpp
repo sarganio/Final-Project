@@ -402,8 +402,11 @@ void Party::verifyRound1(vec_ZZ_p& thetas,unsigned int M, vec_vec_ZZ_p& pointsTo
 		//put the witness coeffient as the free coeffient
 		pointsToInterpolate[i][0] = omegas[i];
 		for (int j = 1; j < M + 1; j++) {
-			if ((j - 1) * INPUTS_PER_G_GATE * L + i >= _gGatesInputs.capacity())
+			if ((j - 1) * INPUTS_PER_G_GATE * L + i >= _gGatesInputs.capacity()) {
 				pointsToInterpolate[i][j] = 0;
+				if (((j - 1) * INPUTS_PER_G_GATE * L + i) % 5)//if the input is z_i
+					_multipicationGateOutputs.push_back(Part(0, _id, 0));
+			}
 			else
 				pointsToInterpolate[i][j] = this->_gGatesInputs[(j - 1) * INPUTS_PER_G_GATE * L + i].getValue();//j'th input ,j'th coefficient of the polynomial
 		}
@@ -544,8 +547,12 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 			for (int l = 1; l < L + 1; l++) {//l'th g gate
 				if (i == (_id + 2) % NUM_OF_PARTIES)
 					for (int k = 1; k < M + 1; k++)//set the correct output of the multipication gates
-						pointsToInterpolateRound2[i][5 * l][k] = getMultipicationOutput((k - 1) * l).getValue();
+						pointsToInterpolateRound2[i][5+ (l-1) * INPUTS_PER_G_GATE][k] = getMultipicationOutput((k - 1)+(l-1)*L).getValue();
+				cout << "Before, i=" << i <<":"<< endl;
+				printVecVec(pointsToInterpolateRound2[i]);
 				orderInputVector(pointsToInterpolateRound2[i], i, l);
+				cout << "After:"<< endl;
+				printVecVec(pointsToInterpolateRound2[i]);
 			}
 			//set omegas as the fisrt point
 			for(int j=0;j<INPUTS_PER_G_GATE*L;j++)
@@ -720,7 +727,7 @@ void Party::orderInputVector(vec_vec_ZZ_p& inputVector, unsigned short proverInd
 
 		NTL::clear(inputVector[5 + offset]);
 	}
-	if (proverIndex == (_id + 2) % NUM_OF_PARTIES) {
+	else if (proverIndex == (_id + 2) % NUM_OF_PARTIES) {
 		inputVector[0 + offset] = inputVector[1 + offset];
 		NTL::clear(inputVector[1 + offset]);
 
