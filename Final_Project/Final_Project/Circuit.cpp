@@ -3,7 +3,7 @@
 #include "MultiplicationGate.h"
 
 
-#define MIN_NUM_OF_LAYERS 3
+#define MIN_NUM_OF_LAYERS 10
 #define MIN_NUM_OF_GATES 2
 #define RANGE_OF_LAYERS 1
 #define RANGE_OF_GATES 1

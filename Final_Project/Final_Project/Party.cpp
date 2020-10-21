@@ -128,7 +128,7 @@ Party::~Party() {
 bool Party::sendTo(unsigned short id, byte messageType, byte* msg)const {
 	Message toSend(messageType);
 	if(messageType == F_VERIFY_ROUND1_MESSAGE)
-		toSend.setSize(messageType, (std::ceil(_arithmeticCircuit->getNumOfMulGates()/L)*2+6*L+1)*ELEMENT_SIZE);
+		toSend.setSize(messageType, (std::ceil(_arithmeticCircuit->getNumOfMulGates()/(double)L)*2+INPUTS_PER_G_GATE*L+1)*ELEMENT_SIZE);
 	else
 		toSend.setSize(messageType);
 	toSend.setData(msg);
@@ -476,7 +476,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 		if (i == _id) {
 			PIs[i] = nullptr;
 		}
-		else {//set Message's size to: 2*M+6*L+2 before receiving the data
+		else {//set Message's size to: 2*M+6*L+1 before receiving the data
 			PIs[i] = new byte[ELEMENT_SIZE * orderOfPI]();
 			std::condition_variable& other = _msgs[i]->getListenerIsSetSizeCV();
 			std::condition_variable& mine = _msgs[i]->getPartyIsSetSizeCV();
@@ -548,11 +548,7 @@ void Party::verifyRound2(unsigned int M, vec_vec_ZZ_p& pointsToInterpolate, ZZ_p
 				if (i == (_id + 2) % NUM_OF_PARTIES)
 					for (int k = 1; k < M + 1; k++)//set the correct output of the multipication gates
 						pointsToInterpolateRound2[i][5 + (l - 1) * INPUTS_PER_G_GATE][k] = getMultipicationOutput((k - 1) * L + (l - 1)).getValue();
-				cout << "Before, i=" << i <<":"<< endl;
-				printVecVec(pointsToInterpolateRound2[i]);
 				orderInputVector(pointsToInterpolateRound2[i], i, l);
-				cout << "After:"<< endl;
-				printVecVec(pointsToInterpolateRound2[i]);
 			}
 			//set omegas as the fisrt point
 			for(int j=0;j<INPUTS_PER_G_GATE*L;j++)
