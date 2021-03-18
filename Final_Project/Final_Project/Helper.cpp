@@ -2,6 +2,7 @@
 #include "Messages.h"
 
 bool Helper::IPCompare(string first, string second) {
+	//compare IP adresses by the last octate
 	string firstEnd = first.substr(first.rfind(".") + 1, string::npos);
 	string secondtEnd = second.substr(second.rfind(".") + 1, string::npos);
 	if (firstEnd.size() == secondtEnd.size())

@@ -8,7 +8,7 @@ class MultiplicationGate : public Gate
 {
 
 private:
-	operand* _right;																	//either a Share or a constant
+	operand* _right;		//either a Share or a constant
 
 public:
 	MultiplicationGate() {};

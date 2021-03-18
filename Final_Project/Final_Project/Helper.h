@@ -13,9 +13,10 @@
 #define TRACE(msg, ...) printf(msg "\n", __VA_ARGS__);
 #define TRACE(msg, ...) // do nothing
 #endif
-#include "pch.h"
-#include "aes.h"
-#include "osrng.h"
+
+#include "CryptoPP/pch.h"
+#include "CryptoPP/aes.h"
+#include "CryptoPP/osrng.h"
 #include <WinSock2.h>
 #include <Windows.h>
 #include <iostream>
@@ -27,25 +28,25 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-#include "cryptlib.h"
+#include "CryptoPP/cryptlib.h"
 using CryptoPP::Exception;
 
-#include "hex.h"
+#include "CryptoPP/hex.h"
 using CryptoPP::HexEncoder;
 using CryptoPP::HexDecoder;
 
-#include "filters.h"
+#include "CryptoPP/filters.h"
 using CryptoPP::StringSink;
 using CryptoPP::StringSource;
 using CryptoPP::StreamTransformationFilter;
 
-#include "aes.h"
+#include "CryptoPP/aes.h"
 using CryptoPP::AES;
 
-#include "ccm.h"
+#include "CryptoPP/ccm.h"
 using CryptoPP::CBC_Mode;
 
-#include "secblock.h"
+#include "CryptoPP/secblock.h"
 using CryptoPP::SecByteBlock;
 
 #include <cstdlib>
@@ -55,15 +56,23 @@ using std::exit;
 #include <cstddef>
 using CryptoPP::byte;
 
-#define P 127 //make sure all the elements are belong to Z_p (mod p)
+#define NTL_NO_MIN_MAX
+#include "NTL/ZZ_p.h"
 
 #include <string>
+
+#define ZP 127 //make sure all the elements are belong to Z_p (mod p)
+#define L  5//num of multipication gates per G gate
+#define INPUTS_PER_G_GATE  6//(u_i,u_{i-1},v_i,v_{i-1},alpha_i,z_i)
+#define ELEMENT_SIZE sizeof(NTL::ZZ_p)
+#define DISHONEST_PARTY_ID -1//the id of the dishonest party
+#define LIE_MUL_GATE_INDEX 3//the index of the multipication gate at which the dishonest party cheat
+
 
 using std::string;
 
 class Helper
 {
-	//static void decryptAES(byte* chiperText, size_t messageLen, CryptoPP::SecByteBlock key, CryptoPP::SecByteBlock iv);
 public:
 	//returns true if last octet is bigger that second's
 	static bool IPCompare(string first, string second);										//return true if first is greater than second.
