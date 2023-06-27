@@ -5,8 +5,8 @@
 
 #include "Share.h"
 #define NTL_NO_MIN_MAX
-#include "NTL/vec_ZZ_p.h"
-#include "NTL/ZZ_pX.h"
+#include "NTL\vec_ZZ_p.h"
+#include "NTL\ZZ_pX.h"
 #include <vector>
 #include <string>
 #include <mutex>

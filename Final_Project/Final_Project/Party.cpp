@@ -4,10 +4,10 @@
 #include "Circuit.h"
 //NTL
 #define NTL_NO_MIN_MAX
-#include "NTL/ZZ_pX.h"
-#include "NTL/vec_ZZ.h"
-#include "NTL/lzz_p.h"
-#include "NTL/tools.h"
+#include "NTL\ZZ_pX.h"
+#include "NTL\vec_ZZ.h"
+#include "NTL\lzz_p.h"
+#include "NTL\tools.h"
 
 #include <string>
 #include <iostream>
